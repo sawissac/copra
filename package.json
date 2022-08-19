@@ -1,0 +1,17 @@
+{
+  "dependencies": {
+    "@popperjs/core": "^2.11.5",
+    "bootstrap-icons": "^1.9.1",
+    "html-to-image": "^1.9.0"
+  },
+  "name": "copra",
+  "version": "1.0.0",
+  "main": "app.js",
+  "scripts": {
+    "sass-compile": "sass ./css/style.scss ./css/style.css"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": ""
+}
