@@ -1,133 +1,34 @@
-import { StateManager } from "./stateManager.js";
-import { Storage } from "./storage.js";
+import { Component } from "./component/component.js";
 
-const sto = new Storage();
-
-export class LayerRander extends StateManager {
-  #canvasBtn = null;
-  #canvasText = null;
-  #addBtn = null;
-  #editBtn = null;
-  #delBtn = null;
-  #moveBtn = null;
-  #layerEle = null;
-  #worker = null;
-  #htmlTitle = null;
-  #isCanvasOn = false;
+export class LayerRander extends Component {
   constructor() {
     super();
-  }
-  setHtmlTitle(ele) {
-    this.#htmlTitle = ele;
-  }
-  setCanvasText(ele) {
-    this.#canvasText = ele;
-  }
-  getCanvasText() {
-    return this.#canvasText;
-  }
-  setCanvasBtn(canvsBtn) {
-    this.#canvasBtn = canvsBtn;
-  }
-  setLayer(layer) {
-    this.#layerEle = layer;
-  }
-  worker(callback) {
-    this.#worker = callback;
-  }
-  setController(move, add, edit, del) {
-    this.#addBtn = add;
-    this.#editBtn = edit;
-    this.#delBtn = del;
-    this.#moveBtn = move;
+    this.edit = false;
+    this.canvas = false;
   }
   createLayer() {
     this.state.push({
       layerName: "Element",
       isHighlight: false,
-      isEdit: false,
-      isMove: false,
-      component: {type:"none", text:'', height: 0},
+      component: { type: "Empty", text: "", height: 50,textColor:'' },
     });
+    this.updateCpsState();
+    this.getWorker();
   }
-  delteLayer() {
-    this.getStorageState();
-    this.setState(this.state.filter((i) => i.isHighlight !== true));
+  deleteLayer() {
+    if (this.state.length > 1) {
+      this.setState(this.state.filter((i) => i.isHighlight !== true));
+    }
+    this.updateCpsState();
+    this.getWorker();
   }
   moveLayer() {
-    this.getStorageState();
-    this.#layerEle.innerHTML = "";
-    this.state.map((i) => {
-      let layerList = document.createElement("div");
-
-      if (!i.isHighlight) {
-        layerList.classList.add(
-          "btn-btn",
-          "d-flex",
-          "flex-column",
-          "j-center",
-          "fs-12",
-          "text-white",
-          "bg-secoundary",
-          "br-5",
-          "my-4",
-          "p-0"
-        );
-        const div1 = document.createElement("div");
-        const div2 = document.createElement("div");
-        const p = document.createElement("div");
-
-        div1.setAttribute(
-          "class",
-          "bi bi-chevron-compact-up btn-secoundary btn-btn"
-        );
-        div2.setAttribute(
-          "class",
-          "bi bi-chevron-compact-down btn-secoundary btn-btn"
-        );
-
-        div1.onclick = () => {
-          const filteredData = this.state.filter((i) => i.isHighlight === true);
-          this.setState(
-            this.state.reduce((p, c) => {
-              if (c.id === i.id) {
-                p.push(...filteredData);
-              }
-              if (!c.isHighlight) {
-                p.push(c);
-              }
-              return p;
-            }, [])
-          );
-          this.storageUpdate();
-          this.reRenderLayer();
-          this.#worker();
-        };
-        div2.onclick = () => {
-          const filteredData = this.state.filter((i) => i.isHighlight === true);
-          this.setState(
-            this.state.reduce((p, c) => {
-              if (!c.isHighlight) {
-                p.push(c);
-              }
-              if (c.id === i.id) {
-                p.push(...filteredData);
-              }
-              return p;
-            }, [])
-          );
-          this.storageUpdate();
-          this.reRenderLayer();
-          this.#worker();
-        };
-        p.textContent = i.layerName;
-
-        layerList.appendChild(div1);
-        layerList.appendChild(p);
-        layerList.appendChild(div2);
-        this.#layerEle.appendChild(layerList);
-      } else {
-        layerList.classList.add(
+    const isactiveLayer = this.state.filter((i) => i.isHighlight === true);
+    if (isactiveLayer.length !== 0) {
+      this.getHost()._layer_.innerHTML = "";
+      const MoveLayerCancelBtn = er.component({
+        element: "move-layer-cancel-div",
+        class: [
           "btn-btn",
           "d-flex",
           "j-center",
@@ -136,231 +37,343 @@ export class LayerRander extends StateManager {
           "btn-secoundary",
           "br-5",
           "my-4",
-          "highlight"
-        );
-        layerList.textContent = i.layerName;
-        this.#layerEle.appendChild(layerList);
-      }
-    });
+        ],
+        text: "CANCEL",
+        build: (_) => {
+          _.onclick = () => {
+            this.render();
+          };
+        },
+      });
+      this.getHost()._layer_.appendChild(MoveLayerCancelBtn.target);
+      this.state.map((i) => {
+        const MoveLayerBtn = er.component({
+          element: "move-layer-btn-div",
+          class: [
+            "btn-btn",
+            "d-flex",
+            "j-center",
+            "ai-center",
+            "flex-column",
+            "fs-12",
+            "text-white",
+            "bg-secoundary",
+            "br-5",
+            "my-4",
+            "p-0",
+            i.isHighlight === true ? "highlight" : "not-highlight",
+          ],
+          children:
+            i.isHighlight !== true
+              ? [
+                  er.component({
+                    element: "up-layer-btn-div",
+                    class: [
+                      "btn-btn",
+                      "d-flex",
+                      "j-center",
+                      "ai-center",
+                      "btn-secoundary",
+                    ],
+                    build: (_) => {
+                      er.icon(_, ["bi", "bi-chevron-compact-up", "mx-5"], true);
+                      _.onclick = () => {
+                        this.moveArray(i.id, -1);
+                        this.updateCpsState();
+                        this.render();
+                        this.worker();
+                      };
+                    },
+                  }),
+                  er.component({
+                    element: "up-layer-btn-div",
+                    text: i.layerName,
+                  }),
+                  er.component({
+                    element: "up-layer-btn-div",
+                    class: [
+                      "btn-btn",
+                      "d-flex",
+                      "j-center",
+                      "ai-center",
+                      "btn-secoundary",
+                    ],
+                    build: (_) => {
+                      er.icon(
+                        _,
+                        ["bi", "bi-chevron-compact-down", "mx-5"],
+                        true
+                      );
+                      _.onclick = () => {
+                        this.moveArray(i.id, 1);
+                        this.updateCpsState();
+                        this.render();
+                        this.worker();
+                      };
+                    },
+                  }),
+                ]
+              : [
+                  er.component({
+                    element: "up-layer-btn-div",
+                    class: ["py-10"],
+                    text: i.layerName,
+                  }),
+                ],
+        });
+        this.getHost()._layer_.appendChild(MoveLayerBtn.target);
+      });
+    }
   }
-  editLayer() {
-    this.getStorageState();
-    this.#layerEle.innerHTML = "";
-    this.state.map((i) => {
-      let layerList = document.createElement("div");
+  build() {
+    const MoveBtn = er.component({
+      element: "move-btn-div",
+      class: ["mx-4"],
+      build: (_) => {
+        er.icon(_, ["bi", "bi-arrows-move", "mx-5"], true);
+        _.onclick = () => {
+          this.moveLayer();
+        };
+      },
+    });
+    const EditBtn = er.component({
+      element: "add-btn-div",
+      class: ["mx-4"],
+      build: (_) => {
+        er.icon(_, ["bi", "bi-pen-fill", "mx-5"], true);
+        _.onclick = () => {
+          this.edit = true;
+          this.render();
+        };
+      },
+    });
+    const AddBtn = er.component({
+      element: "add-btn-div",
+      class: ["mx-4"],
+      build: (_) => {
+        er.icon(_, ["bi", "bi-plus-lg", "mx-5"], true);
+        _.onclick = () => {
+          this.edit = false;
+          this.createLayer();
+          this.updateCpsState();
+          this.render();
+        };
+      },
+    });
+    const DeleteBtn = er.component({
+      element: "delete-btn-div",
+      class: ["mx-4"],
+      build: (_) => {
+        er.icon(_, ["bi", "bi-trash3-fill"], true);
+        _.onclick = () => {
+          this.edit = false;
+          this.deleteLayer();
+          this.updateCpsState();
+          this.render();
+        };
+      },
+    });
+    const Block = er.component({
+      element: "block-div",
+      class: ["block"],
+    });
 
-      if (i.isHighlight) {
-        layerList.classList.add(
+    this.getHost()._canvasbtn_.onclick = () => {
+      if (this.canvas !== true) {
+        this.canvasBtnOn();
+        this.stateRefresh("isHighlight", false);
+        this.updateCpsState();
+        this.render();
+        this.getWorker();
+      }
+    };
+    this.updatePageTitle();
+    this.getHost()._layerlabel_.appendChild(Block.target);
+    this.getHost()._layerlabel_.appendChild(MoveBtn.target);
+    this.getHost()._layerlabel_.appendChild(EditBtn.target);
+    this.getHost()._layerlabel_.appendChild(AddBtn.target);
+    this.getHost()._layerlabel_.appendChild(DeleteBtn.target);
+    this.render();
+  }
+  canvasBtnOff() {
+    this.canvas = false;
+    this.getHost()._canvasbtn_.classList.remove("highlight");
+  }
+  canvasBtnOn() {
+    this.canvas = true;
+    this.getHost()._canvasbtn_.classList.add("highlight");
+  }
+  render() {
+    this.getHost()._layer_.innerHTML = "";
+    this.getCpsState();
+    this.updatePageTitle();
+    this.state.map((i) => {
+      let layerBtn = er.component({
+        element: "layer-btn-div",
+        class: [
           "btn-btn",
           "d-flex",
-          "j-center",
+          "j-left",
           "fs-12",
           "text-white",
-          "bg-secoundary",
+          "btn-secoundary",
           "br-5",
           "my-4",
-          "highlight"
-        );
-        const input = document.createElement("input");
-        input.type = "text";
-        input.autocomplete = "off";
-        input.value = i.layerName;
-        input.onclick = () => {
-          input.focus();
-          input.select();
-        };
-        input.onkeydown = (ev) => {
-          if (ev.code === "Enter") {
-            this.toggleState(i.id, "layerName", input.value);
-            this.storageUpdate();
-            this.reRenderLayer();
-            this.#worker();
-          }
-        };
-        layerList.appendChild(input);
-        this.#layerEle.appendChild(layerList);
-      } else {
-        layerList.classList.add(
-          "btn-btn",
-          "d-flex",
-          "j-center",
-          "fs-12",
-          "text-white",
-          "bg-secoundary",
-          "br-5",
-          "my-4"
-        );
-        layerList.textContent = i.layerName;
-        this.#layerEle.appendChild(layerList);
+          i.isHighlight === true ? "highlight" : "not-highlight",
+        ],
+        build: (_) => {
+          er.icon(
+            _,
+            ["bi", "bi-bounding-box-circles"],
+            true,
+            i.layerName,
+            true
+          );
+          _.onclick = () => {
+            if (i.isHighlight !== true) {
+              this.edit = false;
+              this.checkState(i.id, "isHighlight", this.highlightSetting);
+              this.updateCpsState();
+              this.render();
+              this.getWorker();
+              if (this.canvas === true) {
+                this.canvasBtnOff();
+              }
+            }
+          };
+        },
+      });
+      if (this.edit && i.isHighlight) {
+        layerBtn = er.component({
+          element: "layer-btn-div",
+          class: [
+            "btn-btn",
+            "d-flex",
+            "j-left",
+            "fs-12",
+            "text-white",
+            "bg-secoundary",
+            "br-5",
+            "my-4",
+            i.isHighlight === true ? "highlight" : "not-highlight",
+          ],
+          build: (_btn) => {
+            er.icon(_btn, ["bi", "bi-bounding-box-circles"], true, "", false);
+            const input = er.component({
+              element: "cansvas-input-input",
+              class: ["text-left"],
+              build: (_input) => {
+                _input.type = "text";
+                _input.value = i.layerName;
+                _input.onclick = () => {
+                  _input.focus();
+                  _input.select();
+                };
+                _input.onkeydown = (ev) => {
+                  if (ev.code === "Enter") {
+                    this.setState(
+                      this.state.reduce((p, c) => {
+                        if (c.isHighlight === true) {
+                          c.layerName = _input.value;
+                          p.push(c);
+                        } else {
+                          p.push(c);
+                        }
+                        return p;
+                      }, [])
+                    );
+                    this.edit = false;
+                    this.updateCpsState();
+                    this.render();
+                  }
+                };
+              },
+            });
+            _btn.appendChild(input.target);
+          },
+        });
       }
+      this.getHost()._layer_.appendChild(layerBtn.target);
     });
   }
-  renderLayer() {
-    this.getStorageState();
-    this.#layerEle.innerHTML = "";
-    let getCanvas = sto.state.filter((i) => i.canvas.isHighlight === true)[0]
-      .canvas.layerName;
-    this.#canvasText.textContent = getCanvas;
-    this.#htmlTitle.textContent = getCanvas;
-
-    for (let i of this.state) {
-      let layerList = document.createElement("div");
-      layerList.textContent = i.layerName;
-      layerList.classList.add(
-        "btn-btn",
-        "d-flex",
-        "j-center",
-        "fs-12",
-        "text-white",
-        "btn-secoundary",
-        "br-5",
-        "my-4"
-      );
-      let checkCanvasHighlight = this.#canvasBtn.classList;
-      checkCanvasHighlight = [...checkCanvasHighlight].includes("highlight");
-      if (checkCanvasHighlight && sto.getStorageValue("type") === "layer") {
-        this.#canvasBtn.classList.remove("highlight");
-        this.#isCanvasOn = false;
-      }
-      if (i.isHighlight) {
-        layerList.classList.add("highlight");
-      }
-      layerList.onclick = () => {
-        sto.storage("type", "layer");
-        if (this.#isCanvasOn) {
-          this.#canvasBtn.classList.remove("highlight");
-          this.#isCanvasOn = false;
-        }
-        this.toggleState(i.id, "isHighlight");
-        this.storageUpdate();
-        this.reRenderLayer();
-        this.#worker();
-      };
-      this.#layerEle.appendChild(layerList);
-    }
-  }
-  reRenderLayer() {
-    this.renderLayer();
-  }
-  run() {
-    this.#addBtn.onclick = () => {
-      if (sto.state.length !== 0) {
-        this.createLayer();
-        this.storageUpdate();
-        this.reRenderLayer();
-        this.#worker();
-      }
-    };
-    this.#delBtn.onclick = () => {
-      if (sto.state.length !== 0 && !this.#isCanvasOn) {
-        this.delteLayer();
-        this.storageUpdate();
-        this.reRenderLayer();
-        this.#worker();
-      }
-    };
-    this.#moveBtn.onclick = () => {
-      if (sto.state.length !== 0 && !this.#isCanvasOn) {
-        this.moveLayer();
-      }
-    };
-    this.#editBtn.onclick = () => {
-      if (sto.state.length !== 0 && !this.#isCanvasOn) {
-        this.editLayer();
-      }
-      if (this.#isCanvasOn) {
-        this.editCanvasBtn();
-      }
-    };
-    this.#canvasBtn.onclick = () => {
-      this.#isCanvasOn = true;
-      sto.storage("type", "canvas");
-      this.#canvasBtn.classList.add("highlight");
-      this.stateRefresh("isHighlight");
-      this.storageUpdate();
-      this.reRenderLayer();
-      this.#worker();
-    };
-  }
-  editCanvasBtn() {
-    const layerList = document.createElement("div");
-    const icon = document.createElement("i");
-    const input = document.createElement("input");
-    icon.classList.add("bi", "bi-bounding-box-circles");
-    layerList.classList.add(
-      "btn-btn",
-      "d-flex",
-      "j-left",
-      "fs-12",
-      "text-white",
-      "bg-secoundary",
-      "br-5",
-      "my-4",
-      "highlight"
-    );
-    input.classList.add("text-left", "mx-4");
-    input.type = "text";
-    input.autocomplete = "off";
-
-    let canvasName = sto.state.filter((i) => i.canvas.isHighlight === true);
-    input.value = canvasName[0].canvas.layerName;
-    input.onclick = () => {
-      input.focus();
-      input.select();
-    };
-    input.onkeydown = (ev) => {
-      if (ev.code === "Enter") {
-        sto.storage(
-          "pageData",
-          sto.state.reduce((p, c) => {
-            if (c.canvas.isHighlight) {
-              c.canvas.layerName = input.value;
-              p.push(c);
-            } else {
-              p.push(c);
-            }
-            return p;
-          }, [])
-        );
-        layerList.parentNode.replaceChild(this.#canvasBtn, layerList);
-        this.#canvasText.textContent = input.value;
-        this.#canvasBtn.classList.remove("highlight");
-        this.storageUpdate();
-        this.reRenderLayer();
-        this.#worker();
-      }
-    };
-    layerList.appendChild(icon);
-    layerList.appendChild(input);
-    this.#canvasBtn.parentNode.replaceChild(layerList, this.#canvasBtn);
-    this.#isCanvasOn = false;
-  }
-  getStorageState() {
-    sto.getStorage("pageData");
-    let canvasData = sto.state.filter((i) => i.canvas.isHighlight === true);
-    if (canvasData.length !== 0) {
-      this.setState(
-        canvasData[0].canvas.data.reduce((p, c) => {
-          c.id = Symbol();
-          p.push(c);
-          return p;
-        }, [])
-      );
+  highlightSetting(p, c, id, key) {
+    if (c.id === id) {
+      c[key] = true;
+      p.push(c);
     } else {
-      this.setState([]);
+      c[key] = false;
+      p.push(c);
     }
+    return p;
   }
-  storageUpdate() {
-    sto.getStorage("pageData");
-    let updatedData = sto.state.reduce((p, c) => {
-      if (c.canvas.isHighlight) {
-        c.canvas.data = this.state;
+  getCpsState() {
+    let activePageLayer = cps
+      .getPageLayerData()
+      .filter((i) => i.canvas.isHighlight === true);
+    this.setState(
+      activePageLayer[0].canvas.data.reduce((p, c) => {
+        c.id = Symbol();
         p.push(c);
-      } else {
-        p.push(c);
-      }
-      return p;
-    }, []);
-    sto.storage("pageData", updatedData);
+        return p;
+      }, [])
+    );
+  }
+  updateCpsState() {
+    let initState = cps.getPageLayerData();
+    cps.setPageLayerData(
+      initState.reduce((p, c) => {
+        if (c.canvas.isHighlight === true) {
+          c.canvas.data = this.state;
+          p.push(c);
+        } else {
+          p.push(c);
+        }
+        return p;
+      }, [])
+    );
+  }
+  moveArray(id, direction) {
+    let targetArray = this.state.filter((i) => i.isHighlight === true);
+    this.setState(
+      this.state.reduce((p, c) => {
+        if (c.id === id) {
+          if (direction === -1) {
+            p.push(targetArray[0]);
+          }
+          p.push(c);
+          if (direction === 1) {
+            p.push(targetArray[0]);
+          }
+        } else {
+          if (c.isHighlight !== true) {
+            p.push(c);
+          }
+        }
+        return p;
+      }, [])
+    );
+  }
+  updatePageTitle() {
+    const activePageLayer = cps
+      .getPageLayerData()
+      .filter((i) => i.canvas.isHighlight === true);
+    if (activePageLayer.length !== 0) {
+      this.getHost()._canvasbtn_.innerHTML = "";
+      er.icon(
+        this.getHost()._canvasbtn_,
+        ["bi", "bi-collection"],
+        true,
+        activePageLayer[0].canvas.layerName,
+        true
+      );
+    }
+    const activeEleLayer = activePageLayer[0].canvas.data.filter(
+      (i) => i.isHighlight === true
+    );
+    if (activeEleLayer.length === 0) {
+      this.canvasBtnOn();
+    } else {
+      this.canvasBtnOff();
+    }
   }
 }

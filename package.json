@@ -8,7 +8,7 @@
   "version": "1.0.0",
   "main": "app.js",
   "scripts": {
-    "sass-compile": "sass ./css/style.scss ./css/style.css"
+    "sass-compile": "sass ./css/style.scss ./css/style.css -w"
   },
   "keywords": [],
   "author": "",

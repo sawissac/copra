@@ -1,400 +1,375 @@
-import { ElementList } from "./elementList.js";
-import { ElementListRender } from "./elementListRender.js";
-import { CanvasScroller } from "./canvasScroller.js";
-import { GlobalState } from "./globalState.js";
-import {
-  aspectChecker,
-  canvasAspectRatio,
-  preSetupAspect,
-} from "./canvasAspectRatio.js";
+import { CanvasScaler } from "./canvasScaler.js";
+import { changeCanvasAspectRatio } from "./canvasAspectRatio.js";
 import { LayerRander } from "./layerRender.js";
 import { htmlRender } from "./htmlRender.js";
 import { PageListRender } from "./pageListRender.js";
-import { BackgroundEngine, Colors } from "./backgroundEngine.js";
-import { buildUi } from "./buildComponent.js";
-import { Storage } from "./storage.js";
+import { BackgroundEngine } from "./backgroundEngine.js";
+import { ImageRender } from "./imageRender.js";
 import { ComponentBuilder } from "./componentBuilder.js";
-import { CanvasScreenRender } from "./render.js";
+import { Tooltips } from "./tooltips.js";
 
-const er = new ElementListRender(ElementList);
-const hcs = new CanvasScroller();
-const rcs = new CanvasScroller();
-const gs = new GlobalState();
+const hcs = new CanvasScaler();
+const imcs = new CanvasScaler();
 const lr = new LayerRander();
 const hr = new htmlRender();
 const pr = new PageListRender();
 const be = new BackgroundEngine();
 const cb = new ComponentBuilder();
-const sto = new Storage();
-const csr = new CanvasScreenRender();
+const imr = new ImageRender();
+const rtp = new Tooltips();
+const stp = new Tooltips();
+const etp = new Tooltips();
 
-gs.store({
-  shiftState: false,
-  scaleIndicator: null,
-  aspectIndicator: null,
-  scrollYIndicator: null,
-  type: "",
-  pageData: [
-    {
-      canvas: {
-        layerName: "New Canvas",
-        isHighlight: true,
-        data: [],
-      },
-    },
-  ],
+/**
+ *  disable ctrl key
+ *
+ *
+ */
+document.body.addEventListener("keydown", function (keyPressev) {
+  if (keyPressev.ctrlKey) {
+    keyPressev.preventDefault();
+  }
+});
+/**
+ *  pageLayer
+ */
+pr.setHost({
+  _btn_: er.element.layerInnerPageBtn.target,
+  _layer_: er.element.layerInnerPageList.target,
+});
+pr.build();
+pr.setWorker(() => {
+  hr.updateTitle();
+  hr.render();
+  lr.render();
+});
+/**
+ * layerController
+ *
+ */
+lr.setHost({
+  _htmltitle_: er.element.htmlInnerTitle.target,
+  _layerlabel_: er.element.layerInnerLayerLabel.target,
+  _canvasbtn_: er.element.layerInnerCanvasButton.target,
+  _layer_: er.element.layerInnerLayerList.target,
+  _canvaslayer_: er.element.htmlLayer.target,
+});
+lr.build();
+lr.setWorker(() => {
+  hr.render();
+  cb.updateBuilder();
+});
+/**
+ *  html canvs render
+ *
+ */
+hr.setHost({
+  _layer_: er.element.htmlLayer.target,
+  _htmlTitle_: er.element.htmlInnerTitle.target,
+});
+hr.updateTitle();
+hr.setWorker(() => {
+  lr.render();
+  cb.updateBuilder();
+});
+hr.build();
+hr.render();
+/**
+ * background engine
+ *
+ *
+ */
+be.setHost({
+  _layer_: er.element.optionInnerLayer.target,
+});
+be.setWorker(() => {
+  cb.updateBuilder();
+});
+be.build();
+/**
+ * Component Builder
+ */
+cb.setHost({
+  _layer_: er.element.optionInnerLayer.target,
+});
+cb.build();
+cb.updateBuilder();
+cb.setWorker(() => {
+  hr.render();
+  lr.render();
+});
+/**
+ * imageRender
+ * 
+ * 
+ */
+imr
+.setHost({
+  _html_: er.element.htmlInnerCanvas.target,
+  _image_:er.element.renderInnerCanvas.target,
+  _imageScene_: er.element.renderCanvas.target,
+  _controller_: er.element.renderController.target,
+
+})
+.setEngine(htmlToImage)
+.build();
+/**
+ * controllerCanvasScrollYButton
+ * 
+ * 
+ */
+let scrollYIndicator = null;
+er.element.controllerCanvasScrollYButton.set((_) => {
+  const [indi] = er.icon(_, ["bi", "bi-arrows-expand"], true, "N", true, false);
+  scrollYIndicator = indi;
+  let btnToggle = false;
+  _.onclick = () => {
+    btnToggle = !btnToggle;
+    if (btnToggle) {
+      hcs.verticalMoveOn();
+      indi.textContent = "Y";
+    } else {
+      hcs.verticalMoveOff();
+      indi.textContent = "N";
+    }
+  };
+});
+/**
+ * controllerCanvasScrollXButton
+ * 
+ * 
+ */
+ let scrollXIndicator = null;
+ er.element.controllerCanvasScrollXButton.set((_) => {
+   const [indi] = er.icon(_, ["bi", "bi-arrows-expand",'rotate-90'], true, "N", true, false);
+   scrollXIndicator = indi;
+   let btnToggle = false;
+   _.onclick = () => {
+     btnToggle = !btnToggle;
+     if (btnToggle) {
+       hcs.horizontalMoveOn();
+       indi.textContent = "X";
+     } else {
+       hcs.horizontalMoveOff();
+       indi.textContent = "N";
+     }
+   };
+ });
+
+er.element.headerSaveBtn.set((_) => {
+  _.onclick = () => {
+    stoV2.val(cps.getPageLayerData()).storeToPageData();
+  };
 });
 
-// window event
+/**
+ *  htmlcanvasScroller
+ *
+ *
+ */
+hcs
+  .setHost({
+    _canvas_: er.element.htmlInnerCenter.target,
+  })
+  .setMinMax(10, 300)
+  .setScalePercentMiddle()
+  .setWorker(() => {
+    stp.btnLabelEl.textContent =
+      hcs.formatPerscent(String(hcs.getScale() * 100)) + "%";
+  })
+  .build();
+/**
+ *  imagecanvasScroller
+ *
+ *
+ */
+imcs
+.setHost({
+  _canvas_: er.element.renderInnerCenter.target,
+})
+.setMinMax(10, 500)
+.setWorker(() => {
+  stp.btnLabelEl.textContent =
+    imcs.formatPerscent(String(imcs.getScale() * 100)) + "%";
+})
+.build();
+/**
+ *  canvas center button
+ *
+ *
+ */
+er.element.controllerCanvasCenterButton.set((_) => {
+  changeCanvasAspectRatio(stoV2.getCanvasAspect());
+  er.icon(_, ["bi", "bi-align-center"], true, "", false, false);
+  _.onclick = () => {
+    changeZoomScale(1);
+  };
+});
+/**
+ * tooltips for rationbtn
+ *
+ *
+ */
+rtp
+  .setHost({
+    _btn_: er.element.controllerRatioBtn.target,
+    _box_: er.element.controllerRatioBox.target,
+  })
+  .setBtnIconStyle(["bi", "bi-aspect-ratio-fill"], "Ratio")
+  .setListIconStyle(["bi", "bi-star-fill"])
+  .offset([0, 15])
+  .set([
+    {
+      listName: "aspect-1:1",
+      fun: () => {
+        changeCanvasAspectRatio("aspect-1:1", hcs);
+      },
+    },
+    {
+      listName: "aspect-9:16",
+      fun: () => {
+        changeCanvasAspectRatio("aspect-9:16", hcs);
+      },
+    },
+    {
+      listName: "aspect-16:9",
+      fun: () => {
+        changeCanvasAspectRatio("aspect-16:9", hcs);
+      },
+    },
+  ])
+  .build();
+
+/**
+ * tooltips for scaler percent btn
+ *
+ *
+ */
+function changeZoomScale(value) {
+  if (stoV2.getCanvasMode() === "htmlmode") {
+    stp.btnLabelEl.textContent = value * 100 + "%";
+    hcs.scale = value;
+    hcs.setCanvasPostion(hcs.defalutX, hcs.defaultY);
+    hcs.changeCanvas();
+  } else {
+    stp.btnLabelEl.textContent = value * 100 + "%";
+    imcs.scale = value;
+    imcs.setCanvasPostion(imcs.defalutX, imcs.defaultY);
+    imcs.changeCanvas();
+  }
+}
+stp
+  .setHost({
+    _btn_: er.element.controllerScalePercent.target,
+    _box_: er.element.controllerScalePercentBox.target,
+  })
+  .setBtnIconStyle(["bi", "bi-zoom-in"], "Scale")
+  .setListIconStyle(["bi", "bi-zoom-in"])
+  .offset([-60, 15])
+  .set([
+    {
+      listName: "Scale to 50%",
+      fun: () => {
+        changeZoomScale(0.5);
+      },
+    },
+    {
+      listName: "Zoom to 100%",
+      fun: () => {
+        changeZoomScale(1);
+      },
+    },
+    {
+      listName: "Zoom out",
+      fun: () => {
+        changeZoomScale(1);
+      },
+    },
+    {
+      listName: "Zoom to fit",
+      fun: () => {
+        changeZoomScale(2.1);
+      },
+    },
+    {
+      listName: "Zoom in",
+      fun: () => {
+        changeZoomScale(3);
+      },
+    },
+  ])
+  .build();
+stp.btnLabelEl.textContent =
+  hcs.formatPerscent(String(hcs.getScale() * 100)) + "%";
+/**
+ * tooltips for edit btn
+ *
+ *
+ */
+
+etp
+  .setHost({
+    _btn_: er.element.controllerEditBtn.target,
+    _box_: er.element.controllerEditBox.target,
+  })
+  .setBtnIconStyle(["bi", "bi-list"], "Edit")
+  .setListIconStyle(["bi", "bi-list"])
+  .offset([65, 15])
+  .set([
+    {
+      listName: "Render",
+      fun: () => {
+        stoV2.val("imagemode").storeToCanvasMode();
+        imr.show();
+        changeZoomScale(1);
+        imr.render();
+      },
+    },
+    {
+      listName: "Update App",
+      fun: () => {
+        cps.updateApp();
+      },
+    },
+  ])
+  .build();
+
+/**
+ * window key event
+ *
+ *
+ */
 
 window.addEventListener("keydown", (ev) => {
   // Reset canvas
   if (ev.shiftKey && ev.code === "KeyC") {
-    let optionValue = gs.state.aspectIndicator.textContent;
-    preSetupAspect(optionValue, hcs);
-    preSetupAspect(optionValue, rcs);
+    changeZoomScale(1);
   }
   // scroll up and down
   if (ev.shiftKey && ev.code === "KeyS") {
-    gs.state.shiftState = true;
+    scrollYIndicator.textContent = "Y"
+    hcs.verticalMoveOn();
+    imcs.verticalMoveOn();
+  }
+  // scroll left and right
+  if (ev.shiftKey && ev.code === "KeyA") {
+    scrollXIndicator.textContent = "X"
+    hcs.horizontalMoveOn();
+    imcs.horizontalMoveOn();
   }
 });
-window.addEventListener("keyup", () => {
-  gs.state.shiftState = false;
-  if (!gs.state.shiftState) {
-    gs.state.scrollYIndicator.textContent = "n";
+
+window.addEventListener("keyup", (ev) => {
+  if (ev.shiftKey) {
+    scrollYIndicator.textContent = "N"
+    scrollXIndicator.textContent = "N"
+    hcs.verticalMoveOff();
+    hcs.horizontalMoveOff();
+    imcs.verticalMoveOff();
+    imcs.horizontalMoveOff();
   }
 });
 
-/**
- *  CoreComponent
- */
-
-const Component = document.createElement("div");
-Component.classList.add("core-component");
-
-er.parseComponent();
-buildUi(er);
-
-csr.setHtml_RenderCanvas(
-  er.element.htmlInnerCanvas.target,
-  er.element.renderInnerCanvas.target
-);
-csr.setCanvasParent(er.element.renderInnerCanvas.target);
-csr.engine(htmlToImage);
-csr.addController(er.element.renderController.target);
-csr.setCanvasScene(er.element.renderCanvas.target);
-
-er.element.controllerOptions.set((_button) => {
-  er.icon(_button, ["bi", "bi-list"], true, "Options", true, true);
-  _button.type = "button";
-
-  let _renderBtn = er.component({
-    element: "render-btn-div",
-    text: "render",
-    style: ["btn-btn", "ts-12", "btn-secoundary", "j-left", "br-5"],
-  });
-  let buttonToggle = false;
-  er.element.controllerOptionsBox.set((_tooltip) => {
-    const popperInstance = Popper.createPopper(_button, _tooltip, {
-      modifiers: [
-        {
-          name: "offset",
-          options: {
-            offset: [50, 5],
-          },
-          placement: "bottom-start",
-        },
-      ],
-    });
-    _tooltip.appendChild(_renderBtn.target);
-
-    _button.onclick = () => {
-      buttonToggle = !buttonToggle;
-      if (buttonToggle) {
-        popperInstance.update();
-        _tooltip.style.display = "block";
-      } else {
-        popperInstance.update();
-        _tooltip.style.display = "none";
-      }
-    };
-  });
-
-  _renderBtn.target.onclick = () => {
-    er.element.renderCanvas.set((_) => {
-      _.style.display = "block";
-    });
-    er.element.renderInnerCanvas.target.innerHTML = "";
-    er.element.renderInnerCanvas.set((_render) => {
-      er.element.htmlInnerCanvas.set((_html) => {
-        let aspect = aspectChecker(_html.classList, canvasAspectRatio);
-        _render.classList.add(aspect);
-      });
-    });
-    csr.render();
-  };
-});
-
-er.element.headerLogo.set((_) => {
-  _.textContent = "CoPra";
-  _.type = "button";
-});
-er.element.headerFile.set((_) => {
-  er.icon(_, ["bi", "bi-file-earmark-fill"], true, "New File", true);
-});
-er.element.headerVersion.set((_) => {
-  _.textContent = "1.4.0v";
-  _.type = "button";
-});
-er.element.htmlInnerCanvas.set((_) => {
-  _.classList.add("aspect-1-1");
-  _.style.background = sto.getStorageValue("canvasbackground");
-});
-er.element.htmlInnerTitle.set((_) => {
-  _.textContent = "New Canvas";
-  lr.setHtmlTitle(_);
-});
-er.element.htmlLayer.set((_) => {});
-er.element.htmlImage.set((_) => {
-  be.setImageTarget(_);
-});
-er.element.optionInnerLabel.set((_) => {
-  er.icon(_, ["bi", "bi-gear-fill"], true, "Option", true);
-});
-er.element.htmlLayer.set((_) => {
-  hr.setHtmlLayer(_);
-  hr.renderHtml();
-});
-pr.worker(() => {
-  lr.reRenderLayer();
-  hr.renderHtml();
-});
-lr.worker(() => {
-  pr.reRenderLayer();
-  hr.reRenderHtml();
-  let type = sto.getStorageValue("type");
-  if (type === "canvas") {
-    be.show();
-    cb.hide();
-  } else {
-    be.hide();
-    cb.show();
-    cb.updateLayerOption();
-  }
-});
-hr.worker(() => {
-  lr.reRenderLayer();
-  let type = sto.getStorageValue("type");
-  if (type === "canvas") {
-    be.show();
-    cb.hide();
-  } else {
-    be.hide();
-    cb.show();
-    cb.updateLayerOption();
-  }
-});
-hcs.worker(() => {
-  let scaleText = hcs.scalePercent + "%";
-  hcs.shiftState = gs.state.shiftState;
-  if (gs.state.shiftState && hcs.direction === "up") {
-    gs.state.scrollYIndicator.textContent = "a-t";
-  }
-  if (gs.state.shiftState && hcs.direction === "down") {
-    gs.state.scrollYIndicator.textContent = "a-b";
-  }
-  gs.state.scaleIndicator.textContent = scaleText;
-});
-be.worker((color) => {
-  er.element.htmlInnerCanvas.set((_) => {
-    _.style.background = color;
-  });
-});
-cb.worker(() => {
-  hr.reRenderHtml();
-  lr.reRenderLayer();
-  pr.reRenderLayer();
-});
-rcs.worker(() => {
-  let scaleText = rcs.scalePercent + "%";
-  rcs.shiftState = gs.state.shiftState;
-  if (gs.state.shiftState && rcs.direction === "up") {
-    gs.state.scrollYIndicator.textContent = "a-t";
-  }
-  if (gs.state.shiftState && rcs.direction === "down") {
-    gs.state.scrollYIndicator.textContent = "a-b";
-  }
-  gs.state.scaleIndicator.textContent = scaleText;
-});
-
-er.element.htmlInnerCenter.set((_) => {
-  hcs.setCanvas(_);
-  hcs.setMinMax(50, 250);
-  hcs.setScalePercentMiddle();
-  hcs.run();
-});
-er.element.renderInnerCenter.set((_) => {
-  rcs.setCanvas(_);
-  rcs.setMinMax(0, 250);
-  rcs.setScalePercentMiddle();
-  rcs.run();
-});
-
-er.element.controllerPercent.set((_) => {
-  let scaleText = hcs.scalePercent + "%";
-  const [scaleIndicator] = er.icon(_, [], false, scaleText, true, true);
-  gs.state.scaleIndicator = scaleIndicator;
-});
-er.element.controllerSelectBox.set((_button) => {
-  const [aspectIndicator] = er.icon(
-    _button,
-    ["bi", "bi-aspect-ratio-fill"],
-    true,
-    "aspect-1:1",
-    true,
-    true
-  );
-  gs.state.aspectIndicator = aspectIndicator;
-  er.element.controllerSelectOptions.set((_tooltip) => {
-    const popperInstance = Popper.createPopper(_button, _tooltip, {
-      modifiers: [
-        {
-          name: "offset",
-          options: {
-            offset: [0, 15],
-          },
-        },
-      ],
-    });
-    let buttonToggle = false;
-    for (let i of canvasAspectRatio) {
-      let options = document.createElement("div");
-      options.classList.add(
-        "btn-btn",
-        "ts-12",
-        "btn-secoundary",
-        "j-left",
-        "br-5"
-      );
-      er.icon(options, ["bi", "bi-star-fill"], true, i.name, true);
-      options.onclick = () => {
-        er.element.htmlInnerCanvas.set((_html) => {
-          let _old = aspectChecker(_html.classList, canvasAspectRatio);
-          _html.classList.replace(_old, i.value);
-        });
-        preSetupAspect(i.name, hcs);
-        gs.state.aspectIndicator.textContent = i.name;
-        popperInstance.update();
-        _tooltip.style.display = "none";
-        buttonToggle = false;
-      };
-      _tooltip.appendChild(options);
-    }
-    _button.onclick = () => {
-      buttonToggle = !buttonToggle;
-      if (buttonToggle) {
-        popperInstance.update();
-        _tooltip.style.display = "block";
-      } else {
-        popperInstance.update();
-        _tooltip.style.display = "none";
-      }
-    };
-  });
-});
-er.element.controllerCanvasCenterButton.set((_) => {
-  er.icon(_, ["bi", "bi-align-center"], true, "", false, false);
-  _.onclick = () => {
-    let optionValue = gs.state.aspectIndicator.textContent;
-    preSetupAspect(optionValue, hcs);
-  };
-});
-er.element.controllerCanvasScrollYButton.set((_) => {
-  const [indi] = er.icon(_, ["bi", "bi-arrows-expand"], true, "n", true, false);
-  gs.state.scrollYIndicator = indi;
-  let btnToggle = false;
-  _.onclick = () => {
-    btnToggle = !btnToggle;
-    gs.state.shiftState = btnToggle;
-
-    if (btnToggle) {
-      indi.textContent = "a";
-    } else {
-      indi.textContent = "n";
-    }
-  };
-});
-er.element.layerCanvasButton.set((_) => {
-  let [canvasText] = er.icon(
-    _,
-    ["bi", "bi-bounding-box-circles"],
-    true,
-    gs.state.pageData[0].canvas.layerName,
-    true
-  );
-  lr.setCanvasBtn(_);
-  lr.setCanvasText(canvasText);
-});
-er.element.layerInnerPageBtn.set((_) => {
-  er.icon(_, ["bi", "bi-archive-fill"], true, "Page", true);
-  const addBtn = document.createElement("div");
-  const deleteBtn = document.createElement("div");
-  addBtn.classList.add("mx-4");
-  deleteBtn.classList.add("mx-4");
-  const block = document.createElement("div");
-  block.classList.add("block");
-  er.icon(addBtn, ["bi", "bi-plus-lg", "mx-5"], true);
-  er.icon(deleteBtn, ["bi", "bi-trash3-fill"], true);
-  _.appendChild(block);
-  _.appendChild(addBtn);
-  _.appendChild(deleteBtn);
-  pr.setController(addBtn, deleteBtn);
-  pr.setLayer(er.element.layerInnerPageList.target);
-  pr.run();
-  pr.renderLayer();
-});
-er.element.layerController.set((_) => {
-  const moveBtn = document.createElement("div");
-  const addBtn = document.createElement("div");
-  const editBtn = document.createElement("div");
-  const deleteBtn = document.createElement("div");
-
-  er.icon(moveBtn, ["bi", "bi-arrows-move"], true);
-  er.icon(addBtn, ["bi", "bi-plus-lg", "mx-5"], true);
-  er.icon(deleteBtn, ["bi", "bi-trash3-fill"], true);
-  er.icon(editBtn, ["bi", "bi-pencil-fill"], true);
-
-  _.appendChild(moveBtn);
-  _.appendChild(addBtn);
-  _.appendChild(editBtn);
-  _.appendChild(deleteBtn);
-
-  lr.setController(moveBtn, addBtn, editBtn, deleteBtn);
-  lr.setLayer(er.element.layerList.target);
-  lr.run();
-  const isStorageBuild = sto.getStorageValue("pageData");
-  if (isStorageBuild === null) {
-    sto.storage("pageData", gs.state.pageData);
-    pr.reRenderLayer();
-    lr.reRenderLayer();
-  } else {
-    lr.renderLayer();
-  }
-});
-er.element.optionInnerLayer.set((_) => {
-  be.setElementTarget(_);
-  be.setColorData(Colors);
-  be.setColorBoxWidth((272.02 - 10) / 10);
-  be.render();
-  be.hide();
-  cb.setElementTarget(_);
-  cb.render();
-  cb.hide();
-});
-er.element.renderCanvas.set((_) => {
-  _.style.display = "none";
-});
 /**
  * CoreComponent
  *    ->headerNav
@@ -402,15 +377,22 @@ er.element.renderCanvas.set((_) => {
  *    ->layer
  *    ->options
  *    ->htmlCanvas
- *    ->controllerSelectOptions
+ *    ->controllerRatioBox
  */
+const Component = er.component({
+  element: "component-div",
+  class: ["core-component"],
+  children: [
+    er.toComponent(er.element.headerNav),
+    er.toComponent(er.element.controller),
+    er.toComponent(er.element.layer),
+    er.toComponent(er.element.option),
+    er.toComponent(er.element.renderCanvas),
+    er.toComponent(er.element.htmlCanvas),
+    er.toComponent(er.element.controllerRatioBox),
+    er.toComponent(er.element.controllerEditBox),
+    er.toComponent(er.element.controllerScalePercentBox),
+  ],
+});
 
-Component.appendChild(er.element.headerNav.target);
-Component.appendChild(er.element.controller.target);
-Component.appendChild(er.element.layer.target);
-Component.appendChild(er.element.option.target);
-Component.appendChild(er.element.renderCanvas.target);
-Component.appendChild(er.element.htmlCanvas.target);
-Component.appendChild(er.element.controllerSelectOptions.target);
-Component.appendChild(er.element.controllerOptionsBox.target);
 export const coreComponent = Component;

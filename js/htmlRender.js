@@ -1,143 +1,187 @@
-import { ElementListRender } from "./elementListRender.js";
-import { StateManager } from "./stateManager.js";
-import { Storage } from "./storage.js";
+import { Component } from "./component/component.js";
 
-const sto = new Storage();
-const er = new ElementListRender();
-
-function getHeaderEle(){
-  return er.component({
-    element: "header-inner-div",
-    style: ["inner"],
-    children: [
-      er.component({
-        element: "option-div",
-        style: ["option"],
-        children: [
-          er.component({
-            element: "circle1-div",
-            style: ["circle"],
-          }),
-          er.component({
-            element: "circle2-div",
-            style: ["circle2"],
-          }),
-          er.component({
-            element: "circle3-div",
-            style: ["circle3"],
-          }),
-        ],
-      }),
-      er.component({
-        element: 'label-div',
-        text: "hello",
-        style: ['label']
-      })
-    ],
-  });
-}
-function getTextEle(){
-  return 
-}
-
-export class htmlRender extends StateManager {
-  #worker = null;
-  #htmlEle = null;
-  #hideHighlight = false;
+export class htmlRender extends Component {
   constructor() {
     super();
+    this.canvas = false;
   }
-  setHtmlLayer(ele) {
-    this.#htmlEle = ele;
-  }
-  getHtmlLayer() {
-    return this.#htmlEle;
-  }
-  worker(callback) {
-    this.#worker = callback;
-  }
-  renderHtml() {
-    this.getStorageState();
-    this.#htmlEle.innerHTML = "";
-    this.state.map((i) => {
-      const div = document.createElement("div");
-      if (i.isHighlight && this.#hideHighlight !== true) {
-        div.classList.add("com-highlight");
-      } 
-      if(i.component.type === 'none') {
-        div.classList.add("com-none");
-        div.textContent = "Element";
+  build() {
+    this.getHost()._htmlTitle_.onclick = () => {
+      if (this.canvas !== true) {
+        this.canvas = true;
+        this.getHost()._layer_.classList.add("com-highlight");
+        this.stateRefresh("isHighlight", false);
+        this.updateCpsState();
+        this.render();
+        this.getWorker();
       }
-      
+    };
+  }
+  render() {
+    this.getHost()._layer_.innerHTML = "";
+    this.getCpsState();
+    this.updateTitle();
+    this.state.map((i) => {
+      let LayerEl = null;
+
       if (i.component.type === "Empty") {
-        div.classList.add("com-empty");
-        if (i.component.text.length != 0) {
-          div.textContent = i.component.text;
-        }
+        LayerEl = er.component({
+          element: "layer-none-div",
+          class: [
+            "com-empty",
+            i.isHighlight === true ? "com-highlight" : "com-not-highlight",
+          ],
+          text: i.component.text.length > 0 ? i.component.text : "",
+          build: (_) => {
+            _.style.color = i.component.textColor;
+            _.style.height = i.component.height + "px";
+          },
+        });
       }
       if (i.component.type === "Header") {
-        div.classList.add("com-header");
-        let headerEle = getHeaderEle();
-        headerEle.inner.label.target.textContent = i.component.text;
-        div.appendChild(headerEle.target);
+        LayerEl = er.component({
+          element: "canvas-header-div",
+          class: [
+            "com-header",
+            i.isHighlight === true ? "com-highlight" : "com-not-highlight",
+          ],
+          children: [
+            er.component({
+              element: "header-inner-div",
+              class: ["inner"],
+              children: [
+                er.component({
+                  element: "option-div",
+                  class: ["option"],
+                  children: [
+                    er.component({
+                      element: "circle1-div",
+                      class: ["circle"],
+                    }),
+                    er.component({
+                      element: "circle2-div",
+                      class: ["circle2"],
+                    }),
+                    er.component({
+                      element: "circle3-div",
+                      class: ["circle3"],
+                    }),
+                  ],
+                }),
+                er.component({
+                  element: "label-div",
+                  text: i.component.text.length > 0 ? i.component.text : "",
+                  class: ["label"],
+                  build: (_) => {
+                    _.style.color = i.component.textColor;
+                  },
+                }),
+              ],
+            }),
+          ],
+        });
+      }
+      if (i.component.type === "Line") {
+        LayerEl = er.component({
+          element: "line-div",
+          class: [
+            "com-line",
+            i.isHighlight === true ? "com-highlight" : "com-not-highlight",
+          ],
+          children: [
+            er.component({
+              element: "line-inner-div",
+              class: ["inner"],
+              text: i.component.text,
+              build: (_) => {
+                _.style.color = i.component.textColor;
+              },
+            }),
+          ],
+        });
+      }
+      if (i.component.type === "Footer") {
+        LayerEl = er.component({
+          element: "footer-div",
+          class: [
+            "com-footer",
+            i.isHighlight === true ? "com-highlight" : "com-not-highlight",
+          ],
+          children: [
+            er.component({
+              element: "footer-inner-div",
+              class: ["inner"],
+            }),
+          ],
+        });
       }
 
-      if(i.component.type === 'Line'){
-        div.classList.add('com-line');
-        let lineEle = er.component({
-          element: "text-inner-div",
-          style: ["inner"],
-          text: i.component.text
-        });
-        div.appendChild(lineEle.target);
-      }
-      if(i.component.type === 'Footer'){
-        div.classList.add('com-footer');
-        let footerEle = er.component({
-          element: "footer-inner-div",
-          style: ["inner"],
-        });
-        div.appendChild(footerEle.target);
-      }
-      div.onclick = () => {
-        sto.storage("type", "layer");
-        this.toggleState(i.id, "isHighlight");
-        this.storageUpdate();
-        this.reRenderHtml();
-        this.#worker();
+      LayerEl.target.onclick = () => {
+        if (i.isHighlight !== true) {
+          this.canvas = false;
+          this.getHost()._layer_.classList.remove("com-highlight");
+          this.checkState(i.id, "isHighlight", this.highlightSetting);
+          this.updateCpsState();
+          this.render();
+          this.getWorker();
+        }
       };
-      this.#htmlEle.appendChild(div);
+      this.getHost()._layer_.appendChild(LayerEl.target);
     });
   }
-  reRenderHtml() {
-    this.renderHtml();
-  }
-  getStorageState() {
-    sto.getStorage("pageData");
-    let canvasData = sto.state.filter((i) => i.canvas.isHighlight === true);
-    if (canvasData.length !== 0) {
-      this.setState(
-        canvasData[0].canvas.data.reduce((p, c) => {
-          c.id = Symbol();
-          p.push(c);
-          return p;
-        }, [])
-      );
+  highlightSetting(p, c, id, key) {
+    if (c.id === id) {
+      c[key] = true;
+      p.push(c);
     } else {
-      this.setState([]);
+      c[key] = false;
+      p.push(c);
     }
+    return p;
   }
-  storageUpdate() {
-    sto.getStorage("pageData");
-    let updatedData = sto.state.reduce((p, c) => {
-      if (c.canvas.isHighlight) {
-        c.canvas.data = this.state;
+  getCpsState() {
+    let activePageLayer = cps
+      .getPageLayerData()
+      .filter((i) => i.canvas.isHighlight === true);
+    this.setState(
+      activePageLayer[0].canvas.data.reduce((p, c) => {
+        c.id = Symbol();
         p.push(c);
-      } else {
-        p.push(c);
-      }
-      return p;
-    }, []);
-    sto.storage("pageData", updatedData);
+        return p;
+      }, [])
+    );
+  }
+  updateCpsState() {
+    let initState = cps.getPageLayerData();
+    cps.setPageLayerData(
+      initState.reduce((p, c) => {
+        if (c.canvas.isHighlight === true) {
+          c.canvas.data = this.state;
+          p.push(c);
+        } else {
+          p.push(c);
+        }
+        return p;
+      }, [])
+    );
+  }
+  updateTitle() {
+    const activePageLayer = cps
+      .getPageLayerData()
+      .filter((i) => i.canvas.isHighlight === true);
+    const titleEl = er.element.htmlInnerTitle.target;
+    if (activePageLayer.length !== 0) {
+      titleEl.textContent = activePageLayer[0].canvas.layerName;
+    }
+    const activeEleLayer = activePageLayer[0].canvas.data.filter(
+      (i) => i.isHighlight === true
+    );
+    if (activeEleLayer.length > 0) {
+      this.canvas = false;
+      this.getHost()._layer_.classList.remove("com-highlight");
+    } else {
+      this.canvas = true;
+      this.getHost()._layer_.classList.add("com-highlight");
+    }
   }
 }

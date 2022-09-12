@@ -1,159 +1,362 @@
-import { ElementListRender } from "./elementListRender.js";
-import { StateManager } from "./stateManager.js";
-import { Storage } from "./storage.js";
+import { Component } from "./component/component.js";
 
-const er = new ElementListRender();
-const sto = new Storage();
+const optionList = ["Empty", "Header", "Line", "Footer"];
+const layerStyleBtn = [
+  "btn-btn",
+  "btn-secoundary",
+  "d-flex",
+  "j-left",
+  "fs-12",
+  "text-white",
+  "br-5",
+];
 
-const optionList = ["Empty","Header","Line","Footer"];
-const componentOptionsBox = er.component({
-  element: "component-build-warper-div",
-  style: ["my-4", "px-7", "h-100", "overflow-y"],
-});
-const componentSelectBox = er.component({
-  element: "builder-label-div",
-  style: ["btn-btn", "btn-secoundary", "br-5", "j-left"],
-  build: (_) => {
-    er.icon(
-      _,
-      ["bi", "bi-aspect-ratio-fill"],
-      true,
-      "Choose component",
-      true,
-      true
-    );
-    componentOptionsBox.target.classList.add("d-none");
-    _.onclick = () => {
-      componentOptionsBox.target.classList.toggle("d-none");
-    };
-  },
-});
-const statusBox = er.component({
-  element: "status-box-div",
-  style: ["my-4", "px-7"],
+const MainContainer = er.component({
+  element: "main-conponent-div",
+  class: ["m-top-4", "br-5"],
   children: [
     er.component({
-      element: "status-Type-div",
-      style: ["d-flex", "my-4", "px-7", "text-white", "ts-12"],
-      text: "T : none",
+      element: "builder-element-label-div",
+      text: "Element",
+      class: [...layerStyleBtn],
     }),
     er.component({
-      element: "status-Height-div",
-      style: ["d-flex", "my-4", "px-7", "text-white", "ts-12"],
-      text: "H : 50",
+      element: "warper-div",
+      class: ["d-none"],
+      children: [
+        er.component({
+          element: "status-div",
+          class: [
+            "my-4",
+            "px-4",
+            "bg-dark",
+            "text-white",
+            "br-5",
+            "py-10",
+            "d-flex",
+            "j-center",
+            "fs-12",
+          ],
+        }),
+        er.component({
+          element: "builder-options-label-div",
+          class: [...layerStyleBtn, "my-4"],
+          build: (_) => {
+            er.icon(_, [""], false, "Choose element", true, true);
+          },
+        }),
+        er.component({
+          element: "builder-options-div",
+          class: ["my-4", "px-4", "h-100", "overflow-y", "d-none"],
+        }),
+        er.component({
+          element: "builder-color-label-div",
+          class: [...layerStyleBtn, "my-4"],
+          build: (_) => {
+            er.icon(_, [""], false, "Text color", true, true);
+          },
+        }),
+        er.component({
+          element: "builder-color-warper-div",
+          class: ["d-none"],
+          children: [
+            er.component({
+              element: "builder-color-display-div",
+              class: [
+                "my-4",
+                "px-4",
+                "br-5",
+                "py-10",
+                "d-flex",
+                "j-center",
+                "fs-12",
+                "text-bold",
+              ],
+              text: "Your text",
+            }),
+            er.component({
+              element: "color-container-div",
+              class: [
+                "h-100",
+                "d-flex",
+                "flex-warp",
+                "overflow-y",
+                "my-4",
+                "j-center",
+              ],
+            }),
+            er.component({
+              element: "color-comfirm-div",
+              class: [...layerStyleBtn, "my-4", "j-center"],
+              build: (_) => {
+                er.icon(_, [""], false, "Comfirm text color", true, false);
+              },
+            }),
+          ],
+        }),
+        er.component({
+          element: "text-label-div",
+          class: [...layerStyleBtn, "my-4"],
+          build: (_) => {
+            er.icon(_, [""], false, "Text", true, true);
+          },
+        }),
+        er.component({
+          element: "text-input-input",
+          class: [...layerStyleBtn, "bg-white", "text-dark", "d-none"],
+          build: (_) => {
+            _.type = "text";
+            _.placeholder = "Your text";
+          },
+        }),
+        er.component({
+          element: "height-label-div",
+          class: [...layerStyleBtn, "my-4"],
+          build: (_) => {
+            er.icon(_, [""], false, "Height", true, true);
+          },
+        }),
+        er.component({
+          element: "height-input-input",
+          class: [...layerStyleBtn, "bg-white", "text-dark","d-none"],
+          build: (_) => {
+            _.type = "text";
+            _.placeholder = "0";
+          },
+        }),
+      ],
     }),
   ],
 });
-const confirmButton = er.component({
-  element: "confirm-btn",
-  text: "CONFIRM",
-  style: ["btn-btn", "btn-secoundary", "br-5", "m-top-4"],
-});
-const textOption = er.component({
-  element: "textField-div",
-  style: ["my-4"],
-  children:[
-    er.component({
-      element: "label-div",
-      style:["py-7","text-white"],
-      text: "Text Prop"
-    }),
-    er.component({
-      element: "text-input-input",
-      style:["py-7","btn-btn","btn-white","bg-white", "text-dark", "br-5"],
-      build:_ => {
-        _.type = "text";
-        _.autocomplete = "off";
-      },
-    }),
-  ]
-})
-const componentBuildWarper = er.component({
-  element: "component-build-warper-div",
-  style: ["m-top-4"],
-  children: [statusBox, componentSelectBox, componentOptionsBox,textOption,confirmButton],
-});
-
-export class ComponentBuilder extends StateManager {
-  #optionEle = null;
-  #type = {type:null,text:''};
-  #worker = null;
+const builderElementLabel = MainContainer.inner.builderElementLabel.target;
+const builderElementWarper = MainContainer.inner.warper.target;
+const builderOptionLabel =
+  MainContainer.inner.warper.inner.builderOptionsLabel.target;
+const builderOption = MainContainer.inner.warper.inner.builderOptions.target;
+const builderStatus = MainContainer.inner.warper.inner.status.target;
+const builderColorLabelBtn =
+  MainContainer.inner.warper.inner.builderColorLabel.target;
+const builderColorWarper =
+  MainContainer.inner.warper.inner.builderColorWarper.target;
+const builderColorDisplay =
+  MainContainer.inner.warper.inner.builderColorWarper.inner.builderColorDisplay
+    .target;
+const colorContainer =
+  MainContainer.inner.warper.inner.builderColorWarper.inner.colorContainer
+    .target;
+const colorConfirmBtn =
+  MainContainer.inner.warper.inner.builderColorWarper.inner.colorComfirm.target;
+const textInput = MainContainer.inner.warper.inner.textInput.target;
+const textInputLabel = MainContainer.inner.warper.inner.textLabel.target;
+const heightInputLabel = MainContainer.inner.warper.inner.heightLabel.target;
+const heightInput = MainContainer.inner.warper.inner.heightInput.target;
+export class ComponentBuilder extends Component {
   constructor() {
     super();
+    this.component = { type: null, text: "", height: 0, textColor: "" };
   }
-  worker(callback) {
-    this.#worker = callback;
-  }
-  setElementTarget(ele) {
-    this.#optionEle = ele;
-  }
-  render() {
+  build() {
+    this.getHost()._layer_.appendChild(MainContainer.target);
+    let builderElementToggler = true;
+    builderElementLabel.onclick = () => {
+      if (builderElementToggler === true) {
+        builderElementWarper.classList.remove("d-none");
+        builderElementToggler = false;
+      } else {
+        builderElementWarper.classList.add("d-none");
+        builderElementToggler = true;
+      }
+    };
+    let builderOptionsToggler = true;
+    builderOptionLabel.onclick = () => {
+      if (builderOptionsToggler === true) {
+        builderOption.classList.remove("d-none");
+        builderOptionsToggler = false;
+      } else {
+        builderOption.classList.add("d-none");
+        builderOptionsToggler = true;
+      }
+    };
     optionList.map((i) => {
-      const option = er.component({
-        element: "component-options",
-        style: ["btn-btn", "btn-secoundary", "my-4", "br-5", "j-left"],
+      const options = er.component({
+        element: "option-list-div",
+        class: [...layerStyleBtn, "my-4", "j-center"],
         text: i,
+        build: (_) => {
+          _.onclick = () => {
+            this.component.type = i;
+            builderOption.classList.add("d-none");
+            builderOptionsToggler = true;
+            this.updateElementType();
+            this.updateCpsState();
+            this.getWorker();
+          };
+        },
       });
-      option.target.onclick = () => {
-        statusBox.inner.statusType.target.textContent = `T : ${i}`;
-        this.#type.type = i;
-      };
-      componentOptionsBox.target.appendChild(option.target);
+      builderOption.appendChild(options.target);
     });
-    this.#optionEle.appendChild(componentBuildWarper.target);
+    let boxSize = 272.02 / 8 - 10;
+    for (let i in colorDataArr) {
+      let div = document.createElement("div");
+      let style = {
+        width: boxSize + "px",
+        height: boxSize + "px",
+        backgroundColor: colorDataArr[i],
+      };
+      if (i == 0) {
+        style.display = "grid";
+        style.placeItems = "center";
+        style.color = "white";
+        style.fontSize = "10px";
+        let icon = document.createElement("div");
+        icon.classList.add(...["bi", "bi-app"]);
+        div.appendChild(icon);
+      }
+      Object.assign(div.style, style);
+      div.onclick = () => {
+        this.component.textColor = colorDataArr[i];
+        builderColorDisplay.style.color = colorDataArr[i];
+      };
+      colorContainer.appendChild(div);
+    }
+    let builderColorToggler = true;
+    builderColorLabelBtn.onclick = () => {
+      if (builderColorToggler === true) {
+        builderColorWarper.classList.remove("d-none");
+        builderColorDisplay.style.backgroundColor = stoV2.getCanvasBackground();
+        builderColorDisplay.style.color = this.state[0].component.textColor;
+        builderColorToggler = false;
+      } else {
+        builderColorWarper.classList.add("d-none");
+        builderColorToggler = true;
+      }
+    };
+    colorConfirmBtn.onclick = () => {
+      this.updateTextColor();
+      this.updateCpsState();
+      this.getWorker();
+      builderColorWarper.classList.add("d-none");
+      builderColorToggler = true;
+    };
 
-    confirmButton.target.onclick = () => {
-      this.getStorageState();
-      this.#type.text = textOption.inner.textInput.target.value;
-      this.setState(
-        this.state.reduce((p,c)=>{
-          if(c.isHighlight === true){
-            c.component = this.#type;
-            p.push(c)
-          }else{
-            p.push(c)
-          }
-          return p;
-        },[])
-      )
-      this.storageUpdate();
-      this.#worker();
+    let textToggler = true;
+    textInputLabel.onclick = () => {
+      if (textToggler === true) {
+        textInput.classList.remove("d-none");
+        textToggler = false;
+      } else {
+        textInput.classList.add("d-none");
+        textToggler = true;
+      }
+    };
+    textInput.onkeypress = (ev) => {
+      if (ev.code === "Enter") {
+        this.component.text = textInput.value;
+        this.updateTextInput();
+        this.updateCpsState();
+        this.getWorker();
+      }
+    };
+    let heightToggler = true;
+    heightInputLabel.onclick = () => {
+      if (heightToggler === true) {
+        heightInput.classList.remove("d-none");
+        heightToggler = false;
+      } else {
+        heightInput.classList.add("d-none");
+        heightToggler = true;
+      }
+    };
+    heightInput.onkeypress = (ev) => {
+      if (ev.code === "Enter") {
+        this.component.height = heightInput.value;
+        this.updateElementHeight();
+        this.updateCpsState();
+        this.getWorker();
+      }
     };
   }
-  show() {
-    componentBuildWarper.target.classList.remove("d-none");
+
+  getCpsState() {
+    let activePageLayer = cps
+      .getPageLayerData()
+      .filter((i) => i.canvas.isHighlight === true);
+    this.setState(activePageLayer[0].canvas.data);
   }
-  hide() {
-    componentBuildWarper.target.classList.add("d-none");
-  }
-  getStorageState() {
-    sto.getStorage("pageData");
-    let activeCanvasData = sto.state.filter((i) => i.canvas.isHighlight === true);
-    this.setState(
-      activeCanvasData[0].canvas.data
-    );
-  }
-  storageUpdate() {
-    sto.getStorage("pageData");
-    let updatedData = sto.state.reduce((p, c) => {
-      if (c.canvas.isHighlight) {
-        c.canvas.data = this.state;
+  updateElementHeight() {
+    let updatedElementState = this.state.reduce((p, c) => {
+      if (c.isHighlight === true) {
+        c.component.height = this.component.height;
         p.push(c);
       } else {
         p.push(c);
       }
       return p;
     }, []);
-    sto.storage("pageData", updatedData);
+    this.setState(updatedElementState);
   }
-  updateLayerOption(){
-    sto.getStorage("pageData");
-    let activeCanvasData = sto.state.filter((i) => i.canvas.isHighlight === true);
-    let activeLayerData = activeCanvasData[0].canvas.data.filter((i) => i.isHighlight === true);
-    statusBox.inner.statusType.target.textContent = `T : ${activeLayerData[0].component.type}`;
-    this.#type.type = activeLayerData[0].component.type;
-    this.#type.text = activeLayerData[0].component.text;
-    textOption.inner.textInput.target.value = activeLayerData[0].component.text;
-    this.setState(activeCanvasData[0].canvas.data);
+  updateElementType() {
+    let updatedElementState = this.state.reduce((p, c) => {
+      if (c.isHighlight === true) {
+        c.component.type = this.component.type;
+        p.push(c);
+      } else {
+        p.push(c);
+      }
+      return p;
+    }, []);
+    this.setState(updatedElementState);
+  }
+  updateTextColor() {
+    let updatedElementState = this.state.reduce((p, c) => {
+      if (c.isHighlight === true) {
+        c.component.textColor = this.component.textColor;
+        p.push(c);
+      } else {
+        p.push(c);
+      }
+      return p;
+    }, []);
+    this.setState(updatedElementState);
+  }
+  updateTextInput() {
+    let updatedElementState = this.state.reduce((p, c) => {
+      if (c.isHighlight === true) {
+        c.component.text = this.component.text;
+        p.push(c);
+      } else {
+        p.push(c);
+      }
+      return p;
+    }, []);
+    this.setState(updatedElementState);
+  }
+  updateCpsState() {
+    let initState = cps.getPageLayerData();
+    cps.setPageLayerData(
+      initState.reduce((p, c) => {
+        if (c.canvas.isHighlight === true) {
+          c.canvas.data = this.state;
+          p.push(c);
+        } else {
+          p.push(c);
+        }
+        return p;
+      }, [])
+    );
+  }
+  updateBuilder() {
+    this.getCpsState();
+    let activeElement = this.state.filter((i) => i.isHighlight === true);
+    builderColorDisplay.style.backgroundColor = stoV2.getCanvasBackground();
+    if (activeElement.length > 0) {
+      let text = activeElement[0].component.text;
+      let height = activeElement[0].component.height;
+      builderStatus.textContent = `E: ${activeElement[0].component.type} | T: ${
+        text.length > 0 ? text : "none"
+      }`;
+      textInput.value = text;
+      heightInput.value = height;
+    }
   }
 }

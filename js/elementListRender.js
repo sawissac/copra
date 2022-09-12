@@ -1,16 +1,15 @@
-export class ElementListRender {
+class ElementListRender {
     #list = [];
     #renderedList = {};
-    constructor(elementListArray) {
-        this.#list = elementListArray;
-    }
-    parseComponent() {
+    parseComponent(list) {
+        this.#list = list;
         this.#list.map((elesName) => {
             const ele = this.parse(elesName);
             let Element = document.createElement(ele.type);
             Element.classList.add(ele.class);
             this.#renderedList[ele.name] = {
                 target: Element,
+                name: ele.name,
                 set: function (callback) {
                     callback(this.target);
                 },
@@ -61,13 +60,20 @@ export class ElementListRender {
     get element() {
         return this.#renderedList;
     }
+    toComponent(ele){
+        return {
+            target: ele.target,
+            name: ele.name,
+        }
+    }
     /**
      *   @element
-     *   @style
+     *   @class
      *   @children array that accept other component
      *   @return target,name,inner
      */
-    component(obj = { element: null, style: [], children: [],text: "",build: callback }) {
+
+    component(obj = { element: null, class: [], children: [],text: "",build: callback }) {
         let ele = null;
         let returnObj = {
             target: null,
@@ -84,8 +90,8 @@ export class ElementListRender {
         if (obj.element !== null && obj.text) {
             ele.textContent = obj.text;
         } 
-        if (obj.element !== null && obj.style) {
-            ele.classList.add(...obj.style);
+        if (obj.element !== null && obj.class) {
+            ele.classList.add(...obj.class);
         }
         
         if(obj.element !== null && obj.build){
@@ -100,3 +106,7 @@ export class ElementListRender {
         return returnObj;
     }
 }
+
+const er = new ElementListRender();
+
+er.parseComponent(ElementList)

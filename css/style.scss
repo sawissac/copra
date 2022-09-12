@@ -93,7 +93,11 @@ $dark-light: rgb(32, 32, 32);
     flex-direction: #{$value};
   }
 }
-
+@mixin  fs($value) {
+  .fs-#{$value}{
+    font-size: #{$value}px;
+  }
+}
 * {
   overflow: hidden;
   padding: 0;
@@ -133,6 +137,7 @@ $dark-light: rgb(32, 32, 32);
     }
   }
   input {
+    margin-left: 5px;
     background-color: transparent;
     color: rgb(0, 208, 255);
     font-weight: 600;
@@ -145,12 +150,16 @@ $dark-light: rgb(32, 32, 32);
   width: max-content !important;
   height: max-content !important;
 }
+.rotate-90{
+  transform: rotate(90deg);
+}
 @include bg("primary", $primary);
 @include bg("secoundary", $secoundary);
 @include bg("dark", $dark);
 @include bg("white", $white);
 @include btn("primary", $primary, $secoundary-light);
 @include btn("secoundary", $secoundary, $secoundary-light);
+@include btn("dark", $dark, $dark-light);
 @include btn("white", $white, $white);
 @include text("primary-light", $secoundary-light, $white);
 @include text("white", $white, $white);
@@ -160,10 +169,12 @@ $dark-light: rgb(32, 32, 32);
 @include p("x", 30);
 @include p("y", 7);
 @include p("y", 10);
+@include p("y", 30);
 @include p("top", 7);
 @include p("top", 94);
 @include p("left", 7);
 @include p("right", 60);
+@include p("", 0);
 @include j("left");
 @include j("center");
 @include j("right");
@@ -178,9 +189,12 @@ $dark-light: rgb(32, 32, 32);
 @include m("top", 4);
 @include m("bottom", 4);
 @include fd("column");
-
+@include fs(12);
 .text-left {
   text-align: left;
+}
+.text-bold{
+  font-weight: 600;
 }
 .p-0 {
   padding: 0 !important;
@@ -200,6 +214,7 @@ $dark-light: rgb(32, 32, 32);
     left: 50%;
     transform: translate(-50%, -50%) scale(1);
     .html-inner-title {
+      cursor: pointer;
       color: $white;
       font-size: 10px;
       font-weight: lighter;
@@ -209,12 +224,14 @@ $dark-light: rgb(32, 32, 32);
       background-color: $primary;
       position: relative;
       .html-layer {
+        cursor: pointer;
         position: absolute;
         left: 0;
         right: 0;
         top: 0;
         bottom: 0;
         z-index: 2;
+        transition: 0.3s;
       }
       .html-image {
         width: 100%;
@@ -235,11 +252,11 @@ $dark-light: rgb(32, 32, 32);
   width: 100%;
   position: relative;
   z-index: 0;
-  .render-controller{
+  .render-controller {
     position: absolute;
-    top:0;
-    left:0;
-    right:0;
+    top: 0;
+    left: 0;
+    right: 0;
     height: 50px;
     padding: 2px 0;
     display: flex;
@@ -259,20 +276,8 @@ $dark-light: rgb(32, 32, 32);
     }
   }
 }
-.w-max-contant{
+.w-max-contant {
   width: max-content;
-}
-.com-none {
-  width: 100%;
-  height: 60px;
-  $hight-light: rgb(120, 120, 120);
-  border: 1px solid $hight-light;
-  position: relative;
-  text-align: center;
-  color: $hight-light;
-  display: flex;
-  justify-content: center;
-  align-items: center;
 }
 .com-empty {
   width: 100%;
@@ -329,7 +334,8 @@ $dark-light: rgb(32, 32, 32);
     }
   }
 }
-.com-line,.com-footer {
+.com-line,
+.com-footer {
   padding: 0 25px;
   .inner {
     color: white;
@@ -355,6 +361,21 @@ $dark-light: rgb(32, 32, 32);
   border-color: $hight-light;
   border: 1px solid $hight-light;
 }
+.com-empty,
+.com-header,
+.com-footer,
+.com-line {
+  .inner{
+    margin: 0 auto;
+    max-width: 300px;
+  }
+  
+  &:hover {
+    $hight-light: rgb(54, 172, 245);
+    border-color: $hight-light;
+    border: 1px solid $hight-light;
+  }
+}
 
 .aspect-1-1 {
   aspect-ratio: 1/1;
@@ -364,8 +385,16 @@ $dark-light: rgb(32, 32, 32);
   aspect-ratio: 9/16;
   transition: 0.3s;
 }
+.aspect-16-9 {
+  width: 600px !important;
+  aspect-ratio: 16/9;
+  transition: 0.3s;
+}
 .w-300 {
   width: 300px;
+}
+.pos-relative{
+  position: relative;
 }
 .pos-t-r-l {
   z-index: 998;
@@ -374,12 +403,19 @@ $dark-light: rgb(32, 32, 32);
   left: 0;
   right: 0;
 }
+.pos-all {
+  z-index: 998;
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  left: 0;
+}
 .pos-t-50 {
   top: 41.64px;
 }
 .options-box {
   z-index: 999;
-  background-color: $secoundary;
+  background-color: $dark;
   font-size: 12px;
   width: 200px;
   color: white;
@@ -390,6 +426,9 @@ $dark-light: rgb(32, 32, 32);
 }
 .mh-150 {
   min-height: 150px;
+}
+.h-900{
+  height: 900px;
 }
 .h-100 {
   height: 100px;
@@ -434,7 +473,7 @@ $dark-light: rgb(32, 32, 32);
 /* Track */
 *::-webkit-scrollbar-track {
   background-color: $primary-light;
-  border-radius: 10px;
+  border-radius: 2px;
 }
 /* Handle */
 *::-webkit-scrollbar-thumb {

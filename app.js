@@ -8,5 +8,4 @@ import { coreComponent } from "./js/coreComponent.js";
 
 const App = document.getElementById("root");
 
-
-App.appendChild(coreComponent);
+App.appendChild(coreComponent.target);
