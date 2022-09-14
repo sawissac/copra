@@ -4,26 +4,118 @@
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Document</title>
-    <link rel="stylesheet" href="./css/style.css">
-    <!-- forDev -->
-    <link rel="stylesheet" href="node_modules/bootstrap-icons/font/bootstrap-icons.css">
-    <script defer src="node_modules/html-to-image/dist/html-to-image.js"></script>
-    <script defer src="node_modules/@popperjs/core/dist/umd/popper.min.js"></script>
-    <!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.9.1/font/bootstrap-icons.min.css" integrity="sha512-5PV92qsds/16vyYIJo3T/As4m2d8b6oWYfoqV+vtizRB6KhF1F9kYzWzQmsO6T3z3QG2Xdhrx7FQ+5R1LiQdUA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-        <script defer src="https://cdnjs.cloudflare.com/ajax/libs/html-to-image/1.10.4/html-to-image.min.js" integrity="sha512-FpL4RsJLrvcqFv6kZzbvEpk6G8VexQ9ug7KoZK5xQFxpkaQwtd/MJUG2fZBnNwzH2MW5uLZoVl9tbnGQQtnRRg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/2.11.6/umd/popper.min.js" integrity="sha512-6UofPqm0QupIL0kzS/UIzekR73/luZdC6i/kXDbWnLOJoqwklBK6519iUnShaYceJ0y4FaiPtX/hRnV/X/xlUQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script> -->
-    <script defer src="./js/elementList.js"></script>
-    <script defer src="./js/elementListRender.js"></script>
-    <script defer src="./js/buildComponent.js"></script>
-    <script defer src="./js/state/storage.js"></script>
-    <script defer src="./js/state/state.js"></script>
-    <script defer type="module" src="app.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.0.1/css/bootstrap.min.css"
+        integrity="sha512-Ez0cGzNzHR1tYAv56860NLspgUGuQw16GiOOp/I2LuTmpSK9xDXlgJz3XN4cnpXWDmkNBKXR/VDMTCnAaEooxA=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.0.1/css/bootstrap-reboot.min.css"
+        integrity="sha512-ZJ+KmS7LSGuRKphz9V5eX99TPMci9Ngt5lCk0XFdYJmBg+ZDr/4r/HSsMEiUKmR7bxe1eAv768c2YuSl/OGiFw=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="./css/create_page.css">
+
+    <title>Copra - Create</title>
 </head>
 
-<body>
-    <div class="root-app" id="root"></div>
+<body class="px-0 mx-0">
+    <div class="container-fluid h-100">
+        <div class="row">
+            <div class="col-6 h-100 d-flex align-items-center justify-content-center">
+                <div class=" w-300 d-grid gap-2">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div class="fs-3 fw-bold">
+                            COPRA
+                        </div>
+                        <img src="./img/waux_logo.svg" alt="" width="60">
+                    </div>
+                    <input type="text" id="canvasNameInput"
+                        class="form-control-lg text-start border border-dark border-2" placeholder="Project Name..."
+                        autocomplete="off">
+                    <div class="dropdown">
+                        <button
+                            class="btn btn-light btn-lg dropdown-toggle border border-dark border-2 w-100 text-start"
+                            type="button" id="aspectDropDown" data-bs-toggle="dropdown" aria-expanded="false">Aspect</button>
+                        <ul class="dropdown-menu" aria-labelledby="aspectDropDown" style="width: 300px !important;">
+                            <li class="dropdown-item" onclick="changeLabel('aspect-1:1');">aspect-1:1</li>
+                            <li class="dropdown-item" onclick="changeLabel('aspect-9:16');">aspect-9:16</li>
+                            <li class="dropdown-item" onclick="changeLabel('aspect-16:9');">aspect-16:9</li>
+                        </ul>
+                    </div>
+                    <div class="form-check mt-2 d-flex justify-content-center">
+                        <input class="form-check-input me-2" type="checkbox" id="checkboxTemplate">
+                        <label class="form-check-label" for="checkboxTemplate">
+                            Use Template
+                        </label>
+                    </div>
+                    <div class="btn btn-light border-2 border-dark py-2 rounded-pill mt-3" onclick="resetEditor()">
+                        Reset Editor
+                    </div>
+                    <div class="btn btn-light border-2 border-dark py-2 rounded-pill" onclick="editRecent()">
+                        Edit Recent
+                    </div>
+                    <div class="btn btn-dark py-2 rounded-pill" onclick="goToEditorCreateNew()">Create Project</div>
+                    <hr class="my-3">
+                    <p class="text-center">Created by waux</p>
+                </div>
+            </div>
+            <div class="col-6 h-100 position-relative">
+                <div class="position-absolute top-0 bottom-0 start-0 end-0 postion-center-img"
+                    style="background-image: url('./img/pot_holding.jpg');"></div>
+            </div>
+        </div>
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.0.1/js/bootstrap.bundle.min.js"
+        integrity="sha512-sH8JPhKJUeA9PWk3eOcOl8U+lfZTgtBXD41q6cO/slwxGHCxKcW45K4oPCUhHG7NMB4mbKEddVmPuTXtpbCbFA=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="./js/state/storage.js"></script>
+    <script src="./js/state/state.js"></script>
+    <script>
+        var dropdownElementList = [].slice.call(document.querySelectorAll('.dropdown-toggle'))
+        var dropdownList = dropdownElementList.map(function (dropdownToggleEl) {
+            return new bootstrap.Dropdown(dropdownToggleEl)
+        })
+        const aspectLabel = document.getElementById("aspectDropDown")
+        const canvasNameInput = document.getElementById("canvasNameInput")
+        const templateCheck = document.getElementById("checkboxTemplate")
+
+        templateCheck.onclick = function () {
+            aspectLabel.textContent = "aspect-1:1";
+        }
+        function resetEditor() {
+            cps.updateApp();
+            alert("Editor Reseted");
+        }
+        function editRecent(){
+            const path = window.location.protocol + "//" + window.location.hostname + ":" + window.location.port + "/Editor/";
+            window.location.href = path;
+        }
+        function changeLabel(val) {
+            aspectLabel.textContent = val;
+        }
+        function goToEditorCreateNew() {
+            let inputValue = canvasNameInput.value;
+            let dropdownLabel = aspectLabel.textContent;
+            let pass = 0;
+            if (templateCheck.checked) {
+                cps.updateUsingTemplate();
+            } else {
+                cps.updateApp();
+            }
+            if (dropdownLabel !== "Aspect") {
+                pass++;
+                stoV2.val(dropdownLabel).storeToCanvasAspect();
+            }
+            if (inputValue.length > 0) {
+                pass++;
+                stoV2.val(inputValue).storeToProjectName();
+            }
+            if (pass >= 2) {
+                const path = window.location.protocol + "//" + window.location.hostname + ":" + window.location.port + "/Editor/";
+                window.location.href = path;
+            }else{
+                alert("Please fill the requirement")
+            }
+        }
+    </script>
 </body>
 
 </html>

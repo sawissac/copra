@@ -3,12 +3,13 @@ import { Component } from "./component/component.js";
 const optionList = ["Empty", "Header", "Line", "Footer"];
 const layerStyleBtn = [
   "btn-btn",
-  "btn-secoundary",
+  "btn-light",
   "d-flex",
   "j-left",
   "fs-12",
-  "text-white",
-  "br-5",
+  "text-dark",
+  "border-color-grey",
+  "border-bottom-2",
 ];
 
 const MainContainer = er.component({
@@ -18,7 +19,16 @@ const MainContainer = er.component({
     er.component({
       element: "builder-element-label-div",
       text: "Element",
-      class: [...layerStyleBtn],
+      class: [
+        "btn-btn",
+        "btn-light",
+        "d-flex",
+        "j-left",
+        "fs-12",
+        "text-dark",
+        "border-color-grey",
+        "border-bottom-2",
+      ],
     }),
     er.component({
       element: "warper-div",
@@ -29,8 +39,8 @@ const MainContainer = er.component({
           class: [
             "my-4",
             "px-4",
-            "bg-dark",
-            "text-white",
+            "bg-grey-dark",
+            "text-dark",
             "br-5",
             "py-10",
             "d-flex",
@@ -87,7 +97,17 @@ const MainContainer = er.component({
             }),
             er.component({
               element: "color-comfirm-div",
-              class: [...layerStyleBtn, "my-4", "j-center"],
+              class: [
+                "btn-btn",
+                "btn-blue",
+                "d-flex",
+                "j-left",
+                "br-5",
+                "fs-12",
+                "text-white",
+                "my-4",
+                "j-center",
+              ],
               build: (_) => {
                 er.icon(_, [""], false, "Comfirm text color", true, false);
               },
@@ -103,7 +123,7 @@ const MainContainer = er.component({
         }),
         er.component({
           element: "text-input-input",
-          class: [...layerStyleBtn, "bg-white", "text-dark", "d-none"],
+          class: [...layerStyleBtn, "bg-grey", "text-dark", "d-none", "br-5"],
           build: (_) => {
             _.type = "text";
             _.placeholder = "Your text";
@@ -118,7 +138,7 @@ const MainContainer = er.component({
         }),
         er.component({
           element: "height-input-input",
-          class: [...layerStyleBtn, "bg-white", "text-dark","d-none"],
+          class: [...layerStyleBtn, "bg-grey", "text-dark", "d-none", "br-5"],
           build: (_) => {
             _.type = "text";
             _.placeholder = "0";
@@ -180,7 +200,7 @@ export class ComponentBuilder extends Component {
     optionList.map((i) => {
       const options = er.component({
         element: "option-list-div",
-        class: [...layerStyleBtn, "my-4", "j-center"],
+        class: [...layerStyleBtn, "my-4", "j-center","bg-grey"],
         text: i,
         build: (_) => {
           _.onclick = () => {

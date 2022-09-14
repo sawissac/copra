@@ -2,21 +2,25 @@ let controllerBtnStyle = [
   "ts-12",
   "btn-btn",
   "btn-max",
-  "btn-secoundary",
-  "text-white",
+  "btn-light",
+  "text-dark",
+  "border-2",
+  "border-color-grey",
   "b-primary",
   "br-5",
   "mx-4",
 ];
 /**
  *  headerNav
- *      ->headerLogo
+ *      ->headerLogo 
+ *      ->block
  *      ->headerFile
  *      ->block
  *      ->headerVersion
  */
 // Dom
 er.element.headerNav.target.appendChild(er.element.headerLogo.target);
+er.element.headerNav.target.appendChild(er.element.block2.target);
 er.element.headerNav.target.appendChild(er.element.headerFile.target);
 er.element.headerNav.target.appendChild(er.element.block.target);
 er.element.headerNav.target.appendChild(er.element.headerSaveBtn.target);
@@ -26,16 +30,19 @@ er.element.headerNav.target.appendChild(er.element.headerVersion.target);
 er.element.headerNav.set((_) => {
   _.classList.add(
     "d-flex",
-    "bg-primary",
-    "p-top-7",
+    "bg-dark",
+    "py-7",
     "px-7",
     "pos-t-r-l",
     "ai-center",
     "j-left"
   );
 });
+er.element.block2.set((_)=>{
+  _.classList.add("block");
+})
 er.element.headerLogo.set((_) => {
-  _.classList.add("btn-btn", "btn-max", "btn-primary", "text-primary-light");
+  _.classList.add("btn-btn", "btn-max","bg-dark","text-white");
   _.textContent = "CoPra";
   _.type = "button";
 });
@@ -43,20 +50,20 @@ er.element.headerFile.set((_) => {
   _.classList.add(
     "btn-btn",
     "btn-max",
-    "btn-primary",
     "text-white",
-    "p-right-60",
-    "p-left-7",
-    "j-left"
+    "d-flex",
+    "j-center"
     );
-    er.icon(_, ["bi", "bi-file-earmark-fill"], true, "New File", true);
 });
 er.element.headerSaveBtn.set((_) => {
-  er.icon(_, ["bi", "bi-sd-card-fill"], true, "save", true);
+  _.textContent = "Save";
   _.classList.add(
     "btn-btn",
     "btn-max",
-    "btn-primary",
+    "btn-blue",
+    "br-5",
+    "px-10",
+    "mx-4",
     "text-white",
     "j-left"
   );
@@ -66,12 +73,12 @@ er.element.headerVersion.set((_) => {
     "ts-12",
     "btn-btn",
     "btn-max",
-    "btn-primary",
     "text-white",
     "px-7",
+    "mx-4",
     "b-pill"
   );
-  _.textContent = "1.4.0v";
+  _.textContent = "1.1.0v";
   _.type = "button";
 });
 
@@ -121,12 +128,14 @@ er.element.controller.target.appendChild(
 er.element.controller.set((_) => {
   _.classList.add(
     "d-flex",
-    "bg-secoundary",
+    "bg-light",
     "px-7",
     "ai-center",
     "py-7",
     "pos-t-r-l",
-    "pos-t-50"
+    "pos-t-50",
+    "border-color-grey",
+    "border-bottom-2",
   );
 });
 er.element.controllerWarperLeft.set((_) => {
@@ -161,6 +170,7 @@ er.element.controllerWarperRight.set((_) => {
 });
 er.element.controllerScalePercent.set((_) => {
   _.classList.add(...controllerBtnStyle);
+  _.setAttribute("style","width: 108px !important;");
 });
 er.element.controllerScalePercentBox.set((_) => {
   _.classList.add("options-box");
@@ -205,12 +215,15 @@ er.element.layer.target.appendChild(er.element.layerInnerLayer.target);
 // class
 let layerStyleBtn = [
   "btn-btn",
-  "btn-secoundary",
+  "btn-light",
   "d-flex",
   "j-left",
   "fs-12",
-  "text-white",
+  "text-dark",
+  "border-2",
+  "border-color-grey",
   "br-5",
+  "m-bottom-4"
 ];
 er.element.layer.set((_) => {
   _.classList.add(
@@ -219,8 +232,10 @@ er.element.layer.set((_) => {
     "pos-l",
     "d-flex",
     "flex-column",
-    "bg-dark",
-    "p-top-94",
+    "border-right-2",
+    "border-color-grey-dark",
+    "bg-grey",
+    "p-top-105",
     "px-4",
     "py-7"
   );
@@ -229,7 +244,7 @@ er.element.layerInnerPage.set((_) => {
   _.classList.add(
     "d-flex",
     "flex-column",
-    "bg-primary",
+    "bg-light",
     "br-5",
     "px-7",
     "py-7",
@@ -247,12 +262,12 @@ er.element.layerInnerLayer.set((_) => {
   _.classList.add(
     "d-flex",
     "flex-column",
-    "bg-primary",
+    "bg-light",
     "br-5",
     "px-7",
     "py-7",
     "block",
-    "m-top-4"
+    "m-top-10"
   );
 });
 er.element.layerInnerLayerLabel.set((_) => {
@@ -284,8 +299,10 @@ er.element.option.set((_) => {
     "pos-r",
     "d-flex",
     "flex-column",
-    "bg-dark",
-    "p-top-94",
+    "border-left-2",
+    "border-color-grey-dark",
+    "bg-grey",
+    "p-top-105",
     "px-7",
     "py-7"
   );
@@ -295,7 +312,7 @@ er.element.optionInner.set((_) => {
   _.classList.add(
     "d-flex",
     "flex-column",
-    "bg-primary",
+    "bg-light",
     "br-5",
     "px-7",
     "py-7", 
@@ -304,7 +321,7 @@ er.element.optionInner.set((_) => {
 });
 er.element.optionInnerLayer.set((_) => {
   _.classList.add(
-    "bg-primary",
+    "bg-light",
     "br-5",
     "px-7",
     "py-7",
@@ -313,7 +330,7 @@ er.element.optionInnerLayer.set((_) => {
   );
 });
 er.element.optionInnerLabel.set((_) => {
-  _.classList.add(...layerStyleBtn);
+  _.classList.add(...layerStyleBtn,"py-10");
 });
 
 
@@ -337,6 +354,7 @@ er.element.htmlInnerTitle.set((_) => {
 });
 
 er.element.htmlCanvas.target.appendChild(er.element.htmlInnerCenter.target);
+//class
 /**
  *  renderCanvas
  *    ->renderInnerCenter
@@ -351,7 +369,7 @@ er.element.renderInnerCenter.target.appendChild(
 
 //class
 er.element.renderController.set((_) => {
-  _.classList.add("bg-secoundary");
+  _.classList.add("bg-light");
 });
 er.element.htmlInnerCanvas.set((_) => {
   _.classList.add("aspect-1-1");

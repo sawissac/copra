@@ -4,15 +4,26 @@ let scaleBtnStyle = [
   "ts-12",
   "btn-btn",
   "btn-max",
-  "btn-secoundary",
-  "text-white",
+  "btn-light",
+  "text-dark",
   "b-primary",
   "br-5",
+  "border-color-grey",
   "mx-4",
 ];
 let renderDownloadBtn = er.component({
   element: "download-a",
-  class: scaleBtnStyle,
+  class: [
+    "ts-12",
+    "btn-btn",
+    "btn-max",
+    "btn-blue",
+    "text-white",
+    "b-primary",
+    "br-5",
+    "border-color-grey",
+    "mx-4",
+  ],
   text: "DOWNLOAD",
   build: (_) => {
     _.style.textDecoration = "none";
@@ -32,6 +43,7 @@ export class ImageRender extends Component {
     let closeCanvas = () => {
       this.getHost()._imageScene_.style.display = "none";
       this.canvasHighlightOff(false);
+      stoV2.val("htmlmode").storeToCanvasMode();
     };
     let scaleBtns = [
       {
@@ -134,7 +146,7 @@ export class ImageRender extends Component {
         _.classList.remove("com-highlight");
       });
     }
-    if (activeEleLayer.length === 0 && value === false){
+    if (activeEleLayer.length === 0 && value === false) {
       er.element.htmlLayer.set((_) => {
         _.classList.add("com-highlight");
       });

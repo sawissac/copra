@@ -1,23 +1,22 @@
 import { Component } from "./component/component.js";
 
-const layerStyleBtn = [
-  "btn-btn",
-  "btn-secoundary",
-  "d-flex",
-  "j-left",
-  "fs-12",
-  "text-white",
-  "br-5",
-];
-
 const MainContainer = er.component({
   element: "background-engine-container-div",
-  class: ["m-top-4", "br-5"],
+  class: ["br-5"],
   children: [
     er.component({
       element: "background-label-div",
       text: "Background",
-      class: [...layerStyleBtn],
+      class: [
+        "btn-btn",
+        "btn-light",
+        "d-flex",
+        "j-left",
+        "fs-12",
+        "text-dark",
+        "border-color-grey",
+        "border-bottom-2"
+      ],
     }),
     er.component({
       element: "warper-div",
@@ -45,7 +44,17 @@ const MainContainer = er.component({
         er.component({
           element: "image-upload-btn-div",
           text: "Upload Image",
-          class: [...layerStyleBtn, "my-4", "j-center"],
+          class: [
+            "btn-btn",
+            "btn-blue",
+            "d-flex",
+            "j-left",
+            "fs-12",
+            "text-white",
+            "br-5",
+            "my-4",
+            "j-center",
+          ],
         }),
       ],
     }),

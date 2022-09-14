@@ -30,6 +30,17 @@ document.body.addEventListener("keydown", function (keyPressev) {
     keyPressev.preventDefault();
   }
 });
+document.addEventListener("contextmenu", (e) => {
+  // e.preventDefault();
+});
+/**
+ * CanvasName
+ *
+ *
+ */
+er.element.headerFile.set((_) => {
+  _.textContent = stoV2.getProjectName();
+});
 /**
  *  pageLayer
  */
@@ -100,23 +111,22 @@ cb.setWorker(() => {
 });
 /**
  * imageRender
- * 
- * 
+ *
+ *
  */
 imr
-.setHost({
-  _html_: er.element.htmlInnerCanvas.target,
-  _image_:er.element.renderInnerCanvas.target,
-  _imageScene_: er.element.renderCanvas.target,
-  _controller_: er.element.renderController.target,
-
-})
-.setEngine(htmlToImage)
-.build();
+  .setHost({
+    _html_: er.element.htmlInnerCanvas.target,
+    _image_: er.element.renderInnerCanvas.target,
+    _imageScene_: er.element.renderCanvas.target,
+    _controller_: er.element.renderController.target,
+  })
+  .setEngine(htmlToImage)
+  .build();
 /**
  * controllerCanvasScrollYButton
- * 
- * 
+ *
+ *
  */
 let scrollYIndicator = null;
 er.element.controllerCanvasScrollYButton.set((_) => {
@@ -136,25 +146,32 @@ er.element.controllerCanvasScrollYButton.set((_) => {
 });
 /**
  * controllerCanvasScrollXButton
- * 
- * 
+ *
+ *
  */
- let scrollXIndicator = null;
- er.element.controllerCanvasScrollXButton.set((_) => {
-   const [indi] = er.icon(_, ["bi", "bi-arrows-expand",'rotate-90'], true, "N", true, false);
-   scrollXIndicator = indi;
-   let btnToggle = false;
-   _.onclick = () => {
-     btnToggle = !btnToggle;
-     if (btnToggle) {
-       hcs.horizontalMoveOn();
-       indi.textContent = "X";
-     } else {
-       hcs.horizontalMoveOff();
-       indi.textContent = "N";
-     }
-   };
- });
+let scrollXIndicator = null;
+er.element.controllerCanvasScrollXButton.set((_) => {
+  const [indi] = er.icon(
+    _,
+    ["bi", "bi-arrows-expand", "rotate-90"],
+    true,
+    "N",
+    true,
+    false
+  );
+  scrollXIndicator = indi;
+  let btnToggle = false;
+  _.onclick = () => {
+    btnToggle = !btnToggle;
+    if (btnToggle) {
+      hcs.horizontalMoveOn();
+      indi.textContent = "X";
+    } else {
+      hcs.horizontalMoveOff();
+      indi.textContent = "N";
+    }
+  };
+});
 
 er.element.headerSaveBtn.set((_) => {
   _.onclick = () => {
@@ -184,15 +201,15 @@ hcs
  *
  */
 imcs
-.setHost({
-  _canvas_: er.element.renderInnerCenter.target,
-})
-.setMinMax(10, 500)
-.setWorker(() => {
-  stp.btnLabelEl.textContent =
-    imcs.formatPerscent(String(imcs.getScale() * 100)) + "%";
-})
-.build();
+  .setHost({
+    _canvas_: er.element.renderInnerCenter.target,
+  })
+  .setMinMax(10, 500)
+  .setWorker(() => {
+    stp.btnLabelEl.textContent =
+      imcs.formatPerscent(String(imcs.getScale() * 100)) + "%";
+  })
+  .build();
 /**
  *  canvas center button
  *
@@ -265,7 +282,7 @@ stp
   })
   .setBtnIconStyle(["bi", "bi-zoom-in"], "Scale")
   .setListIconStyle(["bi", "bi-zoom-in"])
-  .offset([-60, 15])
+  .offset([-45, 15])
   .set([
     {
       listName: "Scale to 50%",
@@ -322,13 +339,35 @@ etp
         stoV2.val("imagemode").storeToCanvasMode();
         imr.show();
         changeZoomScale(1);
+        lr.layerUnSelectAll();
         imr.render();
       },
     },
     {
-      listName: "Update App",
+      listName: "Reset App",
       fun: () => {
         cps.updateApp();
+        const path = 
+          window.location.protocol +
+          "//" +
+          window.location.hostname +
+          ":" +
+          window.location.port +
+          "/editor";
+        window.location.href = path;
+      },
+    },
+    {
+      listName: "Exit",
+      fun: () => {
+        const path = 
+          window.location.protocol +
+          "//" +
+          window.location.hostname +
+          ":" +
+          window.location.port +
+          "/";
+        window.location.href = path;
       },
     },
   ])
@@ -347,13 +386,13 @@ window.addEventListener("keydown", (ev) => {
   }
   // scroll up and down
   if (ev.shiftKey && ev.code === "KeyS") {
-    scrollYIndicator.textContent = "Y"
+    scrollYIndicator.textContent = "Y";
     hcs.verticalMoveOn();
     imcs.verticalMoveOn();
   }
   // scroll left and right
   if (ev.shiftKey && ev.code === "KeyA") {
-    scrollXIndicator.textContent = "X"
+    scrollXIndicator.textContent = "X";
     hcs.horizontalMoveOn();
     imcs.horizontalMoveOn();
   }
@@ -361,8 +400,8 @@ window.addEventListener("keydown", (ev) => {
 
 window.addEventListener("keyup", (ev) => {
   if (ev.shiftKey) {
-    scrollYIndicator.textContent = "N"
-    scrollXIndicator.textContent = "N"
+    scrollYIndicator.textContent = "N";
+    scrollXIndicator.textContent = "N";
     hcs.verticalMoveOff();
     hcs.horizontalMoveOff();
     imcs.verticalMoveOff();

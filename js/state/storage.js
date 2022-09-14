@@ -22,9 +22,15 @@ class CopraStorage {
     localStorage.setItem("canvasAspect", JSON.stringify(this.value));
     return this;
   }
+  storeToProjectName(){
+    localStorage.setItem("projectName", JSON.stringify(this.value));
+  }
   storeToCanvasMode(){
     localStorage.setItem("canvasMode", JSON.stringify(this.value));
     return this;
+  }
+  getProjectName(){
+    return JSON.parse(localStorage.getItem("projectName"));
   }
   getCanvasMode(){
     return JSON.parse(localStorage.getItem("canvasMode"));

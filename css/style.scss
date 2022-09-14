@@ -2,12 +2,16 @@ $primary: #2d2d2d;
 $secoundary: rgb(59, 59, 59);
 $primary-light: rgb(51, 51, 51);
 $secoundary-light: rgb(80, 80, 80);
-$white: rgb(235, 235, 235);
+$light: rgb(255, 255, 255);
+$light-dim: rgb(242, 242, 242);
 $info: rgb(63, 79, 157);
 $info-dark: rgb(68, 91, 205);
-$dark: rgb(29, 29, 29);
+$dark: #1d1d1d;
 $dark-light: rgb(32, 32, 32);
-
+$blue: #0B92DE;
+$blue-light: #289fe4;
+$grey: #efefef;
+$grey-dark: #e7e7e7;
 @mixin bg($name, $color) {
   .bg-#{$name} {
     background-color: $color !important;
@@ -109,14 +113,14 @@ $dark-light: rgb(32, 32, 32);
 .core-component {
   width: 100%;
   height: 100vh;
-  background-color: $dark;
+  background-color: $grey;
 }
 .btn-btn {
   width: 100%;
   cursor: pointer;
   user-select: none;
   font-size: 14px;
-  color: $white;
+  color: $light;
   padding: 7px;
   outline: none;
   border: none;
@@ -156,22 +160,29 @@ $dark-light: rgb(32, 32, 32);
 @include bg("primary", $primary);
 @include bg("secoundary", $secoundary);
 @include bg("dark", $dark);
-@include bg("white", $white);
+@include bg("light", $light);
+@include bg("grey", $grey);
+@include bg("grey-dark", $grey-dark);
 @include btn("primary", $primary, $secoundary-light);
+@include btn("light", $light, $light-dim);
 @include btn("secoundary", $secoundary, $secoundary-light);
+@include btn("blue", $blue, $blue-light);
 @include btn("dark", $dark, $dark-light);
-@include btn("white", $white, $white);
-@include text("primary-light", $secoundary-light, $white);
-@include text("white", $white, $white);
+@include btn("white", $light, $light);
+@include btn("grey", $grey, $grey-dark);
+@include text("primary-light", $secoundary-light, $light);
+@include text("white", $light, $light);
 @include text("dark", $dark, $dark);
 @include p("x", 7);
 @include p("x", 4);
+@include p("x", 10);
 @include p("x", 30);
 @include p("y", 7);
+@include p("y", 4);
 @include p("y", 10);
 @include p("y", 30);
 @include p("top", 7);
-@include p("top", 94);
+@include p("top", 105);
 @include p("left", 7);
 @include p("right", 60);
 @include p("", 0);
@@ -187,9 +198,37 @@ $dark-light: rgb(32, 32, 32);
 @include m("x", 4);
 @include m("y", 4);
 @include m("top", 4);
+@include m("top", 10);
 @include m("bottom", 4);
 @include fd("column");
 @include fs(12);
+
+.border-2{
+  border:none;
+  border-width: 2px !important;
+  border-style: solid;
+}
+.border-left-2{
+  border:none;
+  border-left-width: 2px !important;
+  border-style: solid;
+}
+.border-right-2{
+  border:none;
+  border-right-width: 2px !important;
+  border-style: solid;
+}
+.border-bottom-2{
+  border:none;
+  border-bottom: 2px solid;
+}
+.border-color-grey{
+  border-color: $grey;
+}
+.border-color-grey-dark{
+  border-color: $grey-dark;
+}
+
 .text-left {
   text-align: left;
 }
@@ -201,27 +240,24 @@ $dark-light: rgb(32, 32, 32);
 }
 .html-canvas {
   margin-top: 94px;
-  background: $dark-light;
   height: calc(100% - 94px);
   width: 100%;
   position: relative;
   z-index: 0;
   .html-inner-center {
     transition: 0.3s;
-    border: 1px solid $dark-light;
     position: absolute;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%) scale(1);
     .html-inner-title {
       cursor: pointer;
-      color: $white;
+      color: $dark;
       font-size: 10px;
-      font-weight: lighter;
+      font-weight: 400;
     }
     .html-inner-canvas {
       width: 300px;
-      background-color: $primary;
       position: relative;
       .html-layer {
         cursor: pointer;
@@ -247,31 +283,28 @@ $dark-light: rgb(32, 32, 32);
 }
 .render-canvas {
   margin-top: 94px;
-  background: $dark-light;
   height: calc(100% - 94px);
   width: 100%;
   position: relative;
   z-index: 0;
   .render-controller {
     position: absolute;
-    top: 0;
+    top: 6px;
     left: 0;
     right: 0;
     height: 50px;
-    padding: 2px 0;
+    padding: 5px 0;
     display: flex;
     justify-content: center;
     align-items: center;
   }
   .render-inner-center {
     transition: 0.3s;
-    border: 1px solid $dark-light;
     position: absolute;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%) scale(1);
     .render-inner-canvas {
-      background-color: $primary;
       position: relative;
     }
   }
@@ -411,7 +444,7 @@ $dark-light: rgb(32, 32, 32);
   left: 0;
 }
 .pos-t-50 {
-  top: 41.64px;
+  top: 48px;
 }
 .options-box {
   z-index: 999;
@@ -451,6 +484,9 @@ $dark-light: rgb(32, 32, 32);
 .d-flex {
   display: flex !important;
 }
+.flex-1{
+  flex:1;
+}
 .block {
   flex: 1 !important;
 }
@@ -461,7 +497,10 @@ $dark-light: rgb(32, 32, 32);
   overflow-y: scroll;
 }
 .highlight {
-  background-color: $secoundary-light !important;
+  background-color: $light-dim !important;
+}
+.text-center{
+  text-align: center !important;
 }
 .flex-warp {
   flex-wrap: wrap;
@@ -472,15 +511,15 @@ $dark-light: rgb(32, 32, 32);
 }
 /* Track */
 *::-webkit-scrollbar-track {
-  background-color: $primary-light;
+  background-color: $grey;
   border-radius: 2px;
 }
 /* Handle */
 *::-webkit-scrollbar-thumb {
-  background: $secoundary;
+  background: $grey-dark;
   border-radius: 999px;
 }
 /* Handle on hover */
 *::-webkit-scrollbar-thumb:hover {
-  background: $secoundary-light;
+  background: $grey-dark;
 }

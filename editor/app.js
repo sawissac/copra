@@ -1,4 +1,4 @@
-import { coreComponent } from "./js/coreComponent.js";
+import { coreComponent } from "../js/coreComponent.js";
 
 
 /**

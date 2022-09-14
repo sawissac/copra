@@ -1,0 +1,13 @@
+.h-100{
+    height: 100vh !important;
+}
+
+.postion-center-img{
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+.w-300{
+    width: 300px;
+    height: max-content;
+}

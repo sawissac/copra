@@ -77,13 +77,11 @@ export class PageListRender extends Component {
         element: "layer-btn-div",
         class: [
           "btn-btn",
+          "btn-light",
           "d-flex",
           "j-left",
           "fs-12",
-          "text-white",
-          "btn-secoundary",
-          "br-5",
-          "my-4",
+          "text-dark",
           i.canvas.isHighlight === true ? "highlight" : "not-highlight",
         ],
         build: (_) => {
@@ -109,11 +107,13 @@ export class PageListRender extends Component {
           element: "layer-btn-div",
           class: [
             "btn-btn",
+            "text-dark",
+            "btn-light",
+            "border-bottom-2",
+            
             "d-flex",
             "j-left",
             "fs-12",
-            "text-white",
-            "bg-secoundary",
             "br-5",
             "my-4",
             i.canvas.isHighlight === true ? "highlight" : "not-highlight",

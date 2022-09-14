@@ -3,6 +3,7 @@ const ElementList = [
   "header-logo-button",
   "header-file-div",
   "header-save-btn-div",
+  "block2-div",
   "header-version-div",
   "block-div",
   "controller-div",

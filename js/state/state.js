@@ -14,6 +14,62 @@ const DefaultState = [
   },
 ];
 
+const TemplateState = [
+  {
+    canvas: {
+      layerName: "Hello World",
+      isHighlight: true,
+      data: [
+        {
+          layerName: "Title",
+          isHighlight: false,
+          component: {
+            type: "Empty",
+            text: "Hello World for Copra",
+            height: "80",
+            textColor: "",
+          },
+        },
+        {
+          layerName: "Header",
+          isHighlight: false,
+          component: {
+            type: "Header",
+            text: "Hello.txt",
+            height: 50,
+            textColor: "",
+          },
+        },
+        {
+          layerName: "Comment",
+          isHighlight: false,
+          component: {
+            type: "Line",
+            text: "// It works like a charm",
+            height: 50,
+            textColor: "#FDF5DF",
+          },
+        },
+        {
+          layerName: "Codeing",
+          isHighlight: false,
+          component: {
+            type: "Line",
+            text: "console.log('Hello World\");",
+            height: 50,
+            textColor: "",
+          },
+        },
+        {
+          layerName: "Footer",
+          isHighlight: false,
+          component: { type: "Footer", text: "", height: 50, textColor: "" },
+        },
+      ],
+    },
+  },
+];
+
 class CopraState {
   constructor() {
     this.state = {
@@ -28,20 +84,18 @@ class CopraState {
     return this.state.pageData;
   }
   start() {
-  
-    if (stoV2.getPageData() === null) {
-      stoV2.val(DefaultState).storeToPageData();
-      stoV2.val("#2d2d2d").storeToCanvasBackground();
-      stoV2.val("").storeToImageData();
-      stoV2.val("aspect-1:1").storeToCanvasAspect();
-      stoV2.val("htmlmode").storeToCanvasMode();
-    }
-
     this.state.pageData = stoV2.getPageData();
   }
   updateApp() {
     stoV2.val(DefaultState).storeToPageData();
-    stoV2.val("#2d2d2d").storeToCanvasBackground();
+    stoV2.val("#FFFFFF").storeToCanvasBackground();
+    stoV2.val("").storeToImageData();
+    stoV2.val("aspect-1:1").storeToCanvasAspect();
+    stoV2.val("htmlmode").storeToCanvasMode();
+  }
+  updateUsingTemplate(){
+    stoV2.val(TemplateState).storeToPageData();
+    stoV2.val("#FDF5DF").storeToCanvasBackground();
     stoV2.val("").storeToImageData();
     stoV2.val("aspect-1:1").storeToCanvasAspect();
     stoV2.val("htmlmode").storeToCanvasMode();

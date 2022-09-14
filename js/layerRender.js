@@ -30,13 +30,14 @@ export class LayerRander extends Component {
         element: "move-layer-cancel-div",
         class: [
           "btn-btn",
+          "btn-blue",
           "d-flex",
           "j-center",
           "fs-12",
           "text-white",
-          "btn-secoundary",
           "br-5",
           "my-4",
+          "py-10",
         ],
         text: "CANCEL",
         build: (_) => {
@@ -51,13 +52,13 @@ export class LayerRander extends Component {
           element: "move-layer-btn-div",
           class: [
             "btn-btn",
+            "bg-grey",
             "d-flex",
             "j-center",
             "ai-center",
             "flex-column",
             "fs-12",
-            "text-white",
-            "bg-secoundary",
+            "text-dark",
             "br-5",
             "my-4",
             "p-0",
@@ -70,10 +71,11 @@ export class LayerRander extends Component {
                     element: "up-layer-btn-div",
                     class: [
                       "btn-btn",
+                      "btn-grey",
+                      "text-dark",
                       "d-flex",
                       "j-center",
                       "ai-center",
-                      "btn-secoundary",
                     ],
                     build: (_) => {
                       er.icon(_, ["bi", "bi-chevron-compact-up", "mx-5"], true);
@@ -93,10 +95,11 @@ export class LayerRander extends Component {
                     element: "up-layer-btn-div",
                     class: [
                       "btn-btn",
+                      "btn-grey",
+                      "text-dark",
                       "d-flex",
                       "j-center",
                       "ai-center",
-                      "btn-secoundary",
                     ],
                     build: (_) => {
                       er.icon(
@@ -212,13 +215,11 @@ export class LayerRander extends Component {
         element: "layer-btn-div",
         class: [
           "btn-btn",
+          "btn-light",
           "d-flex",
           "j-left",
           "fs-12",
-          "text-white",
-          "btn-secoundary",
-          "br-5",
-          "my-4",
+          "text-dark",
           i.isHighlight === true ? "highlight" : "not-highlight",
         ],
         build: (_) => {
@@ -352,6 +353,12 @@ export class LayerRander extends Component {
         return p;
       }, [])
     );
+  }
+  layerUnSelectAll(){
+    this.stateRefresh("isHighlight", false);
+    this.canvasBtnOn();
+    this.render();
+    this.getWorker();
   }
   updatePageTitle() {
     const activePageLayer = cps
