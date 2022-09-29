@@ -18,7 +18,7 @@ export function aspectChecker(aspect, rule) {
 }
 
 export function changeCanvasAspectRatio(aspectName = "") {
-  er.element.htmlInnerCanvas.set((_html) => {
+  am.element.htmlInnerCanvas.modify((_html) => {
     let _old = aspectChecker(_html.classList, canvasAspectRatio);
     _html.classList.replace(_old, aspectName.replace(":", "-"));
   });

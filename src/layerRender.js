@@ -10,7 +10,7 @@ export class LayerRander extends Component {
     this.state.push({
       layerName: "Element",
       isHighlight: false,
-      component: { type: "Empty", text: "", height: 50,textColor:'' },
+      component: { type: "Empty", text: "", height: 50, textColor: "" },
     });
     this.updateCpsState();
     this.getWorker();
@@ -25,60 +25,59 @@ export class LayerRander extends Component {
   moveLayer() {
     const isactiveLayer = this.state.filter((i) => i.isHighlight === true);
     if (isactiveLayer.length !== 0) {
-      this.getHost()._layer_.innerHTML = "";
-      const MoveLayerCancelBtn = er.component({
-        element: "move-layer-cancel-div",
+      this.getHost()._layer_._children();
+      const MoveLayerCancelBtn = am.component({
+        el: "move-layer-cancel-div",
         class: [
-          "btn-btn",
-          "btn-blue",
-          "d-flex",
-          "j-center",
+          "btn",
+          "btn-sm",
+          "btn-primary",
+          "d-block",
           "fs-12",
-          "text-white",
-          "br-5",
-          "my-4",
-          "py-10",
+          "my-1",
+          "text-center",
+          "py-2"
         ],
         text: "CANCEL",
-        build: (_) => {
+        build: (_,mod) => {
           _.onclick = () => {
             this.render();
           };
         },
       });
-      this.getHost()._layer_.appendChild(MoveLayerCancelBtn.target);
+      this.getHost()._layer_.children([MoveLayerCancelBtn]);
       this.state.map((i) => {
-        const MoveLayerBtn = er.component({
-          element: "move-layer-btn-div",
+        const MoveLayerBtn = am.component({
+          el: "move-layer-btn-div",
           class: [
-            "btn-btn",
-            "bg-grey",
+            "btn",
+            "btn-sm",
+            "btn-light",
             "d-flex",
-            "j-center",
-            "ai-center",
-            "flex-column",
             "fs-12",
-            "text-dark",
-            "br-5",
-            "my-4",
-            "p-0",
+            "my-1",
+            "justify-content-between",
             i.isHighlight === true ? "highlight" : "not-highlight",
           ],
           children:
             i.isHighlight !== true
               ? [
-                  er.component({
-                    element: "up-layer-btn-div",
+                  am.component({
+                    el: "up-layer-btn-div",
                     class: [
-                      "btn-btn",
-                      "btn-grey",
-                      "text-dark",
+                      "btn",
+                      "btn-sm",
+                      "btn-light",
                       "d-flex",
-                      "j-center",
-                      "ai-center",
+                      "fs-12",
+                      "my-1",
+                      "text-center", 
                     ],
                     build: (_) => {
-                      er.icon(_, ["bi", "bi-chevron-compact-up", "mx-5"], true);
+                      addIcon({
+                        target: _,
+                        iconstart: ["bi", "bi-chevron-compact-up"],
+                      });
                       _.onclick = () => {
                         this.moveArray(i.id, -1);
                         this.updateCpsState();
@@ -87,26 +86,35 @@ export class LayerRander extends Component {
                       };
                     },
                   }),
-                  er.component({
-                    element: "up-layer-btn-div",
+                  am.component({
+                    el: "up-layer-btn-div",
+                    class: [
+                      "btn",
+                      "btn-sm",
+                      "btn-light",
+                      "fs-12",
+                      "text-center",
+                      "d-flex",
+                      "align-items-center"
+                    ],
                     text: i.layerName,
                   }),
-                  er.component({
-                    element: "up-layer-btn-div",
+                  am.component({
+                    el: "up-layer-btn-div",
                     class: [
-                      "btn-btn",
-                      "btn-grey",
-                      "text-dark",
+                      "btn",
+                      "btn-sm",
+                      "btn-light",
                       "d-flex",
-                      "j-center",
-                      "ai-center",
+                      "fs-12",
+                      "my-1",
+                      "text-center",
                     ],
                     build: (_) => {
-                      er.icon(
-                        _,
-                        ["bi", "bi-chevron-compact-down", "mx-5"],
-                        true
-                      );
+                      addIcon({
+                        target: _,
+                        iconstart: ["bi", "bi-chevron-compact-down"],
+                      });
                       _.onclick = () => {
                         this.moveArray(i.id, 1);
                         this.updateCpsState();
@@ -117,44 +125,51 @@ export class LayerRander extends Component {
                   }),
                 ]
               : [
-                  er.component({
-                    element: "up-layer-btn-div",
-                    class: ["py-10"],
+                  am.component({
+                    el: "up-layer-btn-div",
+                    class: ["flex-fill","py-1"],
                     text: i.layerName,
                   }),
                 ],
         });
-        this.getHost()._layer_.appendChild(MoveLayerBtn.target);
+        this.getHost()._layer_.children([MoveLayerBtn]);
       });
     }
   }
   build() {
-    const MoveBtn = er.component({
-      element: "move-btn-div",
-      class: ["mx-4"],
+    const MoveBtn = am.component({
+      el: "move-btn-div",
+      class: ["me-1"],
       build: (_) => {
-        er.icon(_, ["bi", "bi-arrows-move", "mx-5"], true);
+        addIcon({
+          target: _,
+          iconstart: ["bi", "bi-arrows-move"],
+        });
         _.onclick = () => {
           this.moveLayer();
         };
       },
     });
-    const EditBtn = er.component({
-      element: "add-btn-div",
-      class: ["mx-4"],
+    const EditBtn = am.component({
+      el: "add-btn-div",
       build: (_) => {
-        er.icon(_, ["bi", "bi-pen-fill", "mx-5"], true);
+        addIcon({
+          target: _,
+          iconstart: ["bi", "bi-pen-fill"],
+        });
         _.onclick = () => {
           this.edit = true;
           this.render();
         };
       },
     });
-    const AddBtn = er.component({
-      element: "add-btn-div",
-      class: ["mx-4"],
+    const AddBtn = am.component({
+      el: "add-btn-div",
       build: (_) => {
-        er.icon(_, ["bi", "bi-plus-lg", "mx-5"], true);
+        addIcon({
+          target: _,
+          iconstart: ["bi", "bi-plus-lg"],
+        });
         _.onclick = () => {
           this.edit = false;
           this.createLayer();
@@ -163,11 +178,13 @@ export class LayerRander extends Component {
         };
       },
     });
-    const DeleteBtn = er.component({
-      element: "delete-btn-div",
-      class: ["mx-4"],
+    const DeleteBtn = am.component({
+      el: "delete-btn-div",
       build: (_) => {
-        er.icon(_, ["bi", "bi-trash3-fill"], true);
+        addIcon({
+          target: _,
+          iconstart: ["bi", "bi-trash3-fill"],
+        });
         _.onclick = () => {
           this.edit = false;
           this.deleteLayer();
@@ -176,12 +193,12 @@ export class LayerRander extends Component {
         };
       },
     });
-    const Block = er.component({
-      element: "block-div",
-      class: ["block"],
+    const Block = am.component({
+      el: "block-div",
+      class: ["flex-fill"],
     });
 
-    this.getHost()._canvasbtn_.onclick = () => {
+    this.getHost()._canvasbtn_.target.onclick = () => {
       if (this.canvas !== true) {
         this.canvasBtnOn();
         this.stateRefresh("isHighlight", false);
@@ -191,45 +208,45 @@ export class LayerRander extends Component {
       }
     };
     this.updatePageTitle();
-    this.getHost()._layerlabel_.appendChild(Block.target);
-    this.getHost()._layerlabel_.appendChild(MoveBtn.target);
-    this.getHost()._layerlabel_.appendChild(EditBtn.target);
-    this.getHost()._layerlabel_.appendChild(AddBtn.target);
-    this.getHost()._layerlabel_.appendChild(DeleteBtn.target);
+    this.getHost()._layerlabel_.children([
+      Block,
+      MoveBtn,
+      EditBtn,
+      AddBtn,
+      DeleteBtn,
+    ]);
     this.render();
   }
   canvasBtnOff() {
     this.canvas = false;
-    this.getHost()._canvasbtn_.classList.remove("highlight");
+    this.getHost()._canvasbtn_.target.classList.remove("highlight");
   }
   canvasBtnOn() {
     this.canvas = true;
-    this.getHost()._canvasbtn_.classList.add("highlight");
+    this.getHost()._canvasbtn_.target.classList.add("highlight");
   }
   render() {
-    this.getHost()._layer_.innerHTML = "";
+    this.getHost()._layer_._children();
     this.getCpsState();
     this.updatePageTitle();
     this.state.map((i) => {
-      let layerBtn = er.component({
-        element: "layer-btn-div",
+      let layerBtn = am.component({
+        el: "layer-btn-div",
         class: [
-          "btn-btn",
+          "btn",
+          "btn-sm",
           "btn-light",
           "d-flex",
-          "j-left",
           "fs-12",
-          "text-dark",
+          "my-1",
           i.isHighlight === true ? "highlight" : "not-highlight",
         ],
         build: (_) => {
-          er.icon(
-            _,
-            ["bi", "bi-bounding-box-circles"],
-            true,
-            i.layerName,
-            true
-          );
+          addIcon({
+            target: _,
+            iconstart: ["bi", "bi-bounding-box-circles"],
+            text: i.layerName,
+          });
           _.onclick = () => {
             if (i.isHighlight !== true) {
               this.edit = false;
@@ -242,28 +259,36 @@ export class LayerRander extends Component {
               }
             }
           };
+          _.ondblclick = () => {
+            this.edit = true;
+            this.render();
+          };
         },
       });
       if (this.edit && i.isHighlight) {
-        layerBtn = er.component({
-          element: "layer-btn-div",
+        layerBtn = am.component({
+          el: "layer-btn-div",
           class: [
-            "btn-btn",
+            "btn",
+            "btn-sm",
+            "btn-light",
             "d-flex",
-            "j-left",
             "fs-12",
-            "text-white",
-            "bg-secoundary",
-            "br-5",
-            "my-4",
+            "my-1",
             i.isHighlight === true ? "highlight" : "not-highlight",
           ],
           build: (_btn) => {
-            er.icon(_btn, ["bi", "bi-bounding-box-circles"], true, "", false);
-            const input = er.component({
-              element: "cansvas-input-input",
-              class: ["text-left"],
-              build: (_input) => {
+            addIcon({
+              target: _btn,
+              iconstart: ["bi", "bi-bounding-box-circles"],
+            });
+            const input = am.component({
+              el: "cansvas-input-input",
+              class: ["outline-none", "fs-12", "ms-1", "fw-bold"],
+              build: (_input, mod) => {
+                mod.style({
+                  background: "transparent",
+                });
                 _input.type = "text";
                 _input.value = i.layerName;
                 _input.onclick = () => {
@@ -294,7 +319,7 @@ export class LayerRander extends Component {
           },
         });
       }
-      this.getHost()._layer_.appendChild(layerBtn.target);
+      this.getHost()._layer_.children([layerBtn]);
     });
   }
   highlightSetting(p, c, id, key) {
@@ -354,7 +379,7 @@ export class LayerRander extends Component {
       }, [])
     );
   }
-  layerUnSelectAll(){
+  layerUnSelectAll() {
     this.stateRefresh("isHighlight", false);
     this.canvasBtnOn();
     this.render();
@@ -365,14 +390,13 @@ export class LayerRander extends Component {
       .getPageLayerData()
       .filter((i) => i.canvas.isHighlight === true);
     if (activePageLayer.length !== 0) {
-      this.getHost()._canvasbtn_.innerHTML = "";
-      er.icon(
-        this.getHost()._canvasbtn_,
-        ["bi", "bi-collection"],
-        true,
-        activePageLayer[0].canvas.layerName,
-        true
-      );
+      let layercanvasbtn = this.getHost()._canvasbtn_;
+      layercanvasbtn._children();
+      addIcon({
+        target: layercanvasbtn.target,
+        iconstart: ["bi", "bi-collection"],
+        text: activePageLayer[0].canvas.layerName,
+      });
     }
     const activeEleLayer = activePageLayer[0].canvas.data.filter(
       (i) => i.isHighlight === true

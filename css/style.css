@@ -38,7 +38,7 @@
 .btn-btn input {
   margin-left: 5px;
   background-color: transparent;
-  color: rgb(0, 208, 255);
+  color: rgb(34, 34, 34);
   font-weight: 600;
   border: none;
   outline: none;
@@ -66,6 +66,10 @@
   background-color: #1d1d1d !important;
 }
 
+.bg-dark-light {
+  background-color: rgb(40, 40, 40) !important;
+}
+
 .bg-light {
   background-color: rgb(255, 255, 255) !important;
 }
@@ -76,6 +80,10 @@
 
 .bg-grey-dark {
   background-color: #e7e7e7 !important;
+}
+
+.bg-blue {
+  background-color: #0B92DE !important;
 }
 
 .btn-primary {
@@ -110,7 +118,7 @@
   background-color: #1d1d1d;
 }
 .btn-dark:hover {
-  background-color: rgb(32, 32, 32);
+  background-color: rgb(40, 40, 40);
 }
 
 .btn-white {
@@ -262,6 +270,10 @@
   margin-top: 10px;
 }
 
+.m-top-30 {
+  margin-top: 30px;
+}
+
 .m-bottom-4 {
   margin-bottom: 4px;
 }
@@ -357,7 +369,7 @@
   z-index: 1;
   position: relative;
   background-position: center;
-  background-size: 100%;
+  background-size: cover;
   background-repeat: no-repeat;
 }
 
@@ -494,6 +506,10 @@
   border: 1px solid rgb(54, 172, 245);
 }
 
+.hover-disable:hover {
+  border: none;
+}
+
 .aspect-1-1 {
   aspect-ratio: 1/1;
   transition: 0.3s;
@@ -611,6 +627,21 @@
 
 .flex-warp {
   flex-wrap: wrap;
+}
+
+.text-none {
+  text-decoration: none;
+}
+
+.sticky-top {
+  position: sticky;
+  top: 0;
+  left: 0;
+  right: 0;
+}
+
+.drops {
+  box-shadow: 0 2px 7px 0px rgba(0, 0, 0, 0.35);
 }
 
 /* width */

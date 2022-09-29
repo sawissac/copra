@@ -1,6 +1,6 @@
 import { Component } from "./component/component.js";
 
-export class htmlRender extends Component {
+export class htmlRender extends Component { 
   constructor() {
     super();
     this.canvas = false;
@@ -21,12 +21,16 @@ export class htmlRender extends Component {
     this.getHost()._layer_.innerHTML = "";
     this.getCpsState();
     this.updateTitle();
-    this.state.map((i) => {
+    this.buildCanvas(this.state)
+  }
+
+  buildCanvas(state){
+    state.map((i) => {
       let LayerEl = null;
 
       if (i.component.type === "Empty") {
-        LayerEl = er.component({
-          element: "layer-none-div",
+        LayerEl = am.component({
+          el: "layer-none-div",
           class: [
             "com-empty",
             i.isHighlight === true ? "com-highlight" : "com-not-highlight",
@@ -38,38 +42,38 @@ export class htmlRender extends Component {
           },
         });
       }
-      if (i.component.type === "Header") {
-        LayerEl = er.component({
-          element: "canvas-header-div",
+      if (i.component.type === "Header") { 
+        LayerEl = am.component({
+          el: "canvas-header-div",
           class: [
             "com-header",
             i.isHighlight === true ? "com-highlight" : "com-not-highlight",
           ],
           children: [
-            er.component({
-              element: "header-inner-div",
+            am.component({
+              el: "header-inner-div",
               class: ["inner"],
               children: [
-                er.component({
-                  element: "option-div",
+                am.component({
+                  el: "option-div",
                   class: ["option"],
                   children: [
-                    er.component({
-                      element: "circle1-div",
+                    am.component({
+                      el: "circle1-div",
                       class: ["circle"],
                     }),
-                    er.component({
-                      element: "circle2-div",
+                    am.component({
+                      el: "circle2-div",
                       class: ["circle2"],
                     }),
-                    er.component({
-                      element: "circle3-div",
+                    am.component({
+                      el: "circle3-div",
                       class: ["circle3"],
                     }),
                   ],
                 }),
-                er.component({
-                  element: "label-div",
+                am.component({
+                  el: "label-div",
                   text: i.component.text.length > 0 ? i.component.text : "",
                   class: ["label"],
                   build: (_) => {
@@ -82,15 +86,15 @@ export class htmlRender extends Component {
         });
       }
       if (i.component.type === "Line") {
-        LayerEl = er.component({
-          element: "line-div",
+        LayerEl = am.component({
+          el: "line-div",
           class: [
             "com-line",
             i.isHighlight === true ? "com-highlight" : "com-not-highlight",
           ],
           children: [
-            er.component({
-              element: "line-inner-div",
+            am.component({
+              el: "line-inner-div",
               class: ["inner"],
               text: i.component.text,
               build: (_) => {
@@ -101,15 +105,15 @@ export class htmlRender extends Component {
         });
       }
       if (i.component.type === "Footer") {
-        LayerEl = er.component({
-          element: "footer-div",
+        LayerEl = am.component({
+          el: "footer-div",
           class: [
             "com-footer",
             i.isHighlight === true ? "com-highlight" : "com-not-highlight",
           ],
           children: [
-            er.component({
-              element: "footer-inner-div",
+            am.component({
+              el: "footer-inner-div",
               class: ["inner"],
             }),
           ],
@@ -169,7 +173,7 @@ export class htmlRender extends Component {
     const activePageLayer = cps
       .getPageLayerData()
       .filter((i) => i.canvas.isHighlight === true);
-    const titleEl = er.element.htmlInnerTitle.target;
+    const titleEl = am.element.htmlInnerTitle.target;
     if (activePageLayer.length !== 0) {
       titleEl.textContent = activePageLayer[0].canvas.layerName;
     }

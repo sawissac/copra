@@ -2,40 +2,53 @@ import { Component } from "./component/component.js";
 
 const optionList = ["Empty", "Header", "Line", "Footer"];
 const layerStyleBtn = [
-  "btn-btn",
+  "btn",
   "btn-light",
+  "bg-white",
   "d-flex",
-  "j-left",
+  "justify-content-left",
   "fs-12",
   "text-dark",
-  "border-color-grey",
-  "border-bottom-2",
+  "border",
+  "rounded-0",
+  "border-grey",
+  "border-2",
+  "border-top-0",
+  "border-start-0",
+  "border-end-0",
 ];
 
-const MainContainer = er.component({
-  element: "main-conponent-div",
+const MainContainer = am.component({
+  el: "main-conponent-div",
   class: ["m-top-4", "br-5"],
   children: [
-    er.component({
-      element: "builder-element-label-div",
+    am.component({
+      el: "builder-element-label-div",
       text: "Element",
       class: [
-        "btn-btn",
+        "btn",
         "btn-light",
+        "bg-white",
         "d-flex",
-        "j-left",
+        "justify-content-left",
         "fs-12",
         "text-dark",
-        "border-color-grey",
-        "border-bottom-2",
+        "border",
+        "rounded-0",
+        "border-grey",
+        "border-2",
+        "border-top-0",
+        "border-start-0",
+        "border-end-0",
+        "shadow-sm"
       ],
     }),
-    er.component({
-      element: "warper-div",
+    am.component({
+      el: "warper-div",
       class: ["d-none"],
       children: [
-        er.component({
-          element: "status-div",
+        am.component({
+          el: "status-div",
           class: [
             "my-4",
             "px-4",
@@ -48,97 +61,92 @@ const MainContainer = er.component({
             "fs-12",
           ],
         }),
-        er.component({
-          element: "builder-options-label-div",
-          class: [...layerStyleBtn, "my-4"],
+        am.component({
+          el: "builder-options-label-div",
+          class: [...layerStyleBtn, "my-1"],
           build: (_) => {
-            er.icon(_, [""], false, "Choose element", true, true);
+            addIcon({ target: _, text: "Choose element", dropdown: true });
           },
         }),
-        er.component({
-          element: "builder-options-div",
-          class: ["my-4", "px-4", "h-100", "overflow-y", "d-none"],
+        am.component({
+          el: "builder-options-div",
+          class: ["my-1", "px-1", "h-100", "overflow-y", "d-none"],
         }),
-        er.component({
-          element: "builder-color-label-div",
-          class: [...layerStyleBtn, "my-4"],
+        am.component({
+          el: "builder-color-label-div",
+          class: [...layerStyleBtn, "my-1"],
           build: (_) => {
-            er.icon(_, [""], false, "Text color", true, true);
+            addIcon({ target: _, text: "Text color", dropdown: true });
           },
         }),
-        er.component({
-          element: "builder-color-warper-div",
+        am.component({
+          el: "builder-color-warper-div",
           class: ["d-none"],
           children: [
-            er.component({
-              element: "builder-color-display-div",
+            am.component({
+              el: "builder-color-display-div",
               class: [
-                "my-4",
-                "px-4",
-                "br-5",
-                "py-10",
                 "d-flex",
-                "j-center",
+                "justify-content-center",
                 "fs-12",
                 "text-bold",
+                "py-2",
+                "mt-2",
+                "rounded",
               ],
               text: "Your text",
             }),
-            er.component({
-              element: "color-container-div",
+            am.component({
+              el: "color-container-div",
               class: [
                 "h-100",
                 "d-flex",
-                "flex-warp",
+                "flex-wrap",
                 "overflow-y",
-                "my-4",
-                "j-center",
+                "my-2",
+                "justify-content-center",
               ],
             }),
-            er.component({
-              element: "color-comfirm-div",
-              class: [
-                "btn-btn",
-                "btn-blue",
-                "d-flex",
-                "j-left",
-                "br-5",
-                "fs-12",
-                "text-white",
-                "my-4",
-                "j-center",
-              ],
-              build: (_) => {
-                er.icon(_, [""], false, "Comfirm text color", true, false);
-              },
+            am.component({
+              el: "color-comfirm-div",
+              class: ["btn", "btn-primary", "fs-12","d-block"],
+              text: "Comfirm text color",
             }),
           ],
         }),
-        er.component({
-          element: "text-label-div",
-          class: [...layerStyleBtn, "my-4"],
+        am.component({
+          el: "text-label-div",
+          class: [...layerStyleBtn, "my-1"],
           build: (_) => {
-            er.icon(_, [""], false, "Text", true, true);
+            addIcon({
+              target: _,
+              text: "Text",
+              dropdown: true,
+            });
           },
         }),
-        er.component({
-          element: "text-input-input",
-          class: [...layerStyleBtn, "bg-grey", "text-dark", "d-none", "br-5"],
+        am.component({
+          el: "text-input-input",
+          class: ["form-control","outline-none","fs-12","bg-light","d-none"],
           build: (_) => {
             _.type = "text";
             _.placeholder = "Your text";
           },
         }),
-        er.component({
-          element: "height-label-div",
-          class: [...layerStyleBtn, "my-4"],
+        am.component({
+          el: "height-label-div",
+          class: [...layerStyleBtn],
           build: (_) => {
-            er.icon(_, [""], false, "Height", true, true);
+            addIcon({
+              target: _,
+              text: "Height",
+              dropdown: true,
+            });
           },
         }),
-        er.component({
-          element: "height-input-input",
-          class: [...layerStyleBtn, "bg-grey", "text-dark", "d-none", "br-5"],
+        am.component({
+          el: "height-input-input",
+          class: ["form-control","outline-none","fs-12","bg-light","d-none","my-1"],
           build: (_) => {
             _.type = "text";
             _.placeholder = "0";
@@ -198,9 +206,9 @@ export class ComponentBuilder extends Component {
       }
     };
     optionList.map((i) => {
-      const options = er.component({
-        element: "option-list-div",
-        class: [...layerStyleBtn, "my-4", "j-center","bg-grey"],
+      const options = am.component({
+        el: "option-list-div",
+        class: ["btn","btn-light","fs-12","mx-2","my-2"],
         text: i,
         build: (_) => {
           _.onclick = () => {

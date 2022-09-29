@@ -1,79 +1,73 @@
 import { Component } from "./component/component.js";
 
-const MainContainer = er.component({
-  element: "background-engine-container-div",
+const MainContainer = am.component({
+  el: "background-engine-container-div",
   class: ["br-5"],
   children: [
-    er.component({
-      element: "background-label-div",
+    am.component({
+      el: "background-label-div",
       text: "Background",
       class: [
-        "btn-btn",
+        "btn",
         "btn-light",
+        "bg-white",
         "d-flex",
         "j-left",
         "fs-12",
         "text-dark",
-        "border-color-grey",
-        "border-bottom-2"
+        "border",
+        "rounded-0",
+        "border-grey",
+        "border-2",
+        "border-top-0",
+        "border-start-0",
+        "border-end-0",
+        "shadow-sm"
       ],
     }),
-    er.component({
-      element: "warper-div",
+    am.component({
+      el: "warper-div",
       class: ["d-none"],
       children: [
-        er.component({
-          element: "background-container-div",
+        am.component({
+          el: "background-container-div",
           class: [
             "h-100",
             "d-flex",
-            "flex-warp",
+            "flex-wrap",
             "overflow-y",
-            "my-4",
-            "j-center",
+            "my-2",
+            "justify-content-center",
           ],
         }),
-        er.component({
-          element: "file-input-none-input",
-          class: [...layerStyleBtn, "d-none"],
+        am.component({
+          el: "file-input-none-input",
+          class: ["d-none"],
           build: (_) => {
             _.type = "file";
             _.src = "";
           },
         }),
-        er.component({
-          element: "image-upload-btn-div",
+        am.component({
+          el: "image-upload-btn-div",
           text: "Upload Image",
-          class: [
-            "btn-btn",
-            "btn-blue",
-            "d-flex",
-            "j-left",
-            "fs-12",
-            "text-white",
-            "br-5",
-            "my-4",
-            "j-center",
-          ],
+          class: ["btn", "btn-primary","btn-sm","d-block","fs-12"],
         }),
       ],
     }),
   ],
 });
-
+const imageUploadBtn = MainContainer.inner.warper.inner.imageUploadBtn.target;
+const fileInput = MainContainer.inner.warper.inner.fileInputNone.target;
+const backgroundLabelBtn = MainContainer.inner.backgroundLabel.target;
+const mainContainerWraper = MainContainer.inner.warper.target;
+const backgroundContainer =
+  MainContainer.inner.warper.inner.backgroundContainer.target;
 export class BackgroundEngine extends Component {
   constructor() {
     super();
   }
   build() {
-    const imageUploadBtn =
-      MainContainer.inner.warper.inner.imageUploadBtn.target;
-    const fileInput = MainContainer.inner.warper.inner.fileInputNone.target;
-    const backgroundLabelBtn = MainContainer.inner.backgroundLabel.target;
-    const mainContainerWraper = MainContainer.inner.warper.target;
-    const backgroundContainer =
-      MainContainer.inner.warper.inner.backgroundContainer.target;
-
     let backgroundLabelToggler = true;
 
     backgroundLabelBtn.onclick = () => {
@@ -85,33 +79,34 @@ export class BackgroundEngine extends Component {
         backgroundLabelToggler = true;
       }
     };
-    er.element.htmlImage.set((_) => {
+    am.element.htmlImage.modify((_) => {
       _.style.backgroundColor = stoV2.getCanvasBackground();
-      const imageData = stoV2.getImageData();
-      if (imageData.length > 0) {
-        _.style.backgroundImage = `url(${imageData})`;
-        imageUploadBtn.textContent = "Cancel";
-      }
+      getCopraImageData().then((imageData) => {
+        if (imageData.length > 0) {
+          _.style.backgroundImage = `url(${imageData})`;
+          imageUploadBtn.textContent = "Cancel";
+        }
+      });
     });
     imageUploadBtn.onclick = () => {
       if (imageUploadBtn.textContent !== "Cancel") {
         fileInput.click();
       } else {
         fileInput.value = "";
-        er.element.htmlImage.set((_) => {
+        am.element.htmlImage.modify((_) => {
           _.style.backgroundImage = null;
         });
         imageUploadBtn.textContent = "Upload Image";
-        stoV2.val("").storeToImageData();
+        updateCopraImageData("");
       }
 
       fileInput.addEventListener("change", function (ev) {
         const reader = new FileReader();
         reader.addEventListener("load", () => {
           const uploaded_image = reader.result;
-          er.element.htmlImage.set((_) => {
+          am.element.htmlImage.modify((_) => {
             _.style.backgroundImage = `url(${uploaded_image})`;
-            stoV2.val(uploaded_image).storeToImageData();
+            updateCopraImageData(uploaded_image);
           });
           imageUploadBtn.textContent = "Cancel";
         });
@@ -139,7 +134,7 @@ export class BackgroundEngine extends Component {
       Object.assign(div.style, style);
       div.onclick = () => {
         stoV2.val(colorDataArr[i]).storeToCanvasBackground();
-        er.element.htmlImage.set((_) => {
+        am.element.htmlImage.modify((_) => {
           _.style.backgroundColor = colorDataArr[i];
           this.getWorker();
         });
@@ -148,5 +143,8 @@ export class BackgroundEngine extends Component {
     }
 
     this.getHost()._layer_.appendChild(MainContainer.target);
+  }
+  imageUploaded() {
+    imageUploadBtn.textContent = "Cancel";
   }
 }

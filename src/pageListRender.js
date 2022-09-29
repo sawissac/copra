@@ -20,24 +20,27 @@ export class PageListRender extends Component {
       this.setState(this.state.filter((i) => i.canvas.isHighlight !== true));
     }
   }
-
   build() {
-    const EditBtn = er.component({
-      element: "add-btn-div",
-      class: ["mx-4"],
+    const EditBtn = am.component({
+      el: "add-btn-div",
       build: (_) => {
-        er.icon(_, ["bi", "bi-pen-fill", "mx-5"], true);
+        addIcon({
+          target: _,
+          iconstart: ["bi", "bi-pen-fill"],
+        });
         _.onclick = () => {
           this.edit = true;
           this.render();
         };
       },
     });
-    const AddBtn = er.component({
-      element: "add-btn-div",
-      class: ["mx-4"],
+    const AddBtn = am.component({
+      el: "add-btn-div",
       build: (_) => {
-        er.icon(_, ["bi", "bi-plus-lg", "mx-5"], true);
+        addIcon({
+          target: _,
+          iconstart: ["bi", "bi-plus-lg"],
+        });
         _.onclick = () => {
           this.edit = false;
           this.createPageLayer();
@@ -46,11 +49,13 @@ export class PageListRender extends Component {
         };
       },
     });
-    const DeleteBtn = er.component({
-      element: "delete-btn-div",
-      class: ["mx-4"],
+    const DeleteBtn = am.component({
+      el: "delete-btn-div",
       build: (_) => {
-        er.icon(_, ["bi", "bi-trash3-fill"], true);
+        addIcon({
+          target: _,
+          iconstart: ["bi", "bi-trash3-fill"],
+        });
         _.onclick = () => {
           this.edit = false;
           this.deletePageLayer();
@@ -59,33 +64,34 @@ export class PageListRender extends Component {
         };
       },
     });
-    const Block = er.component({
-      element: "block-div",
-      class: ["block"],
+    const Block = am.component({
+      el: "block-div",
+      class: ["flex-fill"],
     });
-    this.getHost()._btn_.appendChild(Block.target);
-    this.getHost()._btn_.appendChild(EditBtn.target);
-    this.getHost()._btn_.appendChild(AddBtn.target);
-    this.getHost()._btn_.appendChild(DeleteBtn.target);
+    this.getHost()._btn_.children([Block, EditBtn, AddBtn, DeleteBtn]);
     this.render();
   }
   render() {
-    this.getHost()._layer_.innerHTML = "";
+    this.getHost()._layer_._children();
     this.getCpsState();
     this.state.map((i) => {
-      let layerBtn = er.component({
-        element: "layer-btn-div",
+      let layerBtn = am.component({
+        el: "layer-btn-div",
         class: [
-          "btn-btn",
+          "btn",
+          "btn-sm",
           "btn-light",
           "d-flex",
-          "j-left",
           "fs-12",
-          "text-dark",
+          "my-1",
           i.canvas.isHighlight === true ? "highlight" : "not-highlight",
         ],
         build: (_) => {
-          er.icon(_, ["bi", "bi-collection"], true, i.canvas.layerName, true);
+          addIcon({
+            target: _,
+            iconstart: ["bi", "bi-collection","pe-1"],
+            text: i.canvas.layerName,
+          });
           _.onclick = () => {
             if (i.canvas.isHighlight !== true) {
               this.edit = false;
@@ -99,31 +105,37 @@ export class PageListRender extends Component {
               this.getWorker();
             }
           };
+          _.ondblclick = () => {
+            this.edit = true;
+            this.render();
+          };
         },
       });
 
       if (this.edit && i.canvas.isHighlight) {
-        layerBtn = er.component({
-          element: "layer-btn-div",
+        layerBtn = am.component({
+          el: "layer-btn-div",
           class: [
-            "btn-btn",
-            "text-dark",
+            "btn",
+            "btn-sm",
             "btn-light",
-            "border-bottom-2",
-            
             "d-flex",
-            "j-left",
             "fs-12",
-            "br-5",
-            "my-4",
+            "my-1",
             i.canvas.isHighlight === true ? "highlight" : "not-highlight",
           ],
-          build: (_btn) => {
-            er.icon(_btn, ["bi", "bi-collection"], true, "", false);
-            const input = er.component({
-              element: "cansvas-input-input",
-              class: ["text-left"],
-              build: (_input) => {
+          build: (_btn, mod) => {
+            addIcon({
+              target: _btn,
+              iconstart: ["bi", "bi-collection"],
+            });
+            const input = am.component({
+              el: "cansvas-input-input",
+              class: ["outline-none", "fs-12", "ms-1", "fw-bold"],
+              build: (_input, mod) => {
+                mod.style({
+                  background: "transparent",
+                });
                 _input.type = "text";
                 _input.value = i.canvas.layerName;
                 _input.onclick = () => {
@@ -155,7 +167,7 @@ export class PageListRender extends Component {
           },
         });
       }
-      this.getHost()._layer_.appendChild(layerBtn.target);
+      this.getHost()._layer_.children([layerBtn]);
     });
   }
   highlightSetting(p, c, id, key) {

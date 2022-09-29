@@ -11,16 +11,11 @@ export class Tooltips extends Component {
     this.setState(list);
     return this;
   }
-  setBtnIconStyle(iconList, btnName) {
-    const [labelEl] = er.icon(this.getHost()._btn_, iconList, true, btnName, true, true);
-    this.btnLabelEl = labelEl;
-    return this;
-  }
-  setListIconStyle(iconList){
+  setListIconStyle(iconList) {
     this.listIcon = iconList;
     return this;
   }
-  getBtnLabel(){
+  getBtnLabel() {
     return this.btnLabelEl;
   }
   offset(value) {
@@ -54,15 +49,19 @@ export class Tooltips extends Component {
       }
     };
     this.getHost()._box_.onmouseleave = () => {
-        buttonToggle = false;
-        this.getHost()._box_.style.display = "none";
+      buttonToggle = false;
+      this.getHost()._box_.style.display = "none";
     };
     this.state.map((i) => {
-      const listEl = er.component({
-        element: "list-div",
-        class: ["btn-btn", "ts-12", "btn-dark", "j-left"],
+      const listEl = am.component({
+        el: "list-div",
+        class: ["d-flex", "fs-12", "btn","btn-dark", "justify-content-left"],
         build: (_) => {
-          er.icon(_, this.listIcon, true, i.listName, true);
+          addIcon({
+            target: _,
+            iconstart: this.listIcon,
+            text: i.listName,
+          });
           _.onclick = () => {
             i.fun();
             this.getHost()._box_.style.display = "none";

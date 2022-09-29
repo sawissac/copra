@@ -8,11 +8,15 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.0.1/css/bootstrap.min.css"
         integrity="sha512-Ez0cGzNzHR1tYAv56860NLspgUGuQw16GiOOp/I2LuTmpSK9xDXlgJz3XN4cnpXWDmkNBKXR/VDMTCnAaEooxA=="
         crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.9.1/font/bootstrap-icons.min.css"
+        integrity="sha512-5PV92qsds/16vyYIJo3T/As4m2d8b6oWYfoqV+vtizRB6KhF1F9kYzWzQmsO6T3z3QG2Xdhrx7FQ+5R1LiQdUA=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.0.1/css/bootstrap-reboot.min.css"
         integrity="sha512-ZJ+KmS7LSGuRKphz9V5eX99TPMci9Ngt5lCk0XFdYJmBg+ZDr/4r/HSsMEiUKmR7bxe1eAv768c2YuSl/OGiFw=="
         crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link rel="stylesheet" href="./css/create_page.css">
-
     <title>Copra - Create</title>
 </head>
 
@@ -27,13 +31,14 @@
                         </div>
                         <img src="./img/waux_logo.svg" alt="" width="60">
                     </div>
-                    <input type="text" id="canvasNameInput"
+                    <input type="text" id="canvasNameInput" tabindex="1"
                         class="form-control-lg text-start border border-dark border-2" placeholder="Project Name..."
                         autocomplete="off">
                     <div class="dropdown">
-                        <button
+                        <button tabindex="2"
                             class="btn btn-light btn-lg dropdown-toggle border border-dark border-2 w-100 text-start"
-                            type="button" id="aspectDropDown" data-bs-toggle="dropdown" aria-expanded="false">Aspect</button>
+                            type="button" id="aspectDropDown" data-bs-toggle="dropdown"
+                            aria-expanded="false">Aspect</button>
                         <ul class="dropdown-menu" aria-labelledby="aspectDropDown" style="width: 300px !important;">
                             <li class="dropdown-item" onclick="changeLabel('aspect-1:1');">aspect-1:1</li>
                             <li class="dropdown-item" onclick="changeLabel('aspect-9:16');">aspect-9:16</li>
@@ -41,18 +46,21 @@
                         </ul>
                     </div>
                     <div class="form-check mt-2 d-flex justify-content-center">
-                        <input class="form-check-input me-2" type="checkbox" id="checkboxTemplate">
+                        <input tabindex="3" class="form-check-input me-2" type="checkbox" id="checkboxTemplate">
                         <label class="form-check-label" for="checkboxTemplate">
                             Use Template
                         </label>
                     </div>
-                    <div class="btn btn-light border-2 border-dark py-2 rounded-pill mt-3" onclick="resetEditor()">
+                    <div tabindex="4" class="btn btn-light border-2 border-dark py-2 rounded-pill mt-3"
+                        onclick="resetEditor()">
                         Reset Editor
                     </div>
-                    <div class="btn btn-light border-2 border-dark py-2 rounded-pill" onclick="editRecent()">
+                    <div tabindex="5" class="btn btn-light border-2 border-dark py-2 rounded-pill"
+                        onclick="editRecent()">
                         Edit Recent
                     </div>
-                    <div class="btn btn-dark py-2 rounded-pill" onclick="goToEditorCreateNew()">Create Project</div>
+                    <div tabindex="6" class="btn btn-dark py-2 rounded-pill" onclick="goToEditorCreateNew()">Create
+                        Project</div>
                     <hr class="my-3">
                     <p class="text-center">Created by waux</p>
                 </div>
@@ -63,59 +71,19 @@
             </div>
         </div>
     </div>
+    <script src="https://cdn.jsdelivr.net/npm/idb@7/build/umd.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.0.1/js/bootstrap.bundle.min.js"
         integrity="sha512-sH8JPhKJUeA9PWk3eOcOl8U+lfZTgtBXD41q6cO/slwxGHCxKcW45K4oPCUhHG7NMB4mbKEddVmPuTXtpbCbFA=="
         crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-    <script src="./js/state/storage.js"></script>
-    <script src="./js/state/state.js"></script>
+    <script src="./src/localDatabase/db.js"></script>
+    <script src="./src/state/storage.js"></script>
+    <script src="./src/state/state.js"></script>
+    <script src="./packages/automa/src/automa.js"></script>
     <script>
-        var dropdownElementList = [].slice.call(document.querySelectorAll('.dropdown-toggle'))
-        var dropdownList = dropdownElementList.map(function (dropdownToggleEl) {
-            return new bootstrap.Dropdown(dropdownToggleEl)
-        })
-        const aspectLabel = document.getElementById("aspectDropDown")
-        const canvasNameInput = document.getElementById("canvasNameInput")
-        const templateCheck = document.getElementById("checkboxTemplate")
-
-        templateCheck.onclick = function () {
-            aspectLabel.textContent = "aspect-1:1";
-        }
-        function resetEditor() {
-            cps.updateApp();
-            alert("Editor Reseted");
-        }
-        function editRecent(){
-            const path = window.location.protocol + "//" + window.location.hostname + ":" + window.location.port + "/Editor/";
-            window.location.href = path;
-        }
-        function changeLabel(val) {
-            aspectLabel.textContent = val;
-        }
-        function goToEditorCreateNew() {
-            let inputValue = canvasNameInput.value;
-            let dropdownLabel = aspectLabel.textContent;
-            let pass = 0;
-            if (templateCheck.checked) {
-                cps.updateUsingTemplate();
-            } else {
-                cps.updateApp();
-            }
-            if (dropdownLabel !== "Aspect") {
-                pass++;
-                stoV2.val(dropdownLabel).storeToCanvasAspect();
-            }
-            if (inputValue.length > 0) {
-                pass++;
-                stoV2.val(inputValue).storeToProjectName();
-            }
-            if (pass >= 2) {
-                const path = window.location.protocol + "//" + window.location.hostname + ":" + window.location.port + "/Editor/";
-                window.location.href = path;
-            }else{
-                alert("Please fill the requirement")
-            }
-        }
+        const am = new Automa();
     </script>
+    <script src="./src/alert.js"></script>
+    <script src="./app.js"></script>
 </body>
 
 </html>

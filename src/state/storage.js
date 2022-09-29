@@ -5,14 +5,9 @@ class CopraStorage {
   val(value) {
     this.value = value;
     return this;
-  }
-  storeToPageData() {
-    localStorage.setItem("pageData", JSON.stringify(this.value));
-    return this;
-  }
-  storeToImageData() {
-    localStorage.setItem("imageData", JSON.stringify(this.value));
-    return this;
+  } 
+  isExists(val){
+    return localStorage.getItem(val) !== null;
   }
   storeToCanvasBackground(){
     localStorage.setItem("canvasBackground", JSON.stringify(this.value));
@@ -37,12 +32,6 @@ class CopraStorage {
   }
   getCanvasAspect(){
     return JSON.parse(localStorage.getItem("canvasAspect"));
-  }
-  getPageData() {
-    return JSON.parse(localStorage.getItem("pageData"));
-  }
-  getImageData() {
-    return JSON.parse(localStorage.getItem("imageData"));
   }
   getCanvasBackground(){
     return JSON.parse(localStorage.getItem("canvasBackground")); 

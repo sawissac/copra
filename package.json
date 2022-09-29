@@ -2,13 +2,17 @@
   "dependencies": {
     "@popperjs/core": "^2.11.5",
     "bootstrap-icons": "^1.9.1",
-    "html-to-image": "^1.9.0"
+    "html-to-image": "^1.9.0",
+    "idb": "^7.0.2"
   },
   "name": "copra",
   "version": "1.0.0",
   "main": "app.js",
   "scripts": {
-    "sass-compile": "sass ./css/style.scss ./css/style.css -w"
+    "minify-build":"minify ./src/app.build.js > ./editor/dist/app.build.js",
+    "minify-core":"minify ./src/app.core.js > ./editor/dist/app.core.js",
+    "minify-app": "minify ./src/app.js > ./editor/dist/app.js",
+    "build": "npm run minify-build && npm run minify-core && npm run minify-app"
   },
   "keywords": [],
   "author": "",

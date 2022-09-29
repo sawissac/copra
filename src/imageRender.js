@@ -1,28 +1,28 @@
 import { Component } from "./component/component.js";
 
 let scaleBtnStyle = [
-  "ts-12",
-  "btn-btn",
-  "btn-max",
+  "btn",
+  "btn-sm",
   "btn-light",
-  "text-dark",
-  "b-primary",
-  "br-5",
-  "border-color-grey",
-  "mx-4",
+  "bg-white",
+  "border",
+  "border-2",
+  "rounded",
+  "py-1",
+  "mx-1",
+  "fs-12",
+  "d-flex",
 ];
-let renderDownloadBtn = er.component({
-  element: "download-a",
+let renderDownloadBtn = am.component({
+  el: "download-a",
   class: [
-    "ts-12",
-    "btn-btn",
-    "btn-max",
-    "btn-blue",
-    "text-white",
-    "b-primary",
-    "br-5",
-    "border-color-grey",
-    "mx-4",
+    "btn",
+    "btn-sm",
+    "btn-primary",
+    "py-1",
+    "mx-1",
+    "fs-12",
+    "d-flex",
   ],
   text: "DOWNLOAD",
   build: (_) => {
@@ -76,8 +76,8 @@ export class ImageRender extends Component {
       },
     ];
     scaleBtns.map((i) => {
-      let btn = er.component({
-        element: "sacle-btn-div",
+      let btn = am.component({
+        el: "sacle-btn-div",
         class: scaleBtnStyle,
         text: i.type,
         build: (_) => {
@@ -86,8 +86,8 @@ export class ImageRender extends Component {
       });
       this.getHost()._controller_.appendChild(btn.target);
     });
-    let closeBtn = er.component({
-      element: "image-close-div",
+    let closeBtn = am.component({
+      el: "image-close-div",
       class: scaleBtnStyle,
       text: "Close",
       build: (_) => {
@@ -122,9 +122,11 @@ export class ImageRender extends Component {
       .then((canvas) => {
         this.getHost()._image_.appendChild(canvas);
       });
+
     const activePageLayer = cps
       .getPageLayerData()
       .filter((i) => i.canvas.isHighlight === true);
+
     this.engine
       .toPng(this.getHost()._html_, {
         pixelRatio: this.pixelRatio,
@@ -142,12 +144,12 @@ export class ImageRender extends Component {
       (i) => i.isHighlight === true
     );
     if (activeEleLayer.length === 0 && value === true) {
-      er.element.htmlLayer.set((_) => {
+      am.element.htmlLayer.modify((_) => {
         _.classList.remove("com-highlight");
       });
     }
     if (activeEleLayer.length === 0 && value === false) {
-      er.element.htmlLayer.set((_) => {
+      am.element.htmlLayer.modify((_) => {
         _.classList.add("com-highlight");
       });
     }

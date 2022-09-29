@@ -7,7 +7,7 @@ $light-dim: rgb(242, 242, 242);
 $info: rgb(63, 79, 157);
 $info-dark: rgb(68, 91, 205);
 $dark: #1d1d1d;
-$dark-light: rgb(32, 32, 32);
+$dark-light: rgb(40, 40, 40);
 $blue: #0B92DE;
 $blue-light: #289fe4;
 $grey: #efefef;
@@ -143,7 +143,7 @@ $grey-dark: #e7e7e7;
   input {
     margin-left: 5px;
     background-color: transparent;
-    color: rgb(0, 208, 255);
+    color: rgb(34, 34, 34);
     font-weight: 600;
     border: none;
     outline: none;
@@ -160,9 +160,11 @@ $grey-dark: #e7e7e7;
 @include bg("primary", $primary);
 @include bg("secoundary", $secoundary);
 @include bg("dark", $dark);
+@include bg("dark-light", $dark-light);
 @include bg("light", $light);
 @include bg("grey", $grey);
 @include bg("grey-dark", $grey-dark);
+@include bg("blue", $blue);
 @include btn("primary", $primary, $secoundary-light);
 @include btn("light", $light, $light-dim);
 @include btn("secoundary", $secoundary, $secoundary-light);
@@ -199,6 +201,7 @@ $grey-dark: #e7e7e7;
 @include m("y", 4);
 @include m("top", 4);
 @include m("top", 10);
+@include m("top", 30);
 @include m("bottom", 4);
 @include fd("column");
 @include fs(12);
@@ -275,7 +278,7 @@ $grey-dark: #e7e7e7;
         z-index: 1;
         position: relative;
         background-position: center;
-        background-size: 100%;
+        background-size: cover;
         background-repeat: no-repeat;
       }
     }
@@ -409,7 +412,11 @@ $grey-dark: #e7e7e7;
     border: 1px solid $hight-light;
   }
 }
-
+.hover-disable{
+  &:hover{
+    border:none;
+  }
+}
 .aspect-1-1 {
   aspect-ratio: 1/1;
   transition: 0.3s;
@@ -504,6 +511,18 @@ $grey-dark: #e7e7e7;
 }
 .flex-warp {
   flex-wrap: wrap;
+}
+.text-none{
+  text-decoration: none;
+}
+.sticky-top{
+  position: sticky;
+  top:0;
+  left:0;
+  right: 0;
+}
+.drops{
+  box-shadow: 0 2px 7px 0px rgb(0 0 0 / 35%);
 }
 /* width */
 *::-webkit-scrollbar {
