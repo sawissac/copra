@@ -1,17 +1,36 @@
 import { Component } from "./component/component.js";
+import { createElement } from "../packages/automa/src/automa.js";
+import { addIcon, pick } from "./app.build.con.js";
+import { cps } from "./state/state.js";
+import { iconList } from "./iconEngine.js";
+import { createLayerState } from "./defaultBuild.js";
+
+const layerBtnStyle = [
+  "btn",
+  "btn-sm",
+  "btn-light",
+  "d-flex",
+  "fs-12",
+  "my-1",
+  "py-2",
+];
 
 export class LayerRander extends Component {
   constructor() {
     super();
     this.edit = false;
     this.canvas = false;
+    this.setHost({
+      _htmltitle_: pick("htmlInnerTitle"),
+      _layerlabel_: pick("layerInnerLayerLabel"),
+      _canvasbtn_: pick("layerInnerCanvasButton"),
+      _layer_: pick("layerInnerLayerList"),
+      _canvaslayer_: pick("htmlLayer"),
+    });
+    this.build();
   }
   createLayer() {
-    this.state.push({
-      layerName: "Element",
-      isHighlight: false,
-      component: { type: "Empty", text: "", height: 50, textColor: "" },
-    });
+    this.state.push(createLayerState({layerName: "New Layer"}));
     this.updateCpsState();
     this.getWorker();
   }
@@ -26,7 +45,7 @@ export class LayerRander extends Component {
     const isactiveLayer = this.state.filter((i) => i.isHighlight === true);
     if (isactiveLayer.length !== 0) {
       this.getHost()._layer_._children();
-      const MoveLayerCancelBtn = am.component({
+      const MoveLayerCancelBtn = createElement({
         el: "move-layer-cancel-div",
         class: [
           "btn",
@@ -36,10 +55,10 @@ export class LayerRander extends Component {
           "fs-12",
           "my-1",
           "text-center",
-          "py-2"
+          "py-2",
         ],
         text: "CANCEL",
-        build: (_,mod) => {
+        build: (_, mod) => {
           _.onclick = () => {
             this.render();
           };
@@ -47,7 +66,7 @@ export class LayerRander extends Component {
       });
       this.getHost()._layer_.children([MoveLayerCancelBtn]);
       this.state.map((i) => {
-        const MoveLayerBtn = am.component({
+        const MoveLayerBtn = createElement({
           el: "move-layer-btn-div",
           class: [
             "btn",
@@ -62,16 +81,16 @@ export class LayerRander extends Component {
           children:
             i.isHighlight !== true
               ? [
-                  am.component({
+                  createElement({
                     el: "up-layer-btn-div",
                     class: [
                       "btn",
                       "btn-sm",
-                      "btn-light",
+                      "btn-primary",
                       "d-flex",
                       "fs-12",
                       "my-1",
-                      "text-center", 
+                      "text-center",
                     ],
                     build: (_) => {
                       addIcon({
@@ -86,25 +105,25 @@ export class LayerRander extends Component {
                       };
                     },
                   }),
-                  am.component({
-                    el: "up-layer-btn-div",
+                  createElement({
+                    el: "label-layer-btn-div",
                     class: [
                       "btn",
                       "btn-sm",
-                      "btn-light",
                       "fs-12",
                       "text-center",
                       "d-flex",
-                      "align-items-center"
+                      "align-items-center",
+                      "border-0"
                     ],
                     text: i.layerName,
                   }),
-                  am.component({
-                    el: "up-layer-btn-div",
+                  createElement({
+                    el: "down-layer-btn-div",
                     class: [
                       "btn",
                       "btn-sm",
-                      "btn-light",
+                      "btn-primary",
                       "d-flex",
                       "fs-12",
                       "my-1",
@@ -125,9 +144,9 @@ export class LayerRander extends Component {
                   }),
                 ]
               : [
-                  am.component({
+                  createElement({
                     el: "up-layer-btn-div",
-                    class: ["flex-fill","py-1"],
+                    class: ["flex-fill", "py-1","text-primary"],
                     text: i.layerName,
                   }),
                 ],
@@ -137,66 +156,25 @@ export class LayerRander extends Component {
     }
   }
   build() {
-    const MoveBtn = am.component({
-      el: "move-btn-div",
-      class: ["me-1"],
-      build: (_) => {
-        addIcon({
-          target: _,
-          iconstart: ["bi", "bi-arrows-move"],
-        });
-        _.onclick = () => {
-          this.moveLayer();
-        };
-      },
-    });
-    const EditBtn = am.component({
-      el: "add-btn-div",
-      build: (_) => {
-        addIcon({
-          target: _,
-          iconstart: ["bi", "bi-pen-fill"],
-        });
-        _.onclick = () => {
-          this.edit = true;
-          this.render();
-        };
-      },
-    });
-    const AddBtn = am.component({
-      el: "add-btn-div",
-      build: (_) => {
-        addIcon({
-          target: _,
-          iconstart: ["bi", "bi-plus-lg"],
-        });
-        _.onclick = () => {
-          this.edit = false;
-          this.createLayer();
-          this.updateCpsState();
-          this.render();
-        };
-      },
-    });
-    const DeleteBtn = am.component({
-      el: "delete-btn-div",
-      build: (_) => {
-        addIcon({
-          target: _,
-          iconstart: ["bi", "bi-trash3-fill"],
-        });
-        _.onclick = () => {
-          this.edit = false;
-          this.deleteLayer();
-          this.updateCpsState();
-          this.render();
-        };
-      },
-    });
-    const Block = am.component({
-      el: "block-div",
-      class: ["flex-fill"],
-    });
+    let moveFun = () => {
+      this.moveLayer();
+    };
+    let editFun = () => {
+      this.edit = true;
+      this.render();
+    };
+    let addFun = () => {
+      this.edit = false;
+      this.createLayer();
+      this.updateCpsState();
+      this.render();
+    };
+    let delFun = () => {
+      this.edit = false;
+      this.deleteLayer();
+      this.updateCpsState();
+      this.render();
+    }
 
     this.getHost()._canvasbtn_.target.onclick = () => {
       if (this.canvas !== true) {
@@ -208,13 +186,33 @@ export class LayerRander extends Component {
       }
     };
     this.updatePageTitle();
-    this.getHost()._layerlabel_.children([
-      Block,
-      MoveBtn,
-      EditBtn,
-      AddBtn,
-      DeleteBtn,
-    ]);
+    this.getHost()._layerlabel_.children(
+      iconList([
+        {
+          el: "flex-fill-div",
+        },
+        {
+          el: "move-layer-div",
+          icon: "bi-arrows-move",
+          click:moveFun
+        },
+        {
+          el: "edit-layer-div",
+          icon: "bi-pen-fill",
+          click: editFun,
+        },
+        {
+          el: "add-layer-div",
+          icon: "bi-plus-lg",
+          click: addFun,
+        },
+        {
+          el: "delete-layer-div",
+          icon: "bi-trash3-fill",
+          click: delFun,
+        },
+      ])
+    );
     this.render();
   }
   canvasBtnOff() {
@@ -230,15 +228,10 @@ export class LayerRander extends Component {
     this.getCpsState();
     this.updatePageTitle();
     this.state.map((i) => {
-      let layerBtn = am.component({
+      let layerBtn = createElement({
         el: "layer-btn-div",
         class: [
-          "btn",
-          "btn-sm",
-          "btn-light",
-          "d-flex",
-          "fs-12",
-          "my-1",
+          ...layerBtnStyle,
           i.isHighlight === true ? "highlight" : "not-highlight",
         ],
         build: (_) => {
@@ -266,15 +259,10 @@ export class LayerRander extends Component {
         },
       });
       if (this.edit && i.isHighlight) {
-        layerBtn = am.component({
+        layerBtn = createElement({
           el: "layer-btn-div",
           class: [
-            "btn",
-            "btn-sm",
-            "btn-light",
-            "d-flex",
-            "fs-12",
-            "my-1",
+            ...layerBtnStyle,
             i.isHighlight === true ? "highlight" : "not-highlight",
           ],
           build: (_btn) => {
@@ -282,7 +270,7 @@ export class LayerRander extends Component {
               target: _btn,
               iconstart: ["bi", "bi-bounding-box-circles"],
             });
-            const input = am.component({
+            const input = createElement({
               el: "cansvas-input-input",
               class: ["outline-none", "fs-12", "ms-1", "fw-bold"],
               build: (_input, mod) => {
@@ -396,6 +384,7 @@ export class LayerRander extends Component {
         target: layercanvasbtn.target,
         iconstart: ["bi", "bi-collection"],
         text: activePageLayer[0].canvas.layerName,
+        textBold: true
       });
     }
     const activeEleLayer = activePageLayer[0].canvas.data.filter(

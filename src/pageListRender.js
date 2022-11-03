@@ -1,96 +1,97 @@
 import { Component } from "./component/component.js";
+import { createElement } from "../packages/automa/src/automa.js";
+import { addIcon, pick } from "./app.build.con.js";
+import { cps } from "./state/state.js";
+import { iconList } from "./iconEngine.js";
+import { createPageLayerState } from "./defaultBuild.js";
+
+const layerBtnStyle = [
+  "btn",
+  "btn-sm",
+  "btn-light",
+  "d-flex",
+  "fs-12",
+  "my-1",
+  "py-2",
+];
 
 export class PageListRender extends Component {
   constructor() {
     super();
     this.edit = false;
+    this.setHost({
+      _btn_: pick("layerInnerPageBtn"),
+      _layer_: pick("layerInnerPageList"),
+    });
+    this.build();
   }
   createPageLayer() {
-    this.state.push({
-      canvas: {
-        id: Symbol(),
-        layerName: "New Canvas",
-        isHighlight: false,
-        data: [],
-      },
-    });
+    this.state.push(createPageLayerState({layerName: "New Page"}));
   }
   deletePageLayer() {
     if (this.state.length > 1) {
       this.setState(this.state.filter((i) => i.canvas.isHighlight !== true));
+      this.state[0].canvas.isHighlight = true;
     }
   }
   build() {
-    const EditBtn = am.component({
-      el: "add-btn-div",
-      build: (_) => {
-        addIcon({
-          target: _,
-          iconstart: ["bi", "bi-pen-fill"],
-        });
-        _.onclick = () => {
-          this.edit = true;
-          this.render();
-        };
-      },
-    });
-    const AddBtn = am.component({
-      el: "add-btn-div",
-      build: (_) => {
-        addIcon({
-          target: _,
-          iconstart: ["bi", "bi-plus-lg"],
-        });
-        _.onclick = () => {
-          this.edit = false;
-          this.createPageLayer();
-          this.updateCpsState();
-          this.render();
-        };
-      },
-    });
-    const DeleteBtn = am.component({
-      el: "delete-btn-div",
-      build: (_) => {
-        addIcon({
-          target: _,
-          iconstart: ["bi", "bi-trash3-fill"],
-        });
-        _.onclick = () => {
-          this.edit = false;
-          this.deletePageLayer();
-          this.updateCpsState();
-          this.render();
-        };
-      },
-    });
-    const Block = am.component({
-      el: "block-div",
-      class: ["flex-fill"],
-    });
-    this.getHost()._btn_.children([Block, EditBtn, AddBtn, DeleteBtn]);
+    let addFun = () => {
+      this.edit = false;
+      this.createPageLayer();
+      this.updateCpsState();
+      this.render();
+    };
+    let editFun = () => {
+      this.edit = true;
+      this.render();
+    };
+    let delFun = () => {
+      this.edit = false;
+      this.deletePageLayer();
+      this.updateCpsState();
+      this.render();
+      this.worker();
+    };
+    this.getHost()._btn_.children(
+      iconList([
+        {
+          el: "flex-fill-div",
+        },
+        {
+          el: "edit-layer-div",
+          icon: "bi-pen-fill",
+          click: editFun,
+        },
+        {
+          el: "add-layer-div",
+          icon: "bi-plus-lg",
+          click: addFun,
+        },
+        {
+          el: "delete-layer-div",
+          icon: "bi-trash3-fill",
+          click: delFun,
+        },
+      ])
+    );
     this.render();
   }
   render() {
     this.getHost()._layer_._children();
     this.getCpsState();
     this.state.map((i) => {
-      let layerBtn = am.component({
+      let layerBtn = createElement({
         el: "layer-btn-div",
         class: [
-          "btn",
-          "btn-sm",
-          "btn-light",
-          "d-flex",
-          "fs-12",
-          "my-1",
+          ...layerBtnStyle,
           i.canvas.isHighlight === true ? "highlight" : "not-highlight",
         ],
         build: (_) => {
           addIcon({
             target: _,
-            iconstart: ["bi", "bi-collection","pe-1"],
+            iconstart: ["bi", "bi-collection", "pe-1"],
             text: i.canvas.layerName,
+            iconStartMuted: true,
           });
           _.onclick = () => {
             if (i.canvas.isHighlight !== true) {
@@ -113,15 +114,10 @@ export class PageListRender extends Component {
       });
 
       if (this.edit && i.canvas.isHighlight) {
-        layerBtn = am.component({
+        layerBtn = createElement({
           el: "layer-btn-div",
           class: [
-            "btn",
-            "btn-sm",
-            "btn-light",
-            "d-flex",
-            "fs-12",
-            "my-1",
+            ...layerBtnStyle,
             i.canvas.isHighlight === true ? "highlight" : "not-highlight",
           ],
           build: (_btn, mod) => {
@@ -129,7 +125,7 @@ export class PageListRender extends Component {
               target: _btn,
               iconstart: ["bi", "bi-collection"],
             });
-            const input = am.component({
+            const input = createElement({
               el: "cansvas-input-input",
               class: ["outline-none", "fs-12", "ms-1", "fw-bold"],
               build: (_input, mod) => {

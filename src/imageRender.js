@@ -1,4 +1,7 @@
 import { Component } from "./component/component.js";
+import { createElement,getElementList } from "../packages/automa/src/automa.js";
+import { cps } from "./state/state.js";
+import { stoV2 } from "./state/storage.js";
 
 let scaleBtnStyle = [
   "btn",
@@ -13,7 +16,7 @@ let scaleBtnStyle = [
   "fs-12",
   "d-flex",
 ];
-let renderDownloadBtn = am.component({
+let renderDownloadBtn = createElement({
   el: "download-a",
   class: [
     "btn",
@@ -41,7 +44,7 @@ export class ImageRender extends Component {
       this.render();
     };
     let closeCanvas = () => {
-      this.getHost()._imageScene_.style.display = "none";
+      this.hide();
       this.canvasHighlightOff(false);
       stoV2.val("htmlmode").storeToCanvasMode();
     };
@@ -76,7 +79,7 @@ export class ImageRender extends Component {
       },
     ];
     scaleBtns.map((i) => {
-      let btn = am.component({
+      let btn = createElement({
         el: "sacle-btn-div",
         class: scaleBtnStyle,
         text: i.type,
@@ -86,7 +89,7 @@ export class ImageRender extends Component {
       });
       this.getHost()._controller_.appendChild(btn.target);
     });
-    let closeBtn = am.component({
+    let closeBtn = createElement({
       el: "image-close-div",
       class: scaleBtnStyle,
       text: "Close",
@@ -98,7 +101,10 @@ export class ImageRender extends Component {
     this.getHost()._controller_.appendChild(closeBtn.target);
   }
   show() {
-    this.getHost()._imageScene_.style.display = "";
+    this.getHost()._imageScene_.classList.remove("d-none");
+  }
+  hide(){
+    this.getHost()._imageScene_.classList.add("d-none");
   }
   getRatio() {
     return this.pixelRatio;
@@ -111,7 +117,6 @@ export class ImageRender extends Component {
     this.engine = engine;
     return this;
   }
-
   render() {
     this.canvasHighlightOff(true);
     this.getHost()._image_.innerHTML = "";
@@ -144,12 +149,12 @@ export class ImageRender extends Component {
       (i) => i.isHighlight === true
     );
     if (activeEleLayer.length === 0 && value === true) {
-      am.element.htmlLayer.modify((_) => {
+      getElementList().htmlLayer.modify((_) => {
         _.classList.remove("com-highlight");
       });
     }
     if (activeEleLayer.length === 0 && value === false) {
-      am.element.htmlLayer.modify((_) => {
+      getElementList().htmlLayer.modify((_) => {
         _.classList.add("com-highlight");
       });
     }

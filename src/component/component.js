@@ -1,6 +1,22 @@
-class StateManager {
-    constructor() {
-      this.state = [];
+export class Component{
+    constructor(){
+        this.state = [];
+        this.host = null;
+        this.worker = null;
+    }
+    setHost(el){
+        this.host = el;
+        return this;
+    }
+    getHost(){
+        return this.host;
+    }
+    setWorker(worker){
+        this.worker = worker;
+        return this;
+    }
+    getWorker(){
+        this.worker();
     }
     setState(state) {
       this.state = state;
@@ -20,28 +36,6 @@ class StateManager {
           return p;
         }, [])
       );
-    }
-  }
-
-export class Component extends StateManager{
-    constructor(){
-        super();
-        this.host = null;
-        this.worker = null;
-    }
-    setHost(el){
-        this.host = el;
-        return this;
-    }
-    getHost(){
-        return this.host;
-    }
-    setWorker(worker){
-        this.worker = worker;
-        return this;
-    }
-    getWorker(){
-        this.worker();
     }
     build(){}
     render(){}

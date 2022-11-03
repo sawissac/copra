@@ -269,6 +269,13 @@
     transform: rotate(90deg);
 }
 
+.rotate-45::before{
+    transform: rotate(45deg);
+}
+
+.overflow-0::-webkit-scrollbar{
+    width: 0;
+}
 /* width */
 *::-webkit-scrollbar {
     width: 10px;

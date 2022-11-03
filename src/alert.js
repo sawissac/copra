@@ -1,6 +1,9 @@
-function CustomAlert(props) {
+
+import { createElement } from "../packages/automa/src/automa";
+
+export function CustomAlert(props) {
   let counter = 0;
-  const message = am.component({
+  const message = createElement({
     el: "message-con-div",
     class: ["bg-dark", "shadow-sm", "my-2"],
     build: (_) => {
@@ -18,7 +21,7 @@ function CustomAlert(props) {
       });
     },
     children: [
-      am.component({
+      createElement({
         el: "message-list-div",
         class: [
           "bg-dark",
@@ -29,20 +32,20 @@ function CustomAlert(props) {
           "flex-fill",
         ],
         children: [
-          am.component({
+          createElement({
             el: "message-inner-div",
             text: props.text === undefined? "":props.text,
           }),
         ],
       }),
-      am.component({
+      createElement({
         el: "message-btn-div",
         class: ["bg-dark", "text-white"],
         children: [
-          am.component({
+          createElement({
             el: "message-inner-btn-div",
             children: [
-              am.component({
+              createElement({
                 el: "message-cross-icon-i",
                 class: props.icon===undefined? ["bi", "bi-x"]: props.icon,
               }),
@@ -60,7 +63,7 @@ function CustomAlert(props) {
               });
             },
           }),
-          am.component({
+          createElement({
             el: "message-inner-bg-i",
             class: ["bg-primary"],
             build: (_) => {

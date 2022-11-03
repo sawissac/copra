@@ -1,5 +1,7 @@
-async function createCopraDB() {
-  const db = await idb.openDB("copra", 1, {
+import { openDB } from '../../node_modules/idb/build/index.js';
+
+export async function createCopraDB() {
+  const db = await openDB("copra", 1, {
     upgrade(db, oldVersion, newVersion, transation) {
       switch (oldVersion) {
         case 0:
@@ -21,36 +23,36 @@ async function createCopraDB() {
   db.close();
 }
 
-function getCopraPageData(){
+export function getCopraPageData(){
   return new Promise(async (resolve)=>{
-    const db = await idb.openDB("copra",1);
+    const db = await openDB("copra",1);
     let transaction = db.transaction('page', 'readwrite');
     let pageData = await transaction.objectStore('page').get('data');
     resolve(pageData);
     db.close();
   })
 }
-function getCopraImageData(){
+export function getCopraImageData(){
   return new Promise(async (resolve)=>{
-    const db = await idb.openDB("copra",1);
+    const db = await openDB("copra",1);
     let transaction = db.transaction('image', 'readwrite');
     let pageData = await transaction.objectStore('image').get('data');
     resolve(pageData);
     db.close();
   })
 }
-function updateCopraPageData(data){
+export function updateCopraPageData(data){
   return new Promise(async (resolve)=>{
-    const db = await idb.openDB("copra",1);
+    const db = await openDB("copra",1);
     const transaction = db.transaction('page', 'readwrite');
     await transaction.objectStore('page').put(data,'data');
     resolve("success");
     db.close();
   })
 }
-function updateCopraImageData(data){
+export function updateCopraImageData(data){
   return new Promise(async (resolve)=>{
-    const db = await idb.openDB("copra",1);
+    const db = await openDB("copra",1);
     const transaction = db.transaction('image', 'readwrite');
     await transaction.objectStore('image').put(data,'data');
     resolve("success");

@@ -1,4 +1,7 @@
 import { Component } from "./component/component.js";
+import { createElement } from "../packages/automa/src/automa.js";
+import { addIcon } from "./app.build.con.js";
+import { createPopper } from "../node_modules/@popperjs/core/dist/esm/index.js";
 
 export class Tooltips extends Component {
   constructor() {
@@ -23,7 +26,7 @@ export class Tooltips extends Component {
     return this;
   }
   build() {
-    const popperInstance = Popper.createPopper(
+    const popperInstance = createPopper(
       this.getHost()._btn_,
       this.getHost()._box_,
       {
@@ -53,7 +56,7 @@ export class Tooltips extends Component {
       this.getHost()._box_.style.display = "none";
     };
     this.state.map((i) => {
-      const listEl = am.component({
+      const listEl = createElement({
         el: "list-div",
         class: ["d-flex", "fs-12", "btn","btn-dark", "justify-content-left"],
         build: (_) => {

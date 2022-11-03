@@ -36,7 +36,6 @@ class CopraStorage {
   getCanvasBackground(){
     return JSON.parse(localStorage.getItem("canvasBackground")); 
   }
-
   status() {
     var data = "";
     console.log("Current local storage: ");
@@ -69,4 +68,4 @@ class CopraStorage {
   }
 }
 
-const stoV2 = new CopraStorage();
+export const stoV2 = new CopraStorage();

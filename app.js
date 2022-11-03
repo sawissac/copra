@@ -1,15 +1,23 @@
-createCopraDB();
+import { createCopraDB } from "./src/localDatabase/db.js";
+import { Dropdown } from "./node_modules/bootstrap/dist/js/bootstrap.esm.js";
+import { stoV2 } from "./src/state/storage.js";
+import { CustomAlert } from "./src/alert.js";
+import { cps } from "./src/state/state.js";
+import { createElement, elementID } from "./packages/automa/src/automa.js";
+import { redirect } from "./src/urlpath.js";
+import { canvasAspectRatio } from "./src/canvasAspectRatio.js";
 
+createCopraDB();
 /**
  * Bootstrap dropdown
  *
  *
  */
-var dropdownElementList = [].slice.call(
+const dropdownElementList = [].slice.call(
   document.querySelectorAll(".dropdown-toggle")
 );
-var dropdownList = dropdownElementList.map(function (dropdownToggleEl) {
-  return new bootstrap.Dropdown(dropdownToggleEl);
+dropdownElementList.map(function (dropdownToggleEl) {
+  return new Dropdown(dropdownToggleEl);
 });
 
 /**
@@ -18,40 +26,67 @@ var dropdownList = dropdownElementList.map(function (dropdownToggleEl) {
  *
  *
  */
-const aspectLabel = document.getElementById("aspectDropDown");
-const canvasNameInput = document.getElementById("canvasNameInput");
-const templateCheck = document.getElementById("checkboxTemplate");
 
-templateCheck.onclick = function () {
+const aspectLabel = elementID("aspectDropDown");
+const aspectList = elementID("aspectList");
+const canvasNameInput = elementID("canvasNameInput");
+const templateCheck = elementID("checkboxTemplate");
+const editRecentBtn = elementID("editrecent");
+const resetBtn = elementID("reseteditor");
+const createBtn = elementID("createFile");
+aspectLabel.onclick = () => {
+  aspectList.innerHTML = "";
+  canvasAspectRatio.map((i) => {
+    const list = createElement({
+      el: "list-li",
+      class: ["dropdown-item"],
+      text: i.name,
+      build: (el, mod) => {
+        mod.action("click", () => {
+          changeLabel(i.name);
+        });
+      },
+    });
+    aspectList.appendChild(list.target);
+  });
+};
+
+templateCheck.onclick = () => {
   aspectLabel.textContent = "aspect-1:1";
 };
+
+editRecentBtn.onclick = () => {
+  editRecent();
+};
+
+resetBtn.onclick = () => {
+  resetEditor();
+};
+
+createBtn.onclick = () => {
+  goToEditorCreateNew();
+};
+
 function resetEditor() {
   cps.resetApp();
-  CustomAlert({text: "Editor reseted"});
+  CustomAlert({ text: "Editor reseted" });
 }
 function editRecent() {
   if (stoV2.isExists("projectName")) {
     if (stoV2.getProjectName().length !== 0) {
-      const path =
-        window.location.protocol +
-        "//" +
-        window.location.hostname +
-        ":" +
-        window.location.port +
-        "/editor/";
-        CustomAlert({
-          text: "Opening recent, Please wait...",
-          callback: () => {
-            window.location.href = path;
-          },
-          speed: 20,
-          icon: ["bi","bi-arrow-right-short"]
-        });
+      CustomAlert({
+        text: "Opening recent, Please wait...",
+        callback: () => {
+          redirect("editor/");
+        },
+        speed: 20,
+        icon: ["bi", "bi-arrow-right-short"],
+      });
     } else {
-      CustomAlert({text:"There is no recent edit...!"});
+      CustomAlert({ text: "There is no recent edit...!" });
     }
   } else {
-    CustomAlert({text:"There is no recent edit...!"});
+    CustomAlert({ text: "There is no recent edit...!" });
   }
 }
 function changeLabel(val) {
@@ -70,22 +105,15 @@ function goToEditorCreateNew() {
     stoV2.val(inputValue).storeToProjectName();
   }
   if (pass >= 2) {
-    const path =
-      window.location.protocol +
-      "//" +
-      window.location.hostname +
-      ":" +
-      window.location.port +
-      "/editor/";
     if (templateCheck.checked) {
       cps.updateUsingTemplate().then((res) => {
         CustomAlert({
           text: "App creating, Please wait...",
           callback: () => {
-            window.location.href = path;
+            redirect("editor/");
           },
           speed: 20,
-          icon: ["bi","bi-arrow-right-short"]
+          icon: ["bi", "bi-arrow-right-short"],
         });
       });
     } else {
@@ -93,10 +121,10 @@ function goToEditorCreateNew() {
       CustomAlert({
         text: "App creating, Please wait...",
         callback: () => {
-          window.location.href = path;
+          redirect("editor/");
         },
         speed: 20,
-        icon: ["bi","bi-arrow-right-short"]
+        icon: ["bi", "bi-arrow-right-short"],
       });
     }
   } else {

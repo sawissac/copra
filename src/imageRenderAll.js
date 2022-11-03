@@ -1,4 +1,8 @@
 import { Component } from "./component/component.js";
+import { createElement } from "../packages/automa/src/automa.js";
+import { addIcon } from "./app.build.con.js";
+import { stoV2 } from "./state/storage.js";
+import { getCopraPageData,getCopraImageData } from "./localDatabase/db.js";
 
 let scaleBtnStyle = [
   "btn",
@@ -14,7 +18,7 @@ let scaleBtnStyle = [
   "d-flex",
 ];
 
-let testCanvas = am.component({
+let testCanvas = createElement({
   el: "test-canvas-div",
   build: (_) => {
     const boxArea = "300px";
@@ -24,7 +28,7 @@ let testCanvas = am.component({
     });
   },
 });
-let testCanvasCon = am.component({
+let testCanvasCon = createElement({
   el: "test-canvas-con-div",
   children: [testCanvas],
   build: (_) => {
@@ -35,7 +39,7 @@ let testCanvasCon = am.component({
     });
   },
 });
-let title = am.component({
+let title = createElement({
   el: "title-div",
   text: "rendering...",
   class: ["text-center", "mt-30", "w-300"],
@@ -57,7 +61,7 @@ export class ImageRenderAll extends Component {
       this.getHost()._scene_.classList.add("d-none");
       stoV2.val("htmlmode").storeToCanvasMode();
     };
-    let closeBtn = am.component({
+    let closeBtn = createElement({
       el: "image-close-div",
       class: scaleBtnStyle,
       text: "Close",
@@ -96,7 +100,7 @@ export class ImageRenderAll extends Component {
       },
     ];
     scaleBtns.map((i) => {
-      let btn = am.component({
+      let btn = createElement({
         el: "sacle-btn-div",
         class: scaleBtnStyle,
         text: i.type,
@@ -144,7 +148,7 @@ export class ImageRenderAll extends Component {
     state.map((i) => {
       let LayerEl = null;
       if (i.component.type === "Empty") {
-        LayerEl = am.component({
+        LayerEl = createElement({
           el: "com-empty-div",
           text: i.component.text.length > 0 ? i.component.text : "",
           class: ["hover-disable"],
@@ -155,33 +159,33 @@ export class ImageRenderAll extends Component {
         });
       }
       if (i.component.type === "Header") {
-        LayerEl = am.component({
+        LayerEl = createElement({
           el: "canvas-header-div",
           class: ["com-header", "hover-disable"],
           children: [
-            am.component({
+            createElement({
               el: "header-inner-div",
               class: ["inner"],
               children: [
-                am.component({
+                createElement({
                   el: "option-div",
                   class: ["option"],
                   children: [
-                    am.component({
+                    createElement({
                       el: "circle1-div",
                       class: ["circle"],
                     }),
-                    am.component({
+                    createElement({
                       el: "circle2-div",
                       class: ["circle2"],
                     }),
-                    am.component({
+                    createElement({
                       el: "circle3-div",
                       class: ["circle3"],
                     }),
                   ],
                 }),
-                am.component({
+                createElement({
                   el: "label-div",
                   text: i.component.text.length > 0 ? i.component.text : "",
                   class: ["label"],
@@ -195,11 +199,11 @@ export class ImageRenderAll extends Component {
         });
       }
       if (i.component.type === "Line") {
-        LayerEl = am.component({
+        LayerEl = createElement({
           el: "com-line-div",
           class: ["hover-disable"],
           children: [
-            am.component({
+            createElement({
               el: "line-inner-div",
               class: ["inner"],
               text: i.component.text,
@@ -211,11 +215,11 @@ export class ImageRenderAll extends Component {
         });
       }
       if (i.component.type === "Footer") {
-        LayerEl = am.component({
+        LayerEl = createElement({
           el: "com-footer-div",
           class: ["hover-disable"],
           children: [
-            am.component({
+            createElement({
               el: "footer-inner-div",
               class: ["inner"],
             }),
@@ -228,7 +232,7 @@ export class ImageRenderAll extends Component {
   demoImage(canvas, index, max) {
     return this.sleep(1000 * (index !== 0 ? index + 1 : 1)).then(async (v) => {
       this.buildCanvas(canvas.data);
-      const demoImage = am.component({
+      const demoImage = createElement({
         el: "demo-image-div",
         build: (_) => {
           Object.assign(_.style, {
@@ -245,7 +249,7 @@ export class ImageRenderAll extends Component {
           pixelRatio: this.pixelRatio,
         })
         .then((dataUrl) => {
-          let imageDownlaodBtn = am.component({
+          let imageDownlaodBtn = createElement({
             el: "download-a",
             class: ["text-dark", "text-decoration-none", "d-flex"],
             build: (_) => {

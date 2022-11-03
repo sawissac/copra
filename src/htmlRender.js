@@ -1,6 +1,9 @@
 import { Component } from "./component/component.js";
+import { cps } from "./state/state.js";
+import { createElement } from "../packages/automa/src/automa.js";
+import { pick } from "./app.build.con.js";
 
-export class htmlRender extends Component { 
+export class htmlRender extends Component {
   constructor() {
     super();
     this.canvas = false;
@@ -21,15 +24,15 @@ export class htmlRender extends Component {
     this.getHost()._layer_.innerHTML = "";
     this.getCpsState();
     this.updateTitle();
-    this.buildCanvas(this.state)
+    this.buildCanvas(this.state);
   }
 
-  buildCanvas(state){
+  buildCanvas(state) {
     state.map((i) => {
       let LayerEl = null;
 
       if (i.component.type === "Empty") {
-        LayerEl = am.component({
+        LayerEl = createElement({
           el: "layer-none-div",
           class: [
             "com-empty",
@@ -42,37 +45,37 @@ export class htmlRender extends Component {
           },
         });
       }
-      if (i.component.type === "Header") { 
-        LayerEl = am.component({
+      if (i.component.type === "Header") {
+        LayerEl = createElement({
           el: "canvas-header-div",
           class: [
             "com-header",
             i.isHighlight === true ? "com-highlight" : "com-not-highlight",
           ],
           children: [
-            am.component({
+            createElement({
               el: "header-inner-div",
               class: ["inner"],
               children: [
-                am.component({
+                createElement({
                   el: "option-div",
                   class: ["option"],
                   children: [
-                    am.component({
+                    createElement({
                       el: "circle1-div",
                       class: ["circle"],
                     }),
-                    am.component({
+                    createElement({
                       el: "circle2-div",
                       class: ["circle2"],
                     }),
-                    am.component({
+                    createElement({
                       el: "circle3-div",
                       class: ["circle3"],
                     }),
                   ],
                 }),
-                am.component({
+                createElement({
                   el: "label-div",
                   text: i.component.text.length > 0 ? i.component.text : "",
                   class: ["label"],
@@ -86,14 +89,14 @@ export class htmlRender extends Component {
         });
       }
       if (i.component.type === "Line") {
-        LayerEl = am.component({
+        LayerEl = createElement({
           el: "line-div",
           class: [
             "com-line",
             i.isHighlight === true ? "com-highlight" : "com-not-highlight",
           ],
           children: [
-            am.component({
+            createElement({
               el: "line-inner-div",
               class: ["inner"],
               text: i.component.text,
@@ -105,14 +108,14 @@ export class htmlRender extends Component {
         });
       }
       if (i.component.type === "Footer") {
-        LayerEl = am.component({
+        LayerEl = createElement({
           el: "footer-div",
           class: [
             "com-footer",
             i.isHighlight === true ? "com-highlight" : "com-not-highlight",
           ],
           children: [
-            am.component({
+            createElement({
               el: "footer-inner-div",
               class: ["inner"],
             }),
@@ -173,7 +176,7 @@ export class htmlRender extends Component {
     const activePageLayer = cps
       .getPageLayerData()
       .filter((i) => i.canvas.isHighlight === true);
-    const titleEl = am.element.htmlInnerTitle.target;
+    const titleEl = pick("htmlInnerTitle").target;
     if (activePageLayer.length !== 0) {
       titleEl.textContent = activePageLayer[0].canvas.layerName;
     }

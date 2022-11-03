@@ -1,6 +1,7 @@
 {
   "dependencies": {
     "@popperjs/core": "^2.11.5",
+    "bootstrap": "^5.2.1",
     "bootstrap-icons": "^1.9.1",
     "html-to-image": "^1.9.0",
     "idb": "^7.0.2"
@@ -9,13 +10,15 @@
   "version": "1.0.0",
   "main": "app.js",
   "scripts": {
-    "minify-build":"minify ./src/app.build.js > ./editor/dist/app.build.js",
-    "minify-core":"minify ./src/app.core.js > ./editor/dist/app.core.js",
-    "minify-app": "minify ./src/app.js > ./editor/dist/app.js",
-    "build": "npm run minify-build && npm run minify-core && npm run minify-app"
+    "bundle:watch": "npx webpack --config webpack.config.js --config-name bundle:watch",
+    "bundlelogin": "npx webpack --config webpack.config.js --config-name bundle-login"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "description": ""
+  "description": "",
+  "devDependencies": {
+    "webpack": "^5.74.0",
+    "webpack-cli": "^4.10.0"
+  }
 }

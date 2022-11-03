@@ -15,7 +15,6 @@ export class CanvasScaler extends Component {
     this.scaleBy = 5;
     this.verticalMove = false;
     this.horizontalMove = false;
-    this.worker = null;
     this.direction = "non";
   }
   setCanvasPostion(x, y) {

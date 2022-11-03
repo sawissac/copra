@@ -39,10 +39,8 @@
                             class="btn btn-light btn-lg dropdown-toggle border border-dark border-2 w-100 text-start"
                             type="button" id="aspectDropDown" data-bs-toggle="dropdown"
                             aria-expanded="false">Aspect</button>
-                        <ul class="dropdown-menu" aria-labelledby="aspectDropDown" style="width: 300px !important;">
-                            <li class="dropdown-item" onclick="changeLabel('aspect-1:1');">aspect-1:1</li>
-                            <li class="dropdown-item" onclick="changeLabel('aspect-9:16');">aspect-9:16</li>
-                            <li class="dropdown-item" onclick="changeLabel('aspect-16:9');">aspect-16:9</li>
+                        <ul class="dropdown-menu" id="aspectList" aria-labelledby="aspectDropDown"
+                            style="width: 300px !important;">
                         </ul>
                     </div>
                     <div class="form-check mt-2 d-flex justify-content-center">
@@ -51,16 +49,17 @@
                             Use Template
                         </label>
                     </div>
-                    <div tabindex="4" class="btn btn-light border-2 border-dark py-2 rounded-pill mt-3"
-                        onclick="resetEditor()">
+                    <div tabindex="4" id="reseteditor"
+                        class="btn btn-light border-2 border-dark py-2 rounded-pill mt-3">
                         Reset Editor
                     </div>
-                    <div tabindex="5" class="btn btn-light border-2 border-dark py-2 rounded-pill"
-                        onclick="editRecent()">
+                    <div tabindex="5" id="editrecent" class="btn btn-light border-2 border-dark py-2 rounded-pill">
                         Edit Recent
                     </div>
-                    <div tabindex="6" class="btn btn-dark py-2 rounded-pill" onclick="goToEditorCreateNew()">Create
-                        Project</div>
+                    <div tabindex="6" id="createFile" class="btn btn-dark py-2 rounded-pill">
+                        Create
+                        Project
+                    </div>
                     <hr class="my-3">
                     <p class="text-center">Created by waux</p>
                 </div>
@@ -71,19 +70,8 @@
             </div>
         </div>
     </div>
-    <script src="https://cdn.jsdelivr.net/npm/idb@7/build/umd.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.0.1/js/bootstrap.bundle.min.js"
-        integrity="sha512-sH8JPhKJUeA9PWk3eOcOl8U+lfZTgtBXD41q6cO/slwxGHCxKcW45K4oPCUhHG7NMB4mbKEddVmPuTXtpbCbFA=="
-        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-    <script src="./src/localDatabase/db.js"></script>
-    <script src="./src/state/storage.js"></script>
-    <script src="./src/state/state.js"></script>
-    <script src="./packages/automa/src/automa.js"></script>
-    <script>
-        const am = new Automa();
-    </script>
-    <script src="./src/alert.js"></script>
-    <script src="./app.js"></script>
+
+    <script src="./app.bundle.js"></script>
 </body>
 
 </html>

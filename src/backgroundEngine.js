@@ -1,150 +1,142 @@
 import { Component } from "./component/component.js";
+import {
+  createElement,
+  parseToElement,
+  setElement,
+  setInstruction,
+} from "../packages/automa/src/automa.js";
+import { pick } from "./app.build.con.js";
+import { stoV2 } from "./state/storage.js";
+import { getCopraImageData, updateCopraImageData } from "./localDatabase/db.js";
+import { addIcon } from "./iconEngine.js";
+import {
+  colorData,
+  pickerBoxStyle,
+  pickerBtn,
+  pickerCircle,
+  pickerHide,
+  pickerLabel,
+  pickerShow,
+  showColorList,
+} from "./colorData.js";
 
-const MainContainer = am.component({
-  el: "background-engine-container-div",
-  class: ["br-5"],
-  children: [
-    am.component({
-      el: "background-label-div",
-      text: "Background",
-      class: [
-        "btn",
-        "btn-light",
-        "bg-white",
-        "d-flex",
-        "j-left",
-        "fs-12",
-        "text-dark",
-        "border",
-        "rounded-0",
-        "border-grey",
-        "border-2",
-        "border-top-0",
-        "border-start-0",
-        "border-end-0",
-        "shadow-sm"
-      ],
-    }),
-    am.component({
-      el: "warper-div",
-      class: ["d-none"],
-      children: [
-        am.component({
-          el: "background-container-div",
-          class: [
-            "h-100",
-            "d-flex",
-            "flex-wrap",
-            "overflow-y",
-            "my-2",
-            "justify-content-center",
-          ],
-        }),
-        am.component({
-          el: "file-input-none-input",
-          class: ["d-none"],
-          build: (_) => {
-            _.type = "file";
-            _.src = "";
-          },
-        }),
-        am.component({
-          el: "image-upload-btn-div",
-          text: "Upload Image",
-          class: ["btn", "btn-primary","btn-sm","d-block","fs-12"],
-        }),
-      ],
-    }),
-  ],
-});
-const imageUploadBtn = MainContainer.inner.warper.inner.imageUploadBtn.target;
-const fileInput = MainContainer.inner.warper.inner.fileInputNone.target;
-const backgroundLabelBtn = MainContainer.inner.backgroundLabel.target;
-const mainContainerWraper = MainContainer.inner.warper.target;
-const backgroundContainer =
-  MainContainer.inner.warper.inner.backgroundContainer.target;
 export class BackgroundEngine extends Component {
   constructor() {
     super();
-  }
-  build() {
-    let backgroundLabelToggler = true;
 
-    backgroundLabelBtn.onclick = () => {
-      if (backgroundLabelToggler === true) {
-        mainContainerWraper.classList.remove("d-none");
-        backgroundLabelToggler = false;
-      } else {
-        mainContainerWraper.classList.add("d-none");
-        backgroundLabelToggler = true;
-      }
-    };
-    am.element.htmlImage.modify((_) => {
-      _.style.backgroundColor = stoV2.getCanvasBackground();
-      getCopraImageData().then((imageData) => {
-        if (imageData.length > 0) {
-          _.style.backgroundImage = `url(${imageData})`;
-          imageUploadBtn.textContent = "Cancel";
-        }
+    this.currentStorageColor = stoV2.getCanvasBackground();
+
+    this.element = parseToElement([
+      "colorpicker-div",
+      "background-label-div-.btnBorderLight,h33,borderBot,rounded0",
+      "background-upload-btn",
+      "background-upload-container-div-.btn,bgLight,dFlex,jStart,aiCenter,borderBot,rounded0,pdb2",
+      "background-upload-btn-div-.btnPill,tCenter,my1,f12",
+      "background-file-input-.dNone",
+      "background-container-div",
+    ]);
+
+    this.element["colorpicker"] = pickerBtn({
+      color: this.currentStorageColor,
+    });
+
+    setInstruction(this.element, [
+      "backgroundUploadContainer = backgroundUploadBtn",
+      "backgroundContainer = backgroundLabel,colorpicker,backgroundUploadContainer,backgroundFile",
+    ]);
+
+    this.pickbg = setElement(this.element);
+
+    this.colorBoxBtn = colorData.map((i) => {
+      return createElement({
+        el: "color-box-div",
+        class: ["btn"],
+        build: (el, mod) => {
+          let reportColor = () => {
+            this.canvasBackground(i);
+            stoV2.val(i).storeToCanvasBackground();
+            pickerCircle(this.pickbg("colorpicker"),i);
+            pickerLabel(this.pickbg("colorpicker"),i);
+            pickerHide();
+          };
+          mod.action("click", reportColor);
+          pickerBoxStyle(mod,i)
+        },
       });
     });
-    imageUploadBtn.onclick = () => {
-      if (imageUploadBtn.textContent !== "Cancel") {
-        fileInput.click();
-      } else {
-        fileInput.value = "";
-        am.element.htmlImage.modify((_) => {
-          _.style.backgroundImage = null;
-        });
-        imageUploadBtn.textContent = "Upload Image";
-        updateCopraImageData("");
-      }
 
-      fileInput.addEventListener("change", function (ev) {
+    this.build();
+  }
+
+  canvasBackground(color) {
+    pick("htmlImage").style({
+      backgroundColor: color,
+    });
+  }
+
+  canvasImage(url) {
+    pick("htmlImage").style({
+      backgroundImage: url,
+    });
+  }
+
+  build() {
+    let upLabel = this.pickbg("backgroundUploadBtn");
+
+    getCopraImageData().then((imageData) => {
+      if (imageData.length > 0) {
+        this.canvasImage(`url(${imageData})`);
+        upLabel.text("Cancel");
+      }
+    });
+    pickerCircle(this.pickbg("colorpicker"), this.currentStorageColor);
+    pickerLabel(this.pickbg("colorpicker"), this.currentStorageColor);
+    
+    this.pickbg("backgroundLabel").modify((el) => {
+      addIcon({
+        target: el,
+        text: "Background",
+        textBold: true,
+      });
+    });
+    this.pickbg("backgroundUploadBtn").modify((el, mod) => {
+      let openFile = () => {
+        if (upLabel.target.textContent !== "Cancel") {
+          this.pickbg("backgroundFile").target.click();
+        } else {
+          this.pickbg("backgroundFile").target.value = "";
+          this.canvasImage("");
+          upLabel.text("Upload Image");
+          updateCopraImageData("");
+        }
+      };
+      mod.action("click", openFile);
+      mod.text("Upload Image");
+    });
+    this.pickbg("backgroundFile").modify((el, mod) => {
+      el.type = "file";
+      let openFile = function () {
         const reader = new FileReader();
         reader.addEventListener("load", () => {
           const uploaded_image = reader.result;
-          am.element.htmlImage.modify((_) => {
+          pick("htmlImage").modify((_) => {
             _.style.backgroundImage = `url(${uploaded_image})`;
             updateCopraImageData(uploaded_image);
           });
-          imageUploadBtn.textContent = "Cancel";
+          upLabel.text("Cancel");
         });
         reader.readAsDataURL(this.files[0]);
-      });
-    };
-
-    let boxSize = 272.02 / 8 - 10;
-    for (let i in colorDataArr) {
-      let div = document.createElement("div");
-      let style = {
-        width: boxSize + "px",
-        height: boxSize + "px",
-        backgroundColor: colorDataArr[i],
       };
-      if (i == 0) {
-        style.display = "grid";
-        style.placeItems = "center";
-        style.color = "white";
-        style.fontSize = "10px";
-        let icon = document.createElement("div");
-        icon.classList.add(...["bi", "bi-app"]);
-        div.appendChild(icon);
-      }
-      Object.assign(div.style, style);
-      div.onclick = () => {
-        stoV2.val(colorDataArr[i]).storeToCanvasBackground();
-        am.element.htmlImage.modify((_) => {
-          _.style.backgroundColor = colorDataArr[i];
-          this.getWorker();
-        });
-      };
-      backgroundContainer.appendChild(div);
-    }
+      mod.action("change", openFile);
+    });
+    
+    this.canvasBackground(this.currentStorageColor);
 
-    this.getHost()._layer_.appendChild(MainContainer.target);
-  }
-  imageUploaded() {
-    imageUploadBtn.textContent = "Cancel";
+    this.pickbg("colorpicker").action("click", () => {
+      pickerShow();
+      showColorList(this.colorBoxBtn);
+    });
+
+    pick("optionInnerLayer").children([this.pickbg("backgroundContainer")]);
   }
 }

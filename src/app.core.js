@@ -1,76 +1,57 @@
-import { BackgroundEngine } from "./backgroundEngine.js";
+import {
+  createElement,
+  getElementList,
+} from "../packages/automa/src/automa.js";
+import { pick } from "./app.build.con.js";
+import { stoV2 } from "./state/storage.js";
+import { cps } from "./state/state.js";
+import { htmlToImage } from "../packages/htmlToImage/index.js";
 import { CanvasScaler } from "./canvasScaler.js";
-import { ComponentBuilder } from "./componentBuilder.js";
-import { htmlRender } from "./htmlRender.js";
-import { LayerRander } from "./layerRender.js";
 import { PageListRender } from "./pageListRender.js";
+import { LayerRander } from "./layerRender.js";
+import { htmlRender } from "./htmlRender.js";
+import { BackgroundEngine } from "./backgroundEngine.js";
+import { ComponentBuilder } from "./componentBuilder.js";
 import { changeCanvasAspectRatio } from "./canvasAspectRatio.js";
 import { Tooltips } from "./tooltips.js";
 import { ImageRender } from "./imageRender.js";
 import { ImageRenderAll } from "./imageRenderAll.js";
+import { getCopraImageData, getCopraPageData, updateCopraImageData, updateCopraPageData } from "./localDatabase/db.js";
+import { CustomAlert } from "./alert.js";
+import { pickerInit } from "./colorData.js";
 
 function build() {
   const hcs = new CanvasScaler();
-  const imcs = new CanvasScaler();
-  const hr = new htmlRender();
-  const imr = new ImageRender();
   const pr = new PageListRender();
   const lr = new LayerRander();
+  const hr = new htmlRender();
   const be = new BackgroundEngine();
   const cb = new ComponentBuilder();
+  const imcs = new CanvasScaler();
+  const imr = new ImageRender();
   const rtp = new Tooltips();
   const stp = new Tooltips();
   const etp = new Tooltips();
   const imgtp = new Tooltips();
   const imgra = new ImageRenderAll();
 
+  pickerInit();
+
   /**
    *  disable ctrl key
    *
    *
    */
-  const el = am.element;
+  const el = getElementList();
+
   document.body.addEventListener("keydown", function (keyPressev) {
     if (keyPressev.ctrlKey && keyPressev.code === "KeyS") {
       keyPressev.preventDefault();
     }
   });
   document.addEventListener("contextmenu", (e) => {
-    // e.preventDefault();
+    e.preventDefault();
   });
-  /**
-   *  htmlcanvasScroller
-   *
-   *
-   */
-  hcs
-    .setHost({
-      _canvas_: el.htmlInnerCenter.target,
-    })
-    .setMinMax(10, 300)
-    .setScalePercentMiddle()
-    .setWorker(() => {
-      el.iconPercentLabel.text(
-        hcs.formatPerscent(String(hcs.getScale() * 100)) + "%"
-      );
-    })
-    .build();
-  /**
-   *  imagecanvasScroller
-   *
-   *
-   */
-  imcs
-    .setHost({
-      _canvas_: el.renderInnerCenter.target,
-    })
-    .setMinMax(10, 500)
-    .setWorker(() => {
-      el.iconPercentLabel.text(
-        imcs.formatPerscent(String(imcs.getScale() * 100)) + "%"
-      );
-    })
-    .build();
   /**
    *  headerFile double click
    *
@@ -80,7 +61,7 @@ function build() {
     el.textContent = stoV2.getProjectName();
     el.addEventListener("dblclick", () => {
       const parent = el.parentElement;
-      const newEl = am.component({
+      const newEl = createElement({
         el: "header-file-input",
         class: [
           "form-control",
@@ -111,34 +92,91 @@ function build() {
   });
 
   /**
+   *  htmlcanvasScroller
+   *
+   *
+   */
+  hcs
+    .setHost({
+      _canvas_: el.htmlInnerCenter.target,
+    })
+    .setMinMax(10, 300)
+    .setScalePercentMiddle()
+    .setWorker(() => {
+      el.iconPercentLabel.text(
+        hcs.formatPerscent(String(hcs.getScale() * 100)) + "%"
+      );
+    })
+    .build();
+  /**
    *  pageLayer
    */
-  pr.setHost({
-    _btn_: el.layerInnerPageBtn,
-    _layer_: el.layerInnerPageList,
-  });
-  pr.build();
   pr.setWorker(() => {
     hr.updateTitle();
     hr.render();
     lr.render();
+    // cb.updateBuilder();
   });
   /**
    * layerController
    *
    */
-  lr.setHost({
-    _htmltitle_: el.htmlInnerTitle,
-    _layerlabel_: el.layerInnerLayerLabel,
-    _canvasbtn_: el.layerInnerCanvasButton,
-    _layer_: el.layerInnerLayerList,
-    _canvaslayer_: el.htmlLayer,
-  });
-  lr.build();
   lr.setWorker(() => {
     hr.render();
-    cb.updateBuilder();
+    // cb.updateBuilder();
   });
+  /**
+   *  html canvs render
+   *
+   */
+  hr.setHost({
+    _layer_: el.htmlLayer.target,
+    _htmlTitle_: el.htmlInnerTitle.target,
+  });
+  hr.updateTitle();
+  hr.setWorker(() => {
+    lr.render();
+    // cb.updateBuilder();
+  });
+  hr.build();
+  hr.render();
+  /**
+   * background engine
+   *
+   *
+   */
+  be.setWorker(() => {
+    // cb.updateBuilder();
+  });
+  /**
+   * Component Builder
+   */
+  // cb.setHost({
+  //   _layer_: el.optionInnerLayer.target,
+  // });
+  // cb.build();
+  // cb.updateBuilder();
+  // cb.setWorker(() => {
+  //   hr.render();
+  //   lr.render();
+  // });
+  /**
+   *  imagecanvasScroller
+   *
+   *
+   */
+  imcs
+    .setHost({
+      _canvas_: el.renderInnerCenter.target,
+    })
+    .setMinMax(10, 500)
+    .setWorker(() => {
+      el.iconPercentLabel.text(
+        imcs.formatPerscent(String(imcs.getScale() * 100)) + "%"
+      );
+    })
+    .build();
+
   /**
    * imageRender
    *
@@ -165,45 +203,7 @@ function build() {
   });
   imgra.setEngine(htmlToImage);
   imgra.build();
-  /**
-   *  html canvs render
-   *
-   */
-  hr.setHost({
-    _layer_: el.htmlLayer.target,
-    _htmlTitle_: el.htmlInnerTitle.target,
-  });
-  hr.updateTitle();
-  hr.setWorker(() => {
-    lr.render();
-    cb.updateBuilder();
-  });
-  hr.build();
-  hr.render();
-  /**
-   * background engine
-   *
-   *
-   */
-  be.setHost({
-    _layer_: el.optionInnerLayer.target,
-  });
-  be.setWorker(() => {
-    cb.updateBuilder();
-  });
-  be.build();
-  /**
-   * Component Builder
-   */
-  cb.setHost({
-    _layer_: el.optionInnerLayer.target,
-  });
-  cb.build();
-  cb.updateBuilder();
-  cb.setWorker(() => {
-    hr.render();
-    lr.render();
-  });
+
   /**
    * File save
    *
@@ -299,11 +299,11 @@ function build() {
       if (btnToggle) {
         hcs.verticalMoveOn();
         //  imcs.verticalMoveOn();
-        am.pick("iconScrollY").text("Y");
+        pick("iconScrollY").text("Y");
       } else {
         hcs.verticalMoveOff();
         //  imcs.verticalMoveOff();
-        am.pick("iconScrollY").text("N");
+        pick("iconScrollY").text("N");
       }
     };
   });
@@ -319,11 +319,11 @@ function build() {
       if (btnToggle) {
         hcs.horizontalMoveOn();
         //  imcs.horizontalMoveOn();
-        am.pick("iconScrollX").text("X");
+        pick("iconScrollX").text("X");
       } else {
         hcs.horizontalMoveOff();
         //  imcs.horizontalMoveOff();
-        am.pick("iconScrollX").text("N");
+        pick("iconScrollX").text("N");
       }
     };
   });
@@ -344,21 +344,18 @@ function build() {
         listName: "aspect-1:1",
         fun: () => {
           changeCanvasAspectRatio("aspect-1:1", hcs);
-          CustomAlert({ text: "Changed to aspect-1:1" });
         },
       },
       {
         listName: "aspect-9:16",
         fun: () => {
           changeCanvasAspectRatio("aspect-9:16", hcs);
-          CustomAlert({ text: "Changed to aspect-9:16" });
         },
       },
       {
         listName: "aspect-16:9",
         fun: () => {
           changeCanvasAspectRatio("aspect-16:9", hcs);
-          CustomAlert({ text: "Changed to aspect-16:9" });
         },
       },
     ])
@@ -392,7 +389,6 @@ function build() {
           let stringData = JSON.stringify(cps.getPageLayerData());
           let parseData = JSON.parse(stringData);
           updateCopraPageData(parseData);
-          CustomAlert({ text: "App Saved...!", speed: 30 });
           imgra.show();
           imgra.render();
         },
@@ -405,7 +401,7 @@ function build() {
    *
    */
   function exportCopraFile() {
-    el.globalDownloadLink.set((_) => {
+    el.globalDownloadLink.modify((_) => {
       _.value = "";
       let stringData = JSON.stringify(cps.getPageLayerData());
       let parseData = JSON.parse(stringData);
@@ -569,54 +565,54 @@ function build() {
     }
     // scroll up and down
     if (ev.shiftKey && ev.code === "KeyS") {
-      am.pick("iconScrollY").text("Y");
+      pick("iconScrollY").text("Y");
       hcs.verticalMoveOn();
-      // imcs.verticalMoveOn();
+      imcs.verticalMoveOn();
     }
     // scroll left and right
     if (ev.shiftKey && ev.code === "KeyA") {
-      am.pick("iconScrollX").text("X");
+      pick("iconScrollX").text("X");
       hcs.horizontalMoveOn();
-      // imcs.horizontalMoveOn();
+      imcs.horizontalMoveOn();
     }
   });
 
   window.addEventListener("keyup", (ev) => {
     if (ev.shiftKey) {
-      am.pick("iconScrollY").text("N");
-      am.pick("iconScrollX").text("N");
+      pick("iconScrollY").text("N");
+      pick("iconScrollX").text("N");
       hcs.verticalMoveOff();
       hcs.horizontalMoveOff();
-      // imcs.verticalMoveOff();
-      // imcs.horizontalMoveOff();
+      imcs.verticalMoveOff();
+      imcs.horizontalMoveOff();
     }
   });
 
-  /**
-   * CoreComponent
-   *    ->headerNav
-   *    ->controller
-   *    ->layer
-   *    ->options
-   *    ->htmlCanvas
-   *    ->controllerRatioBox
-   */
-  const Component = am.component({
-    pick: am.pick("coreComponent"),
+  //   /**
+  //    * CoreComponent
+  //    *    ->headerNav
+  //    *    ->controller
+  //    *    ->layer
+  //    *    ->options
+  //    *    ->htmlCanvas
+  //    *    ->controllerRatioBox
+  //    */
+  const Component = createElement({
+    pick: pick("coreComponent"),
     children: [
-      am.pick("headerNav"),
-      am.pick("controller"),
-      am.pick("layer"),
-      am.pick("option"),
-      am.pick("renderCanvas"),
-      am.pick("renderAllScene"),
-      am.pick("htmlCanvas"),
-      am.pick("controllerRatioBox"),
-      am.pick("controllerFileBox"),
-      am.pick("controllerImageBox"),
-      am.pick("controllerScalePercentBox"),
-      am.pick("globalDownloadLink"),
-      am.pick("globalFileInput"),
+      pick("headerNav"),
+      pick("controller"),
+      pick("layer"),
+      pick("option"),
+      pick("renderCanvas"),
+      pick("renderAllScene"),
+      pick("htmlCanvas"),
+      pick("controllerRatioBox"),
+      pick("controllerFileBox"),
+      pick("controllerImageBox"),
+      pick("controllerScalePercentBox"),
+      pick("globalDownloadLink"),
+      pick("globalFileInput"),
     ],
   });
   return Component;
