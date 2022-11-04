@@ -4,8 +4,10 @@ import { addIcon, pick } from "./app.build.con.js";
 import { cps } from "./state/state.js";
 import { iconList } from "./iconEngine.js";
 import { createPageLayerState } from "./defaultBuild.js";
+import { updataActiveCanvasLayer } from "./state/canvasState.js";
+import { moveBtn, moveCancelBtn, noneMoveBtn } from "./layer.common.js";
 
-const layerBtnStyle = [
+export const layerBtnStyle = [
   "btn",
   "btn-sm",
   "btn-light",
@@ -19,27 +21,73 @@ export class PageListRender extends Component {
   constructor() {
     super();
     this.edit = false;
-    this.setHost({
-      _btn_: pick("layerInnerPageBtn"),
-      _layer_: pick("layerInnerPageList"),
-    });
     this.build();
   }
+
   createPageLayer() {
-    this.state.push(createPageLayerState({layerName: "New Page"}));
+    this.state.push(createPageLayerState({ layerName: "New Page" }));
+    this.updateCpsState();
+    this.render();
   }
+
   deletePageLayer() {
     if (this.state.length > 1) {
       this.setState(this.state.filter((i) => i.canvas.isHighlight !== true));
       this.state[0].canvas.isHighlight = true;
+      this.updateCpsState();
+      this.render();
+      this.response();
     }
   }
+
+  moveLayer() {
+    pick("layerInnerPageList")._children();
+
+    pick("layerInnerPageList").children([
+      moveCancelBtn({
+        action: () => {
+          this.render();
+        },
+      }),
+    ]);
+
+    this.state.map((i, index) => {
+      const MoveLayerBtn = createElement({
+        el: "move-layer-btn-div",
+        class: [
+          "justify-content-between",
+          ...layerBtnStyle.filter((i) => i !== "py-2"),
+          i.isHighlight === true ? "highlight" : "not-highlight",
+        ],
+        children:
+          i.isHighlight !== true
+            ? moveBtn({
+                upAction: () => {
+                  this.moveArray(index, -1);
+                  this.updateCpsState();
+                  this.render();
+                },
+                layerName: i.canvas.layerName,
+                downAction: () => {
+                  this.moveArray(index, 1);
+                  this.updateCpsState();
+                  this.render();
+                },
+              })
+            : noneMoveBtn({ layerName: i.canvas.layerName }),
+      });
+
+      pick("layerInnerPageList").children([MoveLayerBtn]);
+    });
+  }
+
   build() {
+    let moveFun = () => {
+      this.moveLayer();
+    };
     let addFun = () => {
       this.edit = false;
       this.createPageLayer();
-      this.updateCpsState();
-      this.render();
     };
     let editFun = () => {
       this.edit = true;
@@ -48,14 +96,16 @@ export class PageListRender extends Component {
     let delFun = () => {
       this.edit = false;
       this.deletePageLayer();
-      this.updateCpsState();
-      this.render();
-      this.worker();
     };
-    this.getHost()._btn_.children(
+    pick("layerInnerPageBtn").children(
       iconList([
         {
           el: "flex-fill-div",
+        },
+        {
+          el: "move-layer-div",
+          icon: "bi-arrows-move",
+          click: moveFun,
         },
         {
           el: "edit-layer-div",
@@ -76,10 +126,11 @@ export class PageListRender extends Component {
     );
     this.render();
   }
+
   render() {
-    this.getHost()._layer_._children();
+    pick("layerInnerPageList")._children();
     this.getCpsState();
-    this.state.map((i) => {
+    this.state.map((i, index) => {
       let layerBtn = createElement({
         el: "layer-btn-div",
         class: [
@@ -96,14 +147,10 @@ export class PageListRender extends Component {
           _.onclick = () => {
             if (i.canvas.isHighlight !== true) {
               this.edit = false;
-              this.checkState(
-                i.canvas.id,
-                "isHighlight",
-                this.highlightSetting
-              );
+              this.canvasHighlight(index);
               this.updateCpsState();
               this.render();
-              this.getWorker();
+              this.response();
             }
           };
           _.ondblclick = () => {
@@ -120,7 +167,7 @@ export class PageListRender extends Component {
             ...layerBtnStyle,
             i.canvas.isHighlight === true ? "highlight" : "not-highlight",
           ],
-          build: (_btn, mod) => {
+          build: (_btn) => {
             addIcon({
               target: _btn,
               iconstart: ["bi", "bi-collection"],
@@ -140,57 +187,79 @@ export class PageListRender extends Component {
                 };
                 _input.onkeydown = (ev) => {
                   if (ev.code === "Enter") {
-                    this.setState(
-                      this.state.reduce((p, c) => {
-                        if (c.canvas.isHighlight === true) {
-                          c.canvas.layerName = _input.value;
-                          p.push(c);
-                        } else {
-                          p.push(c);
-                        }
-                        return p;
-                      }, [])
-                    );
                     this.edit = false;
+                    this.renameLayer(_input.value);
                     this.updateCpsState();
                     this.render();
-                    this.getWorker();
+                    this.response();
                   }
                 };
+                setTimeout(() => {
+                  _input.focus();
+                  _input.select();
+                }, 100);
               },
             });
             _btn.appendChild(input.target);
           },
         });
       }
-      this.getHost()._layer_.children([layerBtn]);
+
+      pick("layerInnerPageList").children([layerBtn]);
     });
   }
-  highlightSetting(p, c, id, key) {
-    if (c.canvas.id === id) {
-      c.canvas[key] = true;
-      p.push(c);
-    } else {
-      c.canvas[key] = false;
-      p.push(c);
-    }
-    return p;
-  }
-  getCpsState() {
+
+  canvasHighlight(preIndex) {
     this.setState(
-      cps.getPageLayerData().reduce((p, c) => {
-        c.canvas.id = Symbol();
-        p.push(c);
+      this.state.reduce((p, c, curIndex) => {
+        if (curIndex === preIndex) {
+          c.canvas.isHighlight = true;
+          p.push(c);
+        } else {
+          c.canvas.isHighlight = false;
+          p.push(c);
+        }
         return p;
       }, [])
     );
   }
-  updateCpsState() {
-    cps.setPageLayerData(
-      this.state.map((i) => {
-        delete i.canvas.id;
-        return i;
+
+  renameLayer(value) {
+    this.setState(
+      updataActiveCanvasLayer(cps.getPageLayerData(), {
+        layerName: value,
       })
+    );
+  }
+
+  getCpsState() {
+    this.setState(cps.getPageLayerData());
+  }
+
+  updateCpsState() {
+    cps.setPageLayerData(this.state);
+  }
+
+  moveArray(preIndex, direction) {
+    
+    let targetArray = this.state.filter((i) => i.canvas.isHighlight === true);
+    this.setState(
+      this.state.reduce((p, c, curIndex) => {
+        if (curIndex === preIndex) {
+          if (direction === -1) {
+            p.push(targetArray[0]);
+          }
+          p.push(c);
+          if (direction === 1) {
+            p.push(targetArray[0]);
+          }
+        } else {
+          if (c.canvas.isHighlight !== true) {
+            p.push(c);
+          }
+        }
+        return p;
+      }, [])
     );
   }
 }

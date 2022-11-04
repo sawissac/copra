@@ -102,7 +102,7 @@ function build() {
     })
     .setMinMax(10, 300)
     .setScalePercentMiddle()
-    .setWorker(() => {
+    .listen(() => {
       el.iconPercentLabel.text(
         hcs.formatPerscent(String(hcs.getScale() * 100)) + "%"
       );
@@ -111,19 +111,19 @@ function build() {
   /**
    *  pageLayer
    */
-  pr.setWorker(() => {
+  pr.listen(() => {
     hr.updateTitle();
     hr.render();
     lr.render();
-    // cb.updateBuilder();
+    cb.refreshBuilder();
   });
   /**
    * layerController
    *
    */
-  lr.setWorker(() => {
+  lr.listen(() => {
     hr.render();
-    // cb.updateBuilder();
+    cb.refreshBuilder();
   });
   /**
    *  html canvs render
@@ -134,9 +134,9 @@ function build() {
     _htmlTitle_: el.htmlInnerTitle.target,
   });
   hr.updateTitle();
-  hr.setWorker(() => {
+  hr.listen(() => {
     lr.render();
-    // cb.updateBuilder();
+    cb.refreshBuilder();
   });
   hr.build();
   hr.render();
@@ -145,7 +145,7 @@ function build() {
    *
    *
    */
-  be.setWorker(() => {
+  be.listen(() => {
     // cb.updateBuilder();
   });
   /**
@@ -156,10 +156,10 @@ function build() {
   // });
   // cb.build();
   // cb.updateBuilder();
-  // cb.setWorker(() => {
-  //   hr.render();
-  //   lr.render();
-  // });
+  cb.listen(() => {
+    hr.render();
+    lr.render();
+  });
   /**
    *  imagecanvasScroller
    *
@@ -170,7 +170,7 @@ function build() {
       _canvas_: el.renderInnerCenter.target,
     })
     .setMinMax(10, 500)
-    .setWorker(() => {
+    .listen(() => {
       el.iconPercentLabel.text(
         imcs.formatPerscent(String(imcs.getScale() * 100)) + "%"
       );
@@ -379,7 +379,9 @@ function build() {
           stoV2.val("imagemode").storeToCanvasMode();
           imr.show();
           changeZoomScale(1);
-          lr.layerUnSelectAll();
+          lr.layerRefresh();
+          lr.render();
+          hr.render();
           imr.render();
         },
       },

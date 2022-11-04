@@ -28,11 +28,19 @@ class CopraState {
     stoV2.val("aspect-1:1").storeToCanvasAspect();
     stoV2.val("htmlmode").storeToCanvasMode();
   }
+
   resetApp() {
-    this.updateApp();
-    stoV2.val("").storeToProjectName();
+    return new Promise(async (resolve) => {
+      await updateCopraPageData("");
+      stoV2.val("").storeToCanvasBackground();
+      stoV2.val("").storeToCanvasAspect();
+      stoV2.val("htmlmode").storeToCanvasMode();
+      stoV2.val("").storeToProjectName();
+      resolve("success");
+    });
   }
-  updateUsingTemplate() {
+
+  useTemplate() {
     return new Promise(async (resolve) => {
       await updateCopraPageData(TemplateState);
       stoV2.val("#FDF5DF").storeToCanvasBackground();
@@ -42,5 +50,7 @@ class CopraState {
     });
   }
 }
+
+
 
 export const cps = new CopraState();

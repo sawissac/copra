@@ -126,7 +126,7 @@ export class CanvasScaler extends Component {
           this.parseScale(this.scale) +
           ";"
       );
-      this.getWorker();
+      this.response();
     });
   }
 }

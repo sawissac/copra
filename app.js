@@ -106,7 +106,7 @@ function goToEditorCreateNew() {
   }
   if (pass >= 2) {
     if (templateCheck.checked) {
-      cps.updateUsingTemplate().then((res) => {
+      cps.useTemplate().then((res) => {
         CustomAlert({
           text: "App creating, Please wait...",
           callback: () => {

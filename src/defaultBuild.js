@@ -44,11 +44,13 @@ export const TemplateState = [
         type: "Empty",
         text: "Hello World for Copra",
         height: "80",
+        textColor: "#2d2d2d",
       }),
       createLayerState({
         layerName: "Header",
         type: "Header",
         text: "Hello.txt",
+        textColor: "#ffffff",
       }),
       createLayerState({
         layerName: "Comment",
@@ -59,11 +61,13 @@ export const TemplateState = [
       createLayerState({
         layerName: "Coding",
         type: "Line",
+        textColor: "#ffffff",
         text: "console.log('Hello World\");",
       }),
       createLayerState({
         layerName: "Footer",
         type: "Footer",
+        textColor: "#2d2d2d",
       }),
     ],
   }),

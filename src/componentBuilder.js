@@ -1,7 +1,7 @@
 import { Component } from "./component/component.js";
 import {
+  autoClass,
   createElement,
-  getElementList,
   parseToElement,
   setElement,
   setInstruction,
@@ -19,39 +19,76 @@ import {
   pickerShow,
   showColorList,
 } from "./colorData.js";
-
-const optionList = ["Empty", "Header", "Line", "Footer"];
+import {
+  getActiveLayerComponent,
+  updateActiveLayerComponent,
+} from "./state/canvasState.js";
 
 function pillBtn(props) {
   return createElement({
-    el: "pill-btn-div",
-    class: ["btn", props.btncolor],
-    text: props.text,
-    build: (el, mod) => {
-      mod.action("click", props.click);
-    },
+    el: "pill-con-div",
+    class: [
+      "col-6",
+      "d-flex",
+      "justify-content-center",
+      "align-items-center",
+      "py-1",
+    ],
+    children: [
+      createElement({
+        el: "pill-btn-div",
+        class: ["btn", "btn-sm", props.btncolor],
+        text: props.text,
+        build: (el, mod) => {
+          autoClass({
+            el: { target: el },
+            class: "btnPill",
+          });
+          autoClass({
+            el: { target: el },
+            class: "borderNone",
+          });
+          autoClass({
+            el: { target: el },
+            class: "f12",
+          });
+          mod.action("click", props.click);
+        },
+      }),
+    ],
   });
 }
-console.log(getElementList());
 
 //optionInnerLayer
 
 export class ComponentBuilder extends Component {
   constructor() {
     super();
+
+    this.typeOptions = ["Empty", "Header", "Line", "Footer"];
+
     this.currentStorageColor = stoV2.getCanvasBackground();
 
     this.element = parseToElement([
       "colorpicker-div",
       "cb-label-div-.btnBorderLight,h33,borderBot,rounded0",
-      "cb-container-div",
+      "type-con-div-.h100,bgLight,flowY",
+      "type-inner-con-div-.row,m0,mt2",
+      "text-label-div-.btnBorderLight,h33,borderY,rounded0",
+      "text-inp-input-.btnBorderLight,h33,border2,tStart,mxauto,my2",
+      "height-label-div-.btnBorderLight,h33,borderY,rounded0",
+      "height-inp-input-.btnBorderLight,h33,border2,tStart,mxauto,my2",
+      "cb-container-div-.pdb2",
     ]);
 
     this.element["colorpicker"] = pickerBtn({
       color: "#000000",
     });
 
-    setInstruction(this.element, ["cbContainer = cbLabel,colorpicker"]);
+    setInstruction(this.element, [
+      "typeCon = typeInnerCon",
+      "cbContainer = cbLabel,typeCon,textLabel,colorpicker,textInp,heightLabel,heightInp",
+    ]);
 
     this.pickcb = setElement(this.element);
 
@@ -61,21 +98,38 @@ export class ComponentBuilder extends Component {
         class: ["btn"],
         build: (el, mod) => {
           let reportColor = () => {
-            pickerCircle(this.pickcb("colorpicker"),i);
-            pickerLabel(this.pickcb("colorpicker"),i);
+            if (!this.isCanvasBtn()) {
+              this.updateComponent({ textColor: i });
+              this.setColorTextPicker(i);
+              this.response();
+            }
             pickerHide();
           };
           mod.action("click", reportColor);
-          pickerBoxStyle(mod,i)
+          pickerBoxStyle(mod, i);
         },
       });
     });
 
     this.build();
-
-    this.component = { type: null, text: "", height: 0, textColor: "" };
   }
+
+  setColorTextPicker(color) {
+    pickerCircle(this.pickcb("colorpicker"), color);
+    pickerLabel(this.pickcb("colorpicker"), color);
+  }
+
+  setContentInput(value) {
+    this.pickcb("textInp").target.value = value;
+  }
+
+  setHeightInput(value) {
+    this.pickcb("heightInp").target.value = value;
+  }
+
   build() {
+    this.refreshBuilder();
+
     this.pickcb("cbLabel").modify((el) => {
       addIcon({
         target: el,
@@ -84,214 +138,101 @@ export class ComponentBuilder extends Component {
       });
     });
 
-    this.pickcb("colorpicker").action("click",()=>{
+    this.pickcb("textLabel").modify((el) => {
+      addIcon({
+        target: el,
+        text: "Text",
+        textBold: true,
+      });
+    });
+
+    this.pickcb("textInp").modify((el, mod) => {
+      el.type = "text";
+      el.placeholder = "Content";
+      mod.style({
+        width: "254px",
+      });
+      mod.action("keydown", (ev) => {
+        if (!this.isCanvasBtn() && ev.code === "Enter") {
+          this.updateComponent({ text: el.value });
+          this.response();
+        }
+      });
+    });
+
+    this.pickcb("heightLabel").modify((el) => {
+      addIcon({
+        target: el,
+        text: "Height",
+        textBold: true,
+      });
+    });
+
+    this.pickcb("heightInp").modify((el, mod) => {
+      el.type = "text";
+      el.placeholder = "height";
+      mod.style({
+        width: "254px",
+      });
+      mod.action("keydown", (ev) => {
+        if (!this.isCanvasBtn() && ev.code === "Enter") {
+          this.updateComponent({ height: el.value });
+          this.response();
+        }
+      });
+    });
+
+    this.pickcb("colorpicker").action("click", () => {
       pickerShow();
       showColorList(this.colorBoxBtn);
-    })
-
+    });
     pick("optionInnerLayer").children([this.pickcb("cbContainer")]);
   }
-  // build() {
-  //   this.getHost()._layer_.appendChild(MainContainer.target);
-  //   let builderElementToggler = true;
-  //   builderElementLabel.onclick = () => {
-  //     if (builderElementToggler === true) {
-  //       builderElementWarper.classList.remove("d-none");
-  //       builderElementToggler = false;
-  //     } else {
-  //       builderElementWarper.classList.add("d-none");
-  //       builderElementToggler = true;
-  //     }
-  //   };
-  //   let builderOptionsToggler = true;
-  //   builderOptionLabel.onclick = () => {
-  //     if (builderOptionsToggler === true) {
-  //       builderOption.classList.remove("d-none");
-  //       builderOptionsToggler = false;
-  //     } else {
-  //       builderOption.classList.add("d-none");
-  //       builderOptionsToggler = true;
-  //     }
-  //   };
-  //   optionList.map((i) => {
-  //     const options = createElement({
-  //       el: "option-list-div",
-  //       class: ["btn","btn-light","fs-12","mx-2","my-2"],
-  //       text: i,
-  //       build: (_) => {
-  //         _.onclick = () => {
-  //           this.component.type = i;
-  //           builderOption.classList.add("d-none");
-  //           builderOptionsToggler = true;
-  //           this.updateElementType();
-  //           this.updateCpsState();
-  //           this.getWorker();
-  //         };
-  //       },
-  //     });
-  //     builderOption.appendChild(options.target);
-  //   });
-  //   let boxSize = 272.02 / 8 - 10;
-  //   for (let i in colorDataArr) {
-  //     let div = document.createElement("div");
-  //     let style = {
-  //       width: boxSize + "px",
-  //       height: boxSize + "px",
-  //       backgroundColor: colorDataArr[i],
-  //     };
-  //     if (i == 0) {
-  //       style.display = "grid";
-  //       style.placeItems = "center";
-  //       style.color = "white";
-  //       style.fontSize = "10px";
-  //       let icon = document.createElement("div");
-  //       icon.classList.add(...["bi", "bi-app"]);
-  //       div.appendChild(icon);
-  //     }
-  //     Object.assign(div.style, style);
-  //     div.onclick = () => {
-  //       this.component.textColor = colorDataArr[i];
-  //       builderColorDisplay.style.color = colorDataArr[i];
-  //     };
-  //     colorContainer.appendChild(div);
-  //   }
-  //   let builderColorToggler = true;
-  //   builderColorLabelBtn.onclick = () => {
-  //     if (builderColorToggler === true) {
-  //       builderColorWarper.classList.remove("d-none");
-  //       builderColorDisplay.style.backgroundColor = stoV2.getCanvasBackground();
-  //       builderColorDisplay.style.color = this.state[0].component.textColor;
-  //       builderColorToggler = false;
-  //     } else {
-  //       builderColorWarper.classList.add("d-none");
-  //       builderColorToggler = true;
-  //     }
-  //   };
-  //   colorConfirmBtn.onclick = () => {
-  //     this.updateTextColor();
-  //     this.updateCpsState();
-  //     this.getWorker();
-  //     builderColorWarper.classList.add("d-none");
-  //     builderColorToggler = true;
-  //   };
 
-  //   let textToggler = true;
-  //   textInputLabel.onclick = () => {
-  //     if (textToggler === true) {
-  //       textInput.classList.remove("d-none");
-  //       textToggler = false;
-  //     } else {
-  //       textInput.classList.add("d-none");
-  //       textToggler = true;
-  //     }
-  //   };
-  //   textInput.onkeypress = (ev) => {
-  //     if (ev.code === "Enter") {
-  //       this.component.text = textInput.value;
-  //       this.updateTextInput();
-  //       this.updateCpsState();
-  //       this.getWorker();
-  //     }
-  //   };
-  //   let heightToggler = true;
-  //   heightInputLabel.onclick = () => {
-  //     if (heightToggler === true) {
-  //       heightInput.classList.remove("d-none");
-  //       heightToggler = false;
-  //     } else {
-  //       heightInput.classList.add("d-none");
-  //       heightToggler = true;
-  //     }
-  //   };
-  //   heightInput.onkeypress = (ev) => {
-  //     if (ev.code === "Enter") {
-  //       this.component.height = heightInput.value;
-  //       this.updateElementHeight();
-  //       this.updateCpsState();
-  //       this.getWorker();
-  //     }
-  //   };
-  // }
-  // getCpsState() {
-  //   let activePageLayer = cps
-  //     .getPageLayerData()
-  //     .filter((i) => i.canvas.isHighlight === true);
-  //   this.setState(activePageLayer[0].canvas.data);
-  // }
-  // updateElementHeight() {
-  //   let updatedElementState = this.state.reduce((p, c) => {
-  //     if (c.isHighlight === true) {
-  //       c.component.height = this.component.height;
-  //       p.push(c);
-  //     } else {
-  //       p.push(c);
-  //     }
-  //     return p;
-  //   }, []);
-  //   this.setState(updatedElementState);
-  // }
-  // updateElementType() {
-  //   let updatedElementState = this.state.reduce((p, c) => {
-  //     if (c.isHighlight === true) {
-  //       c.component.type = this.component.type;
-  //       p.push(c);
-  //     } else {
-  //       p.push(c);
-  //     }
-  //     return p;
-  //   }, []);
-  //   this.setState(updatedElementState);
-  // }
-  // updateTextColor() {
-  //   let updatedElementState = this.state.reduce((p, c) => {
-  //     if (c.isHighlight === true) {
-  //       c.component.textColor = this.component.textColor;
-  //       p.push(c);
-  //     } else {
-  //       p.push(c);
-  //     }
-  //     return p;
-  //   }, []);
-  //   this.setState(updatedElementState);
-  // }
-  // updateTextInput() {
-  //   let updatedElementState = this.state.reduce((p, c) => {
-  //     if (c.isHighlight === true) {
-  //       c.component.text = this.component.text;
-  //       p.push(c);
-  //     } else {
-  //       p.push(c);
-  //     }
-  //     return p;
-  //   }, []);
-  //   this.setState(updatedElementState);
-  // }
-  // updateCpsState() {
-  //   let initState = cps.getPageLayerData();
-  //   cps.setPageLayerData(
-  //     initState.reduce((p, c) => {
-  //       if (c.canvas.isHighlight === true) {
-  //         c.canvas.data = this.state;
-  //         p.push(c);
-  //       } else {
-  //         p.push(c);
-  //       }
-  //       return p;
-  //     }, [])
-  //   );
-  // }
-  // updateBuilder() {
-  //   this.getCpsState();
-  //   let activeElement = this.state.filter((i) => i.isHighlight === true);
-  //   builderColorDisplay.style.backgroundColor = stoV2.getCanvasBackground();
-  //   if (activeElement.length > 0) {
-  //     let text = activeElement[0].component.text;
-  //     let height = activeElement[0].component.height;
-  //     builderStatus.textContent = `E: ${activeElement[0].component.type} | T: ${
-  //       text.length > 0 ? text : "none"
-  //     }`;
-  //     textInput.value = text;
-  //     heightInput.value = height;
-  //   }
-  // }
+  setTypeOption(type) {
+    this.pickcb("typeInnerCon")._children();
+
+    this.typeOptions.map((i) => {
+      this.pickcb("typeInnerCon").children([
+        pillBtn({
+          btncolor: i === type ? "btn-primary" : "btn-light",
+          text: i,
+          click: () => {
+            if (!this.isCanvasBtn()) {
+              this.updateComponent({ type: i });
+              this.setTypeOption(i);
+              this.response();
+            }
+          },
+        }),
+      ]);
+    });
+  }
+
+  refreshBuilder() {
+    const lr = getActiveLayerComponent(cps.getPageLayerData());
+    if (this.isCanvasBtn()) {
+      this.setColorTextPicker("#EF0D50");
+      this.setTypeOption("");
+      this.setContentInput("Can't be change");
+      this.setHeightInput("Can't be change");
+    } else {
+      this.setColorTextPicker(lr.textColor);
+      this.setTypeOption(lr.type);
+      this.setContentInput(lr.text);
+      this.setHeightInput(lr.height);
+    }
+  }
+
+  updateComponent(props) {
+    const updatedLayer = updateActiveLayerComponent(
+      cps.getPageLayerData(),
+      props
+    );
+    cps.setPageLayerData(updatedLayer);
+  }
+
+  isCanvasBtn() {
+    return getActiveLayerComponent(cps.getPageLayerData()).length === 0;
+  }
 }

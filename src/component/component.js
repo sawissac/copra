@@ -11,11 +11,11 @@ export class Component{
     getHost(){
         return this.host;
     }
-    setWorker(worker){
+    listen(worker){
         this.worker = worker;
         return this;
     }
-    getWorker(){
+    response(){
         this.worker();
     }
     setState(state) {
@@ -28,15 +28,8 @@ export class Component{
       },[])
       this.setState(result);
     }
-    stateRefresh(key,value) {
-      this.setState(
-        this.state.reduce((p, c) => {
-          c[key] = value;
-          p.push(c);
-          return p;
-        }, [])
-      );
-    }
+
+    
     build(){}
     render(){}
-}
+}  

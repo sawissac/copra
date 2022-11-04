@@ -16,7 +16,7 @@ export class htmlRender extends Component {
         this.stateRefresh("isHighlight", false);
         this.updateCpsState();
         this.render();
-        this.getWorker();
+        this.response();
       }
     };
   }
@@ -130,7 +130,7 @@ export class htmlRender extends Component {
           this.checkState(i.id, "isHighlight", this.highlightSetting);
           this.updateCpsState();
           this.render();
-          this.getWorker();
+          this.response();
         }
       };
       this.getHost()._layer_.appendChild(LayerEl.target);

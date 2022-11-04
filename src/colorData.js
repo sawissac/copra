@@ -95,6 +95,7 @@ export function pickerCircle(el, color) {
     backgroundColor: color,
   });
 }
+
 export function pickerLabel(el, color) {
   el.inner.colorpickerHexLabel.text(color);
 }
@@ -111,7 +112,4 @@ export function pickerBoxStyle(mod,color) {
     borderRadius: "4px",
     backgroundColor: color,
   });
-}
-export function generateList() {
-  return;
 }

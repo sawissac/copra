@@ -4,6 +4,8 @@ export const CLASS1 = {
   bgLight: ["bg-white"],
   bgLight2: ["bg-light"],
   bgDark: ["bg-dark"],
+  row: ["row"],
+  col6: ["col-6"],
   pFixed: ["position-fixed"],
   pRel: ["position-relative"],
   pAbs: ["position-absolute"],
@@ -27,7 +29,10 @@ export const CLASS1 = {
   pdb2: ["pb-2"],
   pdb5: ["pb-5"],
   br5: ["br-5"],
+  m0: ["m-0"],
+  mxauto: ["mx-auto"],
   my2: ["my-2"],
+  mx2: ["mx-2"],
   mx3: ["mx-3"],
   my3: ["my-3"],
   mx1: ["mx-1"],
@@ -60,6 +65,12 @@ export const CLASS1 = {
   flowY: ["overflow-y"],
   flow0: ["overflow-0"],
   borderNone: ["border", "border-0"],
+  borderY: [
+    "border",
+    "border-2",
+    "border-start-0",
+    "border-end-0",
+  ],
   borderRight: [
     "border",
     "border-2",
@@ -110,6 +121,9 @@ export const CLASS2 = {
   },
   h100p: {
     height: "100%",
+  },
+  w100p: {
+    width: "100%",
   },
   w100: {
     width: "100px",
