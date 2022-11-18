@@ -1,26 +1,41 @@
 import { Component } from "./component/component.js";
-import { createElement } from "../packages/automa/src/automa.js";
-import { addIcon, pick } from "./app.build.con.js";
-import { cps } from "./state/state.js";
+import {
+  createElement,
+  parseToElement,
+  setElement,
+  setInstruction,
+} from "../packages/automa/src/automa.js";
+import { addIcon, pick } from "./app.build.init.js";
+import { cps } from "./state/copra.state.global.js";
 import { iconList } from "./iconEngine.js";
-import { createPageLayerState } from "./defaultBuild.js";
-import { updataActiveCanvasLayer } from "./state/canvasState.js";
-import { moveBtn, moveCancelBtn, noneMoveBtn } from "./layer.common.js";
+import { createPageLayerState } from "./layer.api.js";
+import { updateActiveCanvasLayer } from "./state/canvas.state.api.js";
+import {
+  layerBtnStyle,
+  moveBtn,
+  moveCancelBtn,
+  noneMoveBtn,
+} from "./layer.common.js";
 
-export const layerBtnStyle = [
-  "btn",
-  "btn-sm",
-  "btn-light",
-  "d-flex",
-  "fs-12",
-  "my-1",
-  "py-2",
-];
-
-export class PageListRender extends Component {
+export class PageLayerController extends Component {
   constructor() {
     super();
     this.edit = false;
+    this.element = parseToElement([
+      "layer-div",
+      "layer-inner-page-div-.mh180,dFlex,fColumn,bgLight,rounded,shadow",
+      "layer-inner-page-btn-button-.btnBorderLight,mt2,h33,borderBot,rounded0",
+      "layer-inner-page-list-div-.h150,flowY,pdx2,pdy2",
+    ]);
+
+    this.element.layer = pick("layer");
+
+    setInstruction(this.element, [
+      "layerInnerPage = layerInnerPageBtn,layerInnerPageList",
+      "layer = layerInnerPage",
+    ]);
+
+    this.pick = setElement(this.element);
     this.build();
   }
 
@@ -41,9 +56,9 @@ export class PageListRender extends Component {
   }
 
   moveLayer() {
-    pick("layerInnerPageList")._children();
+    this.pick("layerInnerPageList")._children();
 
-    pick("layerInnerPageList").children([
+    this.pick("layerInnerPageList").children([
       moveCancelBtn({
         action: () => {
           this.render();
@@ -77,11 +92,18 @@ export class PageListRender extends Component {
             : noneMoveBtn({ layerName: i.canvas.layerName }),
       });
 
-      pick("layerInnerPageList").children([MoveLayerBtn]);
+      this.pick("layerInnerPageList").children([MoveLayerBtn]);
     });
   }
 
   build() {
+    this.pick("layerInnerPageBtn").modify((el) => {
+      addIcon({
+        target: el,
+        text: "Page",
+        textBold: true,
+      });
+    });
     let moveFun = () => {
       this.moveLayer();
     };
@@ -97,7 +119,7 @@ export class PageListRender extends Component {
       this.edit = false;
       this.deletePageLayer();
     };
-    pick("layerInnerPageBtn").children(
+    this.pick("layerInnerPageBtn").children(
       iconList([
         {
           el: "flex-fill-div",
@@ -128,7 +150,7 @@ export class PageListRender extends Component {
   }
 
   render() {
-    pick("layerInnerPageList")._children();
+    this.pick("layerInnerPageList")._children();
     this.getCpsState();
     this.state.map((i, index) => {
       let layerBtn = createElement({
@@ -173,7 +195,7 @@ export class PageListRender extends Component {
               iconstart: ["bi", "bi-collection"],
             });
             const input = createElement({
-              el: "cansvas-input-input",
+              el: "canvas-input-input",
               class: ["outline-none", "fs-12", "ms-1", "fw-bold"],
               build: (_input, mod) => {
                 mod.style({
@@ -194,6 +216,10 @@ export class PageListRender extends Component {
                     this.response();
                   }
                 };
+                _input.onblur = () => {
+                  this.edit = false;
+                  this.render();
+                }
                 setTimeout(() => {
                   _input.focus();
                   _input.select();
@@ -205,7 +231,7 @@ export class PageListRender extends Component {
         });
       }
 
-      pick("layerInnerPageList").children([layerBtn]);
+      this.pick("layerInnerPageList").children([layerBtn]);
     });
   }
 
@@ -226,7 +252,7 @@ export class PageListRender extends Component {
 
   renameLayer(value) {
     this.setState(
-      updataActiveCanvasLayer(cps.getPageLayerData(), {
+      updateActiveCanvasLayer(cps.getPageLayerData(), {
         layerName: value,
       })
     );
@@ -241,7 +267,6 @@ export class PageListRender extends Component {
   }
 
   moveArray(preIndex, direction) {
-    
     let targetArray = this.state.filter((i) => i.canvas.isHighlight === true);
     this.setState(
       this.state.reduce((p, c, curIndex) => {

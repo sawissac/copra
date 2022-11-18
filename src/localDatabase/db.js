@@ -1,26 +1,32 @@
-import { openDB } from '../../node_modules/idb/build/index.js';
+import { openDB,deleteDB } from '../../node_modules/idb/build/index.js';
 
 export async function createCopraDB() {
   const db = await openDB("copra", 1, {
-    upgrade(db, oldVersion, newVersion, transation) {
+    upgrade(db, oldVersion, newVersion, transaction) {
+
       switch (oldVersion) {
         case 0:
           upgradeToV1();
         default:
-          console.log("unknow version");
+          console.log("unknown version");
       }
 
       function upgradeToV1() {
         db.createObjectStore("page");
         db.createObjectStore("image");
-        transation
+        transaction
           .objectStore("page")
           .add([], "data");
-        transation.objectStore("image").add("", "data");
+        transaction.objectStore("image").add("", "data");
       }
+
     },
   });
   db.close();
+}
+
+export async function deleteCopraDB(){
+  const db = await deleteDB("copra");
 }
 
 export function getCopraPageData(){

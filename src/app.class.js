@@ -12,6 +12,7 @@ export const CLASS1 = {
   pSticky: ["position-sticky"],
   dFlexiCenter: ["d-flex", "align-items-center"],
   aiCenter: ["align-items-center"],
+  rowReverse: ["flex-row-reverse"],
   pSE: ["start-0", "end-0"],
   pS: ["start-0"],
   pB: ["bottom-0"],
@@ -131,11 +132,11 @@ export const CLASS2 = {
   h150: {
     height: "150px",
   },
-  h400: {
-    height: "400px",
+  h300: {
+    height: "300px",
   },
   w300: {
-    width: "300px",
+    width: "270px",
     height: "max-content",
   },
   w90: {
@@ -143,7 +144,6 @@ export const CLASS2 = {
   },
   headerFile: {
     minWidth: "200px",
-    marginLeft: "-25px",
   },
   controller: {
     top: "44px",
@@ -181,7 +181,7 @@ export const CLASS2 = {
     position: "fixed",
     top: "140px",
     right: "320px",
-    width: "50px",
+    width: "250px",
     height: "content-height",
     padding: 0,
   },

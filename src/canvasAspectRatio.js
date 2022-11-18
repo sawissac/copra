@@ -1,5 +1,7 @@
 import { stoV2 } from "./state/storage.js";
-import { getElementList } from "../packages/automa/src/automa.js";
+import { pick } from "./app.build.init.js";
+import { updateActiveCanvasLayer } from "./state/canvas.state.api.js";
+import { cps } from "./state/copra.state.global.js";
 
 export const canvasAspectRatio = [
   { name: "aspect-1:1", value: "aspect-1-1" },
@@ -20,10 +22,20 @@ export function aspectChecker(aspect, rule) {
   return filterList;
 }
 
-export function changeCanvasAspectRatio(aspectName = "") {
-  getElementList().htmlInnerCanvas.modify((_html) => {
+export function changeHtmlCanvasAspectRatio(aspectName) {
+  pick("htmlInnerCanvas").modify((_html) => {
     let _old = aspectChecker(_html.classList, canvasAspectRatio);
     _html.classList.replace(_old, aspectName.replace(":", "-"));
   });
-  stoV2.val(aspectName).storeToCanvasAspect();
+}
+
+export function saveAspectDataOfActivePage(aspect){
+  updateActiveCanvasLayer(cps.getPageLayerData(), {
+    aspectRatio: aspectName,
+  });
+}
+
+
+export function isHtmlMode() {
+  return stoV2.getCanvasMode() === "htmlmode";
 }

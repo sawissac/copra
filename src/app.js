@@ -1,6 +1,6 @@
 import { coreComponent } from "./app.core.js";
 import { root } from "../packages/automa/src/automa.js";
-import { cps } from "./state/state.js";
+import { cps } from "./state/copra.state.global.js";
 import { getCopraPageData } from "./localDatabase/db.js";
 
 getCopraPageData().then(async (data) => {

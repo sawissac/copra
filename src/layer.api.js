@@ -23,6 +23,7 @@ export const createPageLayerState = (props) => {
   return {
     canvas: {
       layerName: props.layerName,
+      aspectRatio: isUndefined(props.aspectRatio,"aspect-1:1"),
       isHighlight: isUndefined(props.highlight, false),
       data: isUndefined(props.data, [createLayerState({ layerName: "New Layer" })]),
     },

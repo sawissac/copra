@@ -21,7 +21,7 @@ module.exports = [
     mode: "production"
   },
   {
-    name: "bundle-login",
+    name: "bundleLogin:watch",
     entry: "./app.js",
     output: {
       path: path.resolve(__dirname),
@@ -29,5 +29,14 @@ module.exports = [
     },
     watch: true,
     mode: "development"
+  },
+  {
+    name: "bundleLogin:build",
+    entry: "./app.js",
+    output: {
+      path: path.resolve(__dirname),
+      filename: "app.bundle.js",
+    },
+    mode: "production"
   },
 ];

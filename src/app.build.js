@@ -23,21 +23,14 @@ export const DEFINE = [
   "controller-canvas-scrollY-button-button-.h33,btnBorderLight,pdy1,w50,borderNone",
   "controller-canvas-scrollX-button-button-.h33,btnBorderLight,pdy1,w50,borderNone",
   /**@layer**/
-  "layer-div-.pd2,pAbs,pS,pB,vh100,w300,border2,dFlex,bgLight2,fColumn,borderLeft,layer,layerMid",
-  "layer-inner-page-div-.mh180,dFlex,fColumn,bgLight,rounded,shadow",
-  "layer-inner-page-btn-button-.btnBorderLight,mt2,h33,borderBot,rounded0",
-  "layer-inner-page-list-div-.h150,flowY,pdx2,pdy2",
-  "layer-inner-layer-div-.dFlex,fColumn,bgLight,rounded,shadow,fFill,mt2",
-  "layer-inner-layer-label-div-.btnBorderLight,mt2,h33,borderBot,rounded0",
-  "layer-inner-canvas-button-div-.btnBorderLight,h33,borderBot,rounded0,pdx3",
-  "layer-inner-layer-list-div-.h400,flowY,pdx2,pdy2",
+  "layer-div-.pd2,pAbs,pS,pB,vh100,w300,dFlex,bgLight2,fColumn,layer,layerMid",
   /**@option**/
-  "option-div-.pAbs,pE,pB,vh100,w300,border2,dFlex,bgLight2,fColumn,borderRight,layer,layerMid,pd2",
+  "option-div-.pAbs,pE,pB,vh100,w300,dFlex,bgLight2,fColumn,layer,layerMid,pd2",
   "option-inner-div-.dFlex,fFill,fColumn,bgLight,rounded,shadow,pRel",
   "option-inner-label-button-.btnBorderLight,mt2,h33,borderBot,rounded0,pdt2",
   "option-inner-layer-div-.br5,flowY,h100p",
   /**@html-canvas**/
-  "html-canvas-div-.bgLight2",
+  "html-canvas-div",
   "html-inner-center-div",
   "html-inner-title-div",
   "html-inner-canvas-div-.asp11,bgLight",
@@ -55,7 +48,7 @@ export const DEFINE = [
   /**@global download and file**/
   "global-download-link-a-.dNone",
   "global-file-input-input-.dNone",
-  "core-component-div-.vh100,bgLight,pRel",
+  "core-component-div-.vh100,pRel",
 ];
 
 export const ARRANGE = [
@@ -97,9 +90,6 @@ export const ARRANGE = [
    *        -> layerInnerControllerBar
    *        -> layerInnerLayerList
    */
-  "layerInnerPage = layerInnerPageBtn,layerInnerPageList",
-  "layerInnerLayer = layerInnerLayerLabel,layerInnerCanvasButton,layerInnerLayerList",
-  "layer = layerInnerPage,layerInnerLayer",
   /**
    *  option
    *    -> optionInner

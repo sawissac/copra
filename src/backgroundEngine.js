@@ -5,7 +5,7 @@ import {
   setElement,
   setInstruction,
 } from "../packages/automa/src/automa.js";
-import { pick } from "./app.build.con.js";
+import { pick } from "./app.build.init.js";
 import { stoV2 } from "./state/storage.js";
 import { getCopraImageData, updateCopraImageData } from "./localDatabase/db.js";
 import { addIcon } from "./iconEngine.js";
@@ -18,7 +18,7 @@ import {
   pickerLabel,
   pickerShow,
   showColorList,
-} from "./colorData.js";
+} from "./color.picker.js";
 
 export class BackgroundEngine extends Component {
   constructor() {
@@ -64,8 +64,6 @@ export class BackgroundEngine extends Component {
         },
       });
     });
-
-    this.build();
   }
 
   canvasBackground(color) {

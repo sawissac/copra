@@ -3,6 +3,8 @@
     "@popperjs/core": "^2.11.5",
     "bootstrap": "^5.2.1",
     "bootstrap-icons": "^1.9.1",
+    "chroma-js": "^2.4.2",
+    "css-color-names": "^1.0.1",
     "html-to-image": "^1.9.0",
     "idb": "^7.0.2"
   },
@@ -11,7 +13,9 @@
   "main": "app.js",
   "scripts": {
     "bundle:watch": "npx webpack --config webpack.config.js --config-name bundle:watch",
-    "bundlelogin": "npx webpack --config webpack.config.js --config-name bundle-login"
+    "bundle:build": "npx webpack --config webpack.config.js --config-name bundle:build",
+    "bundleLogin:watch": "npx webpack --config webpack.config.js --config-name bundleLogin:watch",
+    "bundleLogin:build": "npx webpack --config webpack.config.js --config-name bundleLogin:build"
   },
   "keywords": [],
   "author": "",

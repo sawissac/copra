@@ -1,6 +1,6 @@
 import { Component } from "./component/component.js";
 import { createElement } from "../packages/automa/src/automa.js";
-import { addIcon } from "./app.build.con.js";
+import { addIcon } from "./app.build.init.js";
 import { stoV2 } from "./state/storage.js";
 import { getCopraPageData,getCopraImageData } from "./localDatabase/db.js";
 

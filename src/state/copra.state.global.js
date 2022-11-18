@@ -1,4 +1,4 @@
-import { DefaultState, TemplateState } from "../defaultBuild.js";
+import { DefaultState, TemplateState } from "../layer.api.js";
 import { stoV2 } from "./storage.js";
 import { updateCopraImageData, updateCopraPageData } from "../localDatabase/db.js";
 
@@ -25,7 +25,6 @@ class CopraState {
     updateCopraPageData(DefaultState);
     updateCopraImageData("");
     stoV2.val("#FFFFFF").storeToCanvasBackground();
-    stoV2.val("aspect-1:1").storeToCanvasAspect();
     stoV2.val("htmlmode").storeToCanvasMode();
   }
 
@@ -33,7 +32,6 @@ class CopraState {
     return new Promise(async (resolve) => {
       await updateCopraPageData("");
       stoV2.val("").storeToCanvasBackground();
-      stoV2.val("").storeToCanvasAspect();
       stoV2.val("htmlmode").storeToCanvasMode();
       stoV2.val("").storeToProjectName();
       resolve("success");
@@ -44,7 +42,6 @@ class CopraState {
     return new Promise(async (resolve) => {
       await updateCopraPageData(TemplateState);
       stoV2.val("#FDF5DF").storeToCanvasBackground();
-      stoV2.val("aspect-1:1").storeToCanvasAspect();
       stoV2.val("htmlmode").storeToCanvasMode();
       resolve("success");
     });

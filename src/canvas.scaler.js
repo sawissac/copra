@@ -1,13 +1,14 @@
+import { pick } from "./app.build.init.js";
 import { Component } from "./component/component.js";
 
 export class CanvasScaler extends Component {
-  constructor() {
+  constructor(canvasName) {
     super();
-    this.defalutX = -50;
+    this.defaultX = -50;
     this.defaultY = -50;
     this.x = -50;
     this.y = -50;
-    this.max = 1;
+    this.max = 0;
     this.min = 0;
     this.scale = 1;
     this.scalePercent = 0;
@@ -16,8 +17,9 @@ export class CanvasScaler extends Component {
     this.verticalMove = false;
     this.horizontalMove = false;
     this.direction = "non";
+    this.canvas = pick(canvasName).target;
   }
-  setCanvasPostion(x, y) {
+  setCanvasPosition(x, y) {
     this.x = x;
     this.y = y;
   }
@@ -34,6 +36,7 @@ export class CanvasScaler extends Component {
   }
   setScalePercentMiddle() {
     this.scalePercent = this.max / 2;
+    this.scale = this.scalePercent / 100;
     return this;
   }
   parseScale(value) {
@@ -42,26 +45,39 @@ export class CanvasScaler extends Component {
   parseTranslate(x, y) {
     return `translate(${x}%,${y}%)`;
   }
-  changeCanvas() {
-    this.getHost()._canvas_.setAttribute(
+
+  scaleTranslate(scale, x, y) {
+    return (
       "style",
       "transform: " +
-        this.parseTranslate(this.x, this.y) +
+        this.parseTranslate(x, y) +
         " " +
-        this.parseScale(this.scale) +
+        this.parseScale(scale) +
         ";"
     );
   }
+
+  scaleTo(value) {
+    this.scalePercent = value * 100;
+    this.scale = this.scalePercent / 100;
+    this.changeCanvas();
+    return this;
+  }
+
+  changeCanvas() {
+    this.canvas.setAttribute(
+      "style",
+      this.scaleTranslate(this.scale, this.x, this.y)
+    );
+    return this;
+  }
   canvasReset() {
     this.scalePercent = this.max / 2;
-    this.scale = 1;
-    this.getHost()._canvas_.setAttribute(
+    this.scale = this.scalePercent / 100;
+    this.setCanvasPosition(this.defaultX, this.defaultY);
+    this.canvas.setAttribute(
       "style",
-      "transform: " +
-        this.parseTranslate(this.x, this.y) +
-        " " +
-        this.parseScale(this.scale) +
-        ";"
+      this.scaleTranslate(this.scale, this.x, this.y)
     );
   }
   verticalMoveOn() {
@@ -76,12 +92,15 @@ export class CanvasScaler extends Component {
   horizontalMoveOff() {
     this.horizontalMove = false;
   }
-  formatPerscent(val) {
-    let valDecimal = val.split(".");
-    return valDecimal[0];
+
+  getPercentage() {
+    let percent = String(this.scalePercent);
+    let decimal = percent.split(".");
+    return decimal[0] + "%";
   }
+
   build() {
-    this.getHost()._canvas_.addEventListener("wheel", (ev) => {
+    this.canvas.addEventListener("wheel", (ev) => {
       //scroll down decrease
       if (ev.deltaY > 0 && !this.verticalMove && !this.horizontalMove) {
         this.scalePercent -= this.scaleBy;
@@ -117,15 +136,14 @@ export class CanvasScaler extends Component {
       if (this.scalePercent < this.min) {
         this.scalePercent = this.min;
       }
+
       this.scale = this.scalePercent / 100;
-      this.getHost()._canvas_.setAttribute(
+
+      this.canvas.setAttribute(
         "style",
-        "transform: " +
-          this.parseTranslate(this.x, this.y) +
-          " " +
-          this.parseScale(this.scale) +
-          ";"
+        this.scaleTranslate(this.scale, this.x, this.y)
       );
+
       this.response();
     });
   }

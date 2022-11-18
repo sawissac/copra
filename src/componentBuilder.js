@@ -6,8 +6,8 @@ import {
   setElement,
   setInstruction,
 } from "../packages/automa/src/automa.js";
-import { cps } from "./state/state.js";
-import { addIcon, pick } from "./app.build.con.js";
+import { cps } from "./state/copra.state.global.js";
+import { addIcon, pick } from "./app.build.init.js";
 import { stoV2 } from "./state/storage.js";
 import {
   colorData,
@@ -18,11 +18,11 @@ import {
   pickerLabel,
   pickerShow,
   showColorList,
-} from "./colorData.js";
+} from "./color.picker.js";
 import {
   getActiveLayerComponent,
   updateActiveLayerComponent,
-} from "./state/canvasState.js";
+} from "./state/canvas.state.api.js";
 
 function pillBtn(props) {
   return createElement({
@@ -65,7 +65,16 @@ export class ComponentBuilder extends Component {
   constructor() {
     super();
 
-    this.typeOptions = ["Empty", "Header", "Line", "Footer"];
+    this.typeOptions = [
+      "Empty",
+      "Text 1",
+      "Text 2",
+      "Flat Text 1",
+      "Flat Text 2",
+      "Header",
+      "Line",
+      "Footer",
+    ];
 
     this.currentStorageColor = stoV2.getCanvasBackground();
 
@@ -110,8 +119,6 @@ export class ComponentBuilder extends Component {
         },
       });
     });
-
-    this.build();
   }
 
   setColorTextPicker(color) {
@@ -150,7 +157,7 @@ export class ComponentBuilder extends Component {
       el.type = "text";
       el.placeholder = "Content";
       mod.style({
-        width: "254px",
+        width: "230px",
       });
       mod.action("keydown", (ev) => {
         if (!this.isCanvasBtn() && ev.code === "Enter") {
@@ -172,7 +179,7 @@ export class ComponentBuilder extends Component {
       el.type = "text";
       el.placeholder = "height";
       mod.style({
-        width: "254px",
+        width: "230px",
       });
       mod.action("keydown", (ev) => {
         if (!this.isCanvasBtn() && ev.code === "Enter") {

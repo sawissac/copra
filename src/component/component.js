@@ -17,6 +17,7 @@ export class Component{
     }
     response(){
         this.worker();
+        return this;
     }
     setState(state) {
       this.state = state;
@@ -28,8 +29,6 @@ export class Component{
       },[])
       this.setState(result);
     }
-
-    
     build(){}
     render(){}
 }  

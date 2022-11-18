@@ -17,7 +17,7 @@ export function getActiveLayerComponent(state) {
   return layer.component;
 }
 
-export function updataActiveCanvasLayer(state, props) {
+export function updateActiveCanvasLayer(state, props) {
   const res = state.reduce((p, c) => {
     if (c.canvas.isHighlight === true) {
       if (props.layerName) {
@@ -25,6 +25,9 @@ export function updataActiveCanvasLayer(state, props) {
       }
       if (props.highlight) {
         c.canvas.isHighlight = props.highlight;
+      }
+      if (props.aspectRatio) {
+        c.canvas.aspectRatio = props.aspectRatio;
       }
       if (props.data) {
         c.canvas.data = props.data;
@@ -38,8 +41,12 @@ export function updataActiveCanvasLayer(state, props) {
   return res;
 }
 
-export function updateActiveLayerComponent(state, props) {
+export function isActiveLayerExist(state) {
+  const activePageLayer = getActiveCanvasLayer(state);
+  return activePageLayer.data.filter((i) => i.isHighlight === true);
+}
 
+export function updateActiveLayerComponent(state, props) {
   const activePageLayer = getActiveCanvasLayer(state);
 
   const res = activePageLayer.data.reduce((p, c) => {
@@ -47,7 +54,7 @@ export function updateActiveLayerComponent(state, props) {
       if (props.type) {
         c.component.type = props.type;
       }
-      if (props.text) {
+      if (props.text || props.text === "") {
         c.component.text = props.text;
       }
       if (props.height) {
@@ -66,9 +73,9 @@ export function updateActiveLayerComponent(state, props) {
     return p;
   }, []);
 
-  const updatedLayer = updataActiveCanvasLayer(state, {
+  const updatedLayer = updateActiveCanvasLayer(state, {
     data: res,
   });
-  
+
   return updatedLayer;
 }

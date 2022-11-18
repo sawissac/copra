@@ -1,13 +1,18 @@
 import { Component } from "./component/component.js";
-import { createElement } from "../packages/automa/src/automa.js";
-import { addIcon, pick } from "./app.build.con.js";
-import { cps } from "./state/state.js";
+import {
+  createElement,
+  parseToElement,
+  setElement,
+  setInstruction,
+} from "../packages/automa/src/automa.js";
+import { addIcon, pick } from "./app.build.init.js";
+import { cps } from "./state/copra.state.global.js";
 import { iconList } from "./iconEngine.js";
-import { createLayerState } from "./defaultBuild.js";
+import { createLayerState } from "./layer.api.js";
 import {
   getActiveCanvasLayer,
-  updataActiveCanvasLayer,
-} from "./state/canvasState.js";
+  updateActiveCanvasLayer,
+} from "./state/canvas.state.api.js";
 import {
   moveCancelBtn,
   moveBtn,
@@ -15,11 +20,29 @@ import {
   layerBtnStyle,
 } from "./layer.common.js";
 
-export class LayerRander extends Component {
+export class PageComponentLayerController extends Component {
   constructor() {
     super();
     this.edit = false;
     this.canvas = false;
+
+    this.element = parseToElement([
+      "layer-div",
+      "layer-inner-layer-div-.dFlex,fColumn,bgLight,rounded,shadow,fFill,mt2",
+      "layer-inner-layer-label-div-.btnBorderLight,mt2,h33,borderBot,rounded0",
+      "layer-inner-canvas-button-div-.btnBorderLight,h33,borderBot,rounded0,pdx3",
+      "layer-inner-layer-list-div-.h300,flowY,pdx2,pdy2",
+    ]);
+
+    this.element.layer = pick("layer");
+
+    setInstruction(this.element, [
+      "layerInnerLayer = layerInnerLayerLabel,layerInnerCanvasButton,layerInnerLayerList",
+      "layer = layerInnerLayer",
+    ]);
+
+    this.pick = setElement(this.element);
+
     this.build();
   }
   createLayer() {
@@ -28,22 +51,21 @@ export class LayerRander extends Component {
     this.render();
     this.response();
   }
+
   deleteLayer() {
     if (this.state.length > 1) {
       this.setState(this.state.filter((i) => i.isHighlight !== true));
-      this.state[0].canvas.isHighlight = true;
     }
     this.updateCpsState();
     this.render();
     this.response();
   }
+
   moveLayer() {
-    const isactiveLayer = this.state.filter((i) => i.isHighlight === true);
+    if (this.isLayerSelected) {
+      this.pick("layerInnerLayerList")._children();
 
-    if (isactiveLayer.length !== 0) {
-      pick("layerInnerLayerList")._children();
-
-      pick("layerInnerLayerList").children([
+      this.pick("layerInnerLayerList").children([
         moveCancelBtn({
           action: () => {
             this.render();
@@ -52,7 +74,7 @@ export class LayerRander extends Component {
       ]);
 
       this.state.map((i, index) => {
-        pick("layerInnerLayerList").children([
+        this.pick("layerInnerLayerList").children([
           createElement({
             el: "move-layer-btn-div",
             class: [
@@ -85,7 +107,22 @@ export class LayerRander extends Component {
   }
 
   build() {
-    pick("layerInnerCanvasButton").action("click", () => {
+    this.pick("layerInnerLayerLabel").modify((el) => {
+      addIcon({
+        target: el,
+        text: "Layer",
+        textBold: true,
+      });
+    });
+    this.pick("layerInnerCanvasButton").modify((el, mod) => {
+      addIcon({
+        target: el,
+        iconstart: ["bi", "bi-collection"],
+        text: "Page",
+        textBold: true,
+      });
+    });
+    this.pick("layerInnerCanvasButton").action("click", () => {
       if (this.canvas !== true) {
         this.canvasBtnOn();
         this.layerRefresh();
@@ -101,16 +138,16 @@ export class LayerRander extends Component {
 
   canvasBtnOff() {
     this.canvas = false;
-    pick("layerInnerCanvasButton").target.classList.remove("highlight");
+    this.pick("layerInnerCanvasButton").target.classList.remove("highlight");
   }
 
   canvasBtnOn() {
     this.canvas = true;
-    pick("layerInnerCanvasButton").target.classList.add("highlight");
+    this.pick("layerInnerCanvasButton").target.classList.add("highlight");
   }
 
   render() {
-    pick("layerInnerLayerList")._children();
+    this.pick("layerInnerLayerList")._children();
     this.getCpsState();
     this.updatePageTitle();
     this.state.map((i, index) => {
@@ -177,6 +214,10 @@ export class LayerRander extends Component {
                     this.render();
                   }
                 };
+                _input.onblur = () => {
+                  this.edit = false;
+                  this.render();
+                };
                 setTimeout(() => {
                   _input.focus();
                   _input.select();
@@ -187,7 +228,7 @@ export class LayerRander extends Component {
           },
         });
       }
-      pick("layerInnerLayerList").children([layerBtn]);
+      this.pick("layerInnerLayerList").children([layerBtn]);
     });
   }
 
@@ -211,7 +252,7 @@ export class LayerRander extends Component {
   }
 
   updateCpsState() {
-    const updatedLayer = updataActiveCanvasLayer(cps.getPageLayerData(), {
+    const updatedLayer = updateActiveCanvasLayer(cps.getPageLayerData(), {
       data: this.state,
     });
     cps.setPageLayerData(updatedLayer);
@@ -269,7 +310,7 @@ export class LayerRander extends Component {
       this.edit = false;
       this.deleteLayer();
     };
-    pick("layerInnerLayerLabel").children(
+    this.pick("layerInnerLayerLabel").children(
       iconList([
         {
           el: "flex-fill-div",
@@ -308,8 +349,12 @@ export class LayerRander extends Component {
     );
   }
 
+  isLayerSelected() {
+    return this.state.filter((i) => i.isHighlight === true).length === 0;
+  }
+
   updatePageTitle() {
-    pick("layerInnerCanvasButton").modify((el, mod) => {
+    this.pick("layerInnerCanvasButton").modify((el, mod) => {
       mod._children();
       addIcon({
         target: el,
@@ -318,10 +363,7 @@ export class LayerRander extends Component {
         textBold: true,
       });
     });
-
-    const isLayerSelected = this.state.filter((i) => i.isHighlight === true);
-
-    if (isLayerSelected.length === 0) {
+    if (this.isLayerSelected()) {
       this.canvasBtnOn();
     } else {
       this.canvasBtnOff();
