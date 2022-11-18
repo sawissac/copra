@@ -31,7 +31,7 @@ export function changeHtmlCanvasAspectRatio(aspectName) {
 
 export function saveAspectDataOfActivePage(aspect){
   updateActiveCanvasLayer(cps.getPageLayerData(), {
-    aspectRatio: aspectName,
+    aspectRatio: aspect,
   });
 }
 

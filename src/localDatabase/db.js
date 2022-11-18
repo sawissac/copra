@@ -25,10 +25,6 @@ export async function createCopraDB() {
   db.close();
 }
 
-export async function deleteCopraDB(){
-  const db = await deleteDB("copra");
-}
-
 export function getCopraPageData(){
   return new Promise(async (resolve)=>{
     const db = await openDB("copra",1);

@@ -1,4 +1,4 @@
-import { createCopraDB, deleteCopraDB } from "./src/localDatabase/db.js";
+import { createCopraDB} from "./src/localDatabase/db.js";
 import { Dropdown } from "./node_modules/bootstrap/dist/js/bootstrap.esm.js";
 import { stoV2 } from "./src/state/storage.js";
 import { CustomAlert } from "./src/alert.js";
