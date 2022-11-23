@@ -77,7 +77,7 @@ export const exportAsCopFile = () => {
   });
 };
 
-export const readCopFile = (callback) => {
+export const readCopFile = (callback,success) => {
   pick("globalFileInput").modify((el, mod) => {
     el.value = "";
     el.click();
@@ -86,7 +86,8 @@ export const readCopFile = (callback) => {
       let file = this.files[0];
       fr.onload = () => {
         if (validateFile(file)) {
-          updateEditor(fr.result, callback);
+          updateEditor(fr.result, callback); 
+          success();
         } else {
           CustomAlert({ text: "File Error: Not copra file format" });
         }

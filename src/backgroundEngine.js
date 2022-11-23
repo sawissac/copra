@@ -78,7 +78,19 @@ export class BackgroundEngine extends Component {
     });
   }
 
+  active(){
+    this.pickbg("backgroundUploadBtn").text("Cancel");
+  }
+
   build() {
+    pick("optionInnerLabel").modify((el) => {
+      addIcon({
+        target: el,
+        text: "Option",
+        textBold: true,
+      });
+    });
+
     let upLabel = this.pickbg("backgroundUploadBtn");
 
     getCopraImageData().then((imageData) => {

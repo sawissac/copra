@@ -20,6 +20,7 @@ import { exportAsCopFile, readCopFile, saveData } from "./io/io.js";
 import { redirect } from "./urlPath.js";
 import { key } from "./key.js";
 import { MenuController } from "./menu.controller.js";
+import { editorFullScreen, editorFullScreenExit } from "./screen.js";
 
 function build() {
   const menuHeader = new MenuHeader();
@@ -34,7 +35,7 @@ function build() {
   pickerInit();
 
   // ! disable short cut
-  key.disableContext().disableCtrlS().disableWheelScaling();
+  key.disableContext().disableWheelScaling().disableAllShortCut();
 
   // ! menuHeader
   menuHeader.build();
@@ -151,6 +152,18 @@ function build() {
         scaleTo(1)
       },
     },
+    {
+      listName: "Active fullscreen mode",
+      fun: () => {
+        editorFullScreen();
+      },
+    },
+    {
+      listName: "Exit fullscreen mode",
+      fun: () => {
+        editorFullScreenExit();
+      },
+    },
   ]);
   // ! tooltips for ration btn
   menuController.setRatioList([
@@ -215,6 +228,8 @@ function build() {
           pageLayerRender.render();
           htmlCanvas.render();
           componentController.refreshBuilder();
+        },()=>{
+          backgroundController.active();
         });
       },
     },

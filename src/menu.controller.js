@@ -12,6 +12,9 @@ export class MenuController {
     this.build();
   }
   build() {
+    pick("globalFileInput").modify((el) => {
+      el.type = "file";
+    });
     pick("controllerFileBtn").modify((el) => {
       addIcon({
         target: el,
@@ -92,7 +95,7 @@ export class MenuController {
         btn: pick("controllerScalePercentBtn").target,
         box: pick("controllerScalePercentBox").target,
       })
-      .setListIconStyle(["bi", "bi-zoom-in"])
+      .setListIconStyle(["bi"])
       .offset(this.offset);
   }
   setFileList(list) {

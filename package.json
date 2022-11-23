@@ -9,7 +9,7 @@
     "idb": "^7.0.2"
   },
   "name": "copra",
-  "version": "1.0.0",
+  "version": "1.5.0",
   "main": "app.js",
   "scripts": {
     "bundle:watch": "npx webpack --config webpack.config.js --config-name bundle:watch",

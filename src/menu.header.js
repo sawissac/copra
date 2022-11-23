@@ -19,7 +19,7 @@ export class MenuHeader extends Component {
     pick("headerLogo").text("CoPra").attr("type", "button");
     pick("headerFile").text("file demo length length");
     pick("headerSaveBtn").text("save");
-    pick("headerVersion").text("1.1.0v");
+    pick("headerVersion").text("1.5.0v");
 
     const headerFileParent = pick("headerFileWarper");
 

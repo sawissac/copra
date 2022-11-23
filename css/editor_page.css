@@ -7,7 +7,7 @@
 }
 
 /* ...or add this class to an element */
-#root {
+.core-component {
     --polka-bg-image:
         radial-gradient(rgb(221, 221, 221) 10%, transparent 10.4%);
     --polka-bg-position: 12px 12px;

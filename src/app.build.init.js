@@ -1,7 +1,6 @@
 import {
   config,
   pick as p,
-  regis,
 } from "../packages/automa/src/automa.js";
 import { DEFINE, ARRANGE } from "./app.build.js";
 import { CLASS1, CLASS2 } from "./app.class.js";
@@ -16,23 +15,5 @@ config({
 });
 
 export const addIcon = ie;
-
-/**@option */
-p("optionInnerLabel").modify((el, mod) => {
-  addIcon({
-    target: el,
-    text: "Option",
-    textBold: true,
-  });
-});
-
-/** @htmlcanvas */
-
-
-/**@globaldownload */
-
-p("globalFileInput").modify((el) => {
-  el.type = "file";
-});
 
 export const pick = p;

@@ -7,6 +7,13 @@ function disableCtrlS() {
   return this;
 }
 
+function disableAllShortCut(){
+  keyDown(function(key){
+    key.preventDefault();
+  },true)
+  return this;
+}
+
 function disableContext() {
   document.addEventListener(
     "contextmenu",
@@ -45,6 +52,7 @@ export const key = {
   disableContext,
   disableCtrlS,
   disableWheelScaling,
+  disableAllShortCut,
   keyDown,
   keyUp,
 };
