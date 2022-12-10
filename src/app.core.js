@@ -35,7 +35,7 @@ function build() {
   pickerInit();
 
   // ! disable short cut
-  key.disableContext().disableWheelScaling().disableAllShortCut();
+  key.disableContext().disableWheelScaling().disableCtrlS();
 
   // ! menuHeader
   menuHeader.build();
